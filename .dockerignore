@@ -1,0 +1,32 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (re-installed inside Docker)
+node_modules
+
+# Next.js build output (rebuilt inside Docker)
+.next
+out
+
+# Local env files (secrets never go into the image)
+.env
+.env.local
+.env*.local
+
+# Dev / editor noise
+.DS_Store
+*.pem
+*.log
+.vscode
+.idea
+
+# Docs / misc that aren't needed in the image
+*.docx
+*.md
+README*
+
+# Docker files themselves
+Dockerfile
+docker-compose*.yml
+.dockerignore

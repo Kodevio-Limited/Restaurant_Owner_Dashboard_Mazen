@@ -1,0 +1,48 @@
+services:
+  ownerdash:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+    container_name: ownerdash_kodevio
+    restart: unless-stopped
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - dokploy-network
+    labels:
+      # ── Traefik routing ──────────────────────────────────────────────────
+      - traefik.enable=true
+
+      # HTTPS router → ownerdash.kodevio.com
+      - traefik.http.routers.ownerdash.rule=Host(`ownerdash.kodevio.com`)
+      - traefik.http.routers.ownerdash.entrypoints=websecure
+      - traefik.http.routers.ownerdash.tls.certResolver=letsencrypt
+
+      # HTTP → HTTPS redirect
+      - traefik.http.routers.ownerdash-http.rule=Host(`ownerdash.kodevio.com`)
+      - traefik.http.routers.ownerdash-http.entrypoints=web
+      - traefik.http.routers.ownerdash-http.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true
+
+      # Backend port
+      - traefik.docker.network=dokploy-network
+      - traefik.http.services.ownerdash.loadbalancer.server.port=3000
+
+networks:
+  dokploy-network:
+    external: true
