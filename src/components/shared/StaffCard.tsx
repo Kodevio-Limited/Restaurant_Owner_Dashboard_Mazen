@@ -35,7 +35,7 @@ export function StaffCard({ member, onEdit, onRemove }: StaffCardProps) {
   const lastNote = member.notes[member.notes.length - 1];
 
   return (
-    <div className="relative flex w-[418px] flex-col items-center rounded-[19.5px] bg-white pb-7">
+    <div className="relative flex w-full max-w-[418px] flex-col items-center rounded-[19.5px] bg-white pb-7">
 
       {/* ── Delete btn — top-right red square ── */}
       <button

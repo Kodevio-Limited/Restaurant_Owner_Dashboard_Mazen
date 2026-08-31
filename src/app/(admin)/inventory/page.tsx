@@ -183,17 +183,18 @@ const TABS = [
 
 function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-zinc-100 shadow-[1px_0px_6.6px_rgba(0,0,0,0.08)] transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -260,23 +261,24 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose: () => void; recipe: Recipe | null }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-zinc-100 shadow-[1px_0px_6.6px_rgba(0,0,0,0.08)] transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -362,23 +364,24 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-zinc-100 shadow-[1px_0px_6.6px_rgba(0,0,0,0.08)] transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -439,23 +442,24 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-zinc-100 shadow-[1px_0px_6.6px_rgba(0,0,0,0.08)] transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -515,23 +519,24 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[490px] flex-col overflow-y-auto rounded-2xl bg-white shadow-lg transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -561,23 +566,24 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[490px] flex-col overflow-y-auto rounded-2xl bg-white shadow-lg transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -627,7 +633,7 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -13,15 +13,19 @@ export function UnsavedChangesModal({
   onLeave: () => void;
 }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity duration-200',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onCancel}
-    >
+    <>
       <div
-        className="mx-4 flex w-full max-w-[614px] flex-col items-center rounded-[13px] bg-white p-10 shadow-lg"
+        className={cn(
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onCancel}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col items-center overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] p-10 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-center">
@@ -44,6 +48,6 @@ export function UnsavedChangesModal({
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

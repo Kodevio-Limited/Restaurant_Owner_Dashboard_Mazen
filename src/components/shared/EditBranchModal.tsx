@@ -13,19 +13,19 @@ export function EditBranchModal({
   onClose: () => void;
 }) {
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-[24px] bg-[#F2F2F2] shadow-lg transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
+        )}
       >
         <div className="flex shrink-0 items-center justify-between px-5 pt-6">
           <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DcDcDc]">
@@ -79,6 +79,6 @@ export function EditBranchModal({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

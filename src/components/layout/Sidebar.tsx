@@ -16,8 +16,6 @@ import {
   LogOut,
   Menu,
   X,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -29,8 +27,6 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
   { id: 'billing', label: 'Billing', icon: DollarSign, href: '/billing' },
 ];
-
-// REMOVED: hardcoded ACTIVE_ID — active state is now derived from current pathname
 
 interface SidebarProps {
   collapsed: boolean;
@@ -47,7 +43,7 @@ function NavItems({
   const pathname = usePathname();
 
   return (
-    <nav className={cn('flex flex-col', showLabels ? 'gap-1 px-3' : 'items-center gap-4')}>
+    <nav className={cn('flex flex-col', showLabels ? 'gap-1 px-3' : 'items-center gap-2 px-2')}>
       {NAV_ITEMS.map((item) => {
         const active = pathname === item.href || (item.href !== '#' && pathname.startsWith(item.href.replace(/\/?$/, '')));
         const Icon = item.icon;
@@ -58,22 +54,22 @@ function NavItems({
             title={item.label}
             onClick={onNavigate}
             className={cn(
-              'group relative flex items-center gap-3 transition-colors',
+              'group relative flex items-center transition-colors',
               showLabels
-                ? 'py-1 pl-1 pr-4'
-                : 'h-[70px] w-[70px] justify-center',
+                ? 'gap-3 py-1 pl-1 pr-4'
+                : 'h-[52px] w-[52px] justify-center',
             )}
           >
             <span
               className={cn(
-                'flex shrink-0 items-center justify-center rounded-full transition-colors',
-                showLabels ? 'h-12 w-12' : 'h-full w-full',
+                'flex shrink-0 items-center justify-center rounded-full transition-all duration-200',
+                showLabels ? 'h-12 w-12' : 'h-[52px] w-[52px]',
                 active
                   ? 'bg-[#026F4F] text-white shadow-md'
                   : 'text-[#989898] group-hover:bg-[#F2F2F2] group-hover:text-[#2D2F33]',
               )}
             >
-              <Icon size={28} strokeWidth={active ? 2.2 : 1.8} />
+              <Icon size={24} strokeWidth={active ? 2.2 : 1.8} />
             </span>
             {showLabels && (
               <span
@@ -110,47 +106,42 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
       <aside
         className={cn(
           'fixed left-5 top-5 z-30 hidden h-[calc(100vh-40px)] flex-col overflow-hidden rounded-xl bg-white shadow-[1px_0_6.6px_rgba(0,0,0,0.08)] transition-[width] duration-300 lg:flex',
-          collapsed ? 'w-[148px]' : 'w-[240px]',
+          collapsed ? 'w-[88px]' : 'w-[240px]',
         )}
       >
         {/* Brand row */}
-        <div className={cn('flex items-center', collapsed ? 'justify-center py-5' : 'justify-between py-5 pl-4 pr-3')}>
-          <Link href="#" className={cn('relative', collapsed ? 'h-[31px] w-[112px]' : 'h-[31px] w-[164px]')}>
+        <div className={cn('flex items-center', collapsed ? 'flex-col gap-3 py-5' : 'justify-between py-5 pl-4 pr-3')}>
+          <Link href="#" className={cn('relative shrink-0', collapsed ? 'h-[31px] w-[50px]' : 'h-[31px] w-[164px]')}>
             <Image
               src="/images/logo-69e842.png"
               alt="Restaurant logo"
               fill
               priority
-              sizes={collapsed ? '112px' : '164px'}
+              sizes={collapsed ? '50px' : '164px'}
               className="object-contain"
             />
           </Link>
-          {!collapsed && (
+          {collapsed ? (
             <button
               onClick={onToggleCollapsed}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#989898] transition-colors hover:bg-[#F2F2F2] hover:text-[#2D2F33]"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#989898] transition-colors hover:bg-[#F2F2F2] hover:text-[#2D2F33]"
+              aria-label="Expand sidebar"
+            >
+              <Menu size={18} />
+            </button>
+          ) : (
+            <button
+              onClick={onToggleCollapsed}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#989898] transition-colors hover:bg-[#F2F2F2] hover:text-[#2D2F33]"
               aria-label="Collapse sidebar"
             >
-              <PanelLeftClose size={20} />
+              <X size={18} />
             </button>
           )}
         </div>
 
-        {/* Collapse toggle for the collapsed rail */}
-        {collapsed && (
-          <div className="flex justify-center py-2">
-            <button
-              onClick={onToggleCollapsed}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#989898] transition-colors hover:bg-[#F2F2F2] hover:text-[#2D2F33]"
-              aria-label="Expand sidebar"
-            >
-              <PanelLeftOpen size={20} />
-            </button>
-          </div>
-        )}
-
         {/* Nav */}
-        <div className={cn('flex-1 overflow-y-auto', collapsed ? 'mt-4' : 'mt-3')}>
+        <div className={cn('flex-1 overflow-y-auto', collapsed ? 'mt-2' : 'mt-3')}>
           <NavItems showLabels={!collapsed} />
         </div>
 
@@ -161,12 +152,12 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
             className={cn(
               'flex items-center transition-colors',
               collapsed
-                ? 'h-[70px] w-[70px] justify-center rounded-full text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]'
+                ? 'h-[52px] w-[52px] justify-center rounded-full text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]'
                 : 'gap-3 rounded-full py-2 pl-2 pr-4 text-[15px] text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]',
             )}
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-full">
-              <LogOut size={28} strokeWidth={1.8} />
+              <LogOut size={24} strokeWidth={1.8} />
             </span>
             {!collapsed && <span className="whitespace-nowrap font-medium">Log Out</span>}
           </button>
@@ -203,7 +194,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
               <div className="border-t border-[#F2F2F2] px-3 py-3">
                 <button className="flex items-center gap-3 rounded-full py-2 pl-2 pr-4 text-[15px] text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]">
                   <span className="flex h-12 w-12 items-center justify-center rounded-full">
-                    <LogOut size={28} strokeWidth={1.8} />
+                    <LogOut size={24} strokeWidth={1.8} />
                   </span>
                   <span className="whitespace-nowrap font-medium">Log Out</span>
                 </button>

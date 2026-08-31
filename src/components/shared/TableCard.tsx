@@ -2,7 +2,6 @@ import { Clock3 } from 'lucide-react';
 
 export type TableStatus = 'available' | 'occupied' | 'reserved';
 
-// Exact colours from Figma
 const STATUS_CONFIG: Record<TableStatus, { label: string; pillBg: string; bodyBg: string }> = {
   occupied:  { label: 'OCCUPIED',  pillBg: '#E8AD0D', bodyBg: '#F9EFA8' },
   available: { label: 'AVAILABLE', pillBg: '#1FB711', bodyBg: '#A8F9B1' },
@@ -26,44 +25,41 @@ export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
   };
 
   return (
-    // Overall container — matches the Figma "table" shape with rails
     <div className="relative h-[232px] w-[301px]">
 
       {/* Left vertical rail */}
       <div
-        className="absolute left-[15px] top-[39.5px] h-3.5 w-[153px] origin-top-left rotate-90 rounded-[48px] border"
+        className="absolute left-0 top-[39.5px] h-[153px] w-[15px] rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Right vertical rail */}
       <div
-        className="absolute left-[286px] top-[39.5px] h-3.5 w-[153px] origin-top-left rotate-90 rounded-[48px] border"
+        className="absolute left-[286px] top-[39.5px] h-[153px] w-[15px] rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Top horizontal rail */}
       <div
-        className="absolute left-[74px] top-0 h-3.5 w-[153px] rounded-[48px] border"
+        className="absolute left-[74px] top-0 h-[15px] w-[153px] rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Bottom horizontal rail */}
       <div
-        className="absolute bottom-0 left-[74px] h-3.5 w-[153px] rounded-[48px] border"
+        className="absolute bottom-0 left-[74px] h-[15px] w-[153px] rounded-[48px] border"
         style={railStyle}
       />
 
-      {/* ── Main table body ── */}
+      {/* Main table body */}
       <div
         className="absolute left-[25px] top-[25px] h-[182px] w-[251px] overflow-hidden rounded-[9px] border border-[#B9B9B9]"
         style={{ backgroundColor: bodyBg }}
       >
-        {/* Zone label */}
         <span className="absolute left-3 top-[51px] text-[16px] font-medium leading-[1.4] text-[#989898]">
           {zone}
         </span>
 
-        {/* Table name + status pill */}
         <div className="absolute left-3 top-3 flex items-center gap-[26px]">
           <span className="font-satoshi text-[23px] font-medium leading-[1.4] text-black">
             {name}
@@ -76,7 +72,6 @@ export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
           </span>
         </div>
 
-        {/* Bill + elapsed time (occupied only) */}
         {(bill || time) && (
           <div className="absolute bottom-3 left-3 flex items-center gap-10">
             {bill && (

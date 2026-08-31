@@ -126,9 +126,15 @@ const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boo
 export default function OrdersPage() {
   const [active, setActive] = useState<(typeof FILTERS)[number]['id']>('in_progress');
   const [selected, setSelected] = useState<Order | null>(null);
+  const [modalAction, setModalAction] = useState<string>('');
 
   const activeFilter = FILTERS.find((f) => f.id === active)!;
   const filtered = ORDERS.filter((o) => activeFilter.match(o));
+
+  const handleOpenModal = (order: Order, action: string) => {
+    setSelected(order);
+    setModalAction(action);
+  };
 
   return (
     <main className="flex flex-col gap-7">
@@ -186,15 +192,9 @@ export default function OrdersPage() {
           {filtered.map((order) => (
             <div
               key={order.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelected(order)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') setSelected(order);
-              }}
-              className="w-full max-w-[417px] cursor-pointer rounded-[19px] transition-transform hover:-translate-y-0.5"
+              className="w-full max-w-[417px] rounded-[19px] transition-transform hover:-translate-y-0.5"
             >
-              <OrderCard order={order} />
+              <OrderCard order={order} onOpenModal={handleOpenModal} />
             </div>
           ))}
         </div>
@@ -204,7 +204,7 @@ export default function OrdersPage() {
         </div>
       )}
 
-      <OrderDetailsModal open={!!selected} order={selected} onClose={() => setSelected(null)} />
+      <OrderDetailsModal open={!!selected} order={selected} action={modalAction} onClose={() => { setSelected(null); setModalAction(''); }} />
     </main>
   );
 }

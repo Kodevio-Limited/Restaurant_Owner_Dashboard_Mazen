@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Download, Headphones, Check, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-
 const PLANS = [
   {
     id: 'basic',
@@ -73,8 +71,6 @@ const BILLING_HISTORY = [
   { date: 'Apr 25, 2026', amount: '$45.00', status: 'PAID' },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
 function PlanFeatureItem({ text, available }: { text: string; available: boolean }) {
   return (
     <div className="flex items-start gap-2">
@@ -104,7 +100,6 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
           : 'border border-[#989898]',
       )}
     >
-      {/* Most Popular badge */}
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="rounded-full bg-[#026F4F] px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white">
@@ -113,7 +108,6 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
         </div>
       )}
 
-      {/* Plan name + current label */}
       <div className="flex items-center gap-2 pb-1">
         <span className="text-[20px] font-bold text-[#2D2F33]">{plan.name}</span>
         {plan.current && (
@@ -123,16 +117,13 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
         )}
       </div>
 
-      {/* Tagline */}
       <p className="pb-4 text-[13px] text-[#989898]">{plan.tagline}</p>
 
-      {/* Price */}
       <div className="pb-5">
         <span className="text-[36px] font-bold text-[#2D2F33]">${price}</span>
         <span className="text-[15px] text-[#989898]">/mo</span>
       </div>
 
-      {/* CTA button */}
       <button
         className={cn(
           'mb-5 w-full rounded-[9px] py-3 text-[15px] font-semibold transition-colors',
@@ -147,10 +138,8 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
         {plan.buttonLabel}
       </button>
 
-      {/* Divider */}
       <div className="mb-5 border-t border-[#F0F0F0]" />
 
-      {/* Features */}
       <div className="flex flex-col gap-3">
         {plan.features.map((f) => (
           <PlanFeatureItem key={f.text} text={f.text} available={f.available} />
@@ -160,80 +149,75 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function BillingPage() {
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
 
   return (
-    <main className="min-h-screen rounded-2xl bg-[#F2F2F2] p-5">
+    <main className="min-h-screen rounded-2xl bg-[#F2F2F2] p-4 sm:p-5">
       {/* Page header */}
       <div className="mb-7">
-        <h1 className="text-[40px] font-medium leading-[56px] text-[#2D2F33]">
+        <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
           Subscription &amp; Billing
         </h1>
-        <p className="text-[23px] text-[#989898]">
+        <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[23px]">
           Manage your plan, billing details, and feature access
         </p>
       </div>
 
       <div className="flex flex-col gap-7">
-        {/* ── Row 1: Current Plan card + Usage Overview ── */}
+        {/* Row 1: Current Plan + Usage */}
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-          {/* Current plan summary */}
+          {/* Current plan */}
           <div
-            className="relative flex flex-col gap-5 overflow-hidden rounded-xl p-8"
+            className="relative flex flex-col gap-5 overflow-hidden rounded-xl p-6 sm:p-8"
             style={{ background: 'linear-gradient(180deg, #484959 0%, #0E1116 100%)' }}
           >
-            {/* Plan name + ACTIVE */}
-            <div className="flex items-center gap-4">
-              <span className="text-[40px] font-semibold text-white">Pro Plan</span>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <span className="text-[28px] font-semibold text-white sm:text-[40px]">Pro Plan</span>
               <span className="rounded-full bg-[#1FB711] px-3 py-1 text-[13px] font-medium text-white">
                 ACTIVE
               </span>
             </div>
 
-            <p className="text-[16px] text-[#C8C8C8]">
+            <p className="text-[14px] text-[#C8C8C8] sm:text-[16px]">
               Perfect for growing restaurants managing high volumes.
             </p>
 
-            <p className="text-[0px]">
-              <span className="text-[40px] font-semibold text-white">$49</span>
-              <span className="text-[23px] text-white">/Month</span>
+            <p>
+              <span className="text-[28px] font-semibold text-white sm:text-[40px]">$49</span>
+              <span className="text-[16px] text-white sm:text-[23px]">/Month</span>
             </p>
 
             {/* Renewal info */}
-            <div className="absolute right-8 top-6 rounded-xl border border-[#989898] bg-[#2A2C37] px-4 py-3">
-              <p className="text-[19px] text-[#989898]">Next Renewal</p>
-              <p className="text-[28px] font-medium text-white">Aug 25, 2026</p>
+            <div className="mt-2 rounded-xl border border-[#989898] bg-[#2A2C37] px-4 py-3 sm:absolute sm:right-8 sm:top-6">
+              <p className="text-[14px] text-[#989898] sm:text-[19px]">Next Renewal</p>
+              <p className="text-[20px] font-medium text-white sm:text-[28px]">Aug 25, 2026</p>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-white/20" />
 
-            {/* Actions */}
             <div className="flex flex-wrap gap-3">
-              <button className="rounded-[9px] border border-white bg-white px-6 py-4 text-[23px] font-medium text-[#2D2F33] transition-colors hover:bg-[#F2F2F2]">
+              <button className="rounded-[9px] border border-white bg-white px-4 py-3 text-[16px] font-medium text-[#2D2F33] transition-colors hover:bg-[#F2F2F2] sm:px-6 sm:py-4 sm:text-[23px]">
                 Renew All Branches
               </button>
-              <button className="rounded-[9px] border border-white px-6 py-4 text-[23px] font-medium text-white transition-colors hover:bg-white/10">
+              <button className="rounded-[9px] border border-white px-4 py-3 text-[16px] font-medium text-white transition-colors hover:bg-white/10 sm:px-6 sm:py-4 sm:text-[23px]">
                 Renew Plan
               </button>
-              <button className="rounded-[9px] bg-[#2C313A] px-6 py-4 text-[23px] font-medium text-white transition-colors hover:bg-[#3a404a]">
+              <button className="rounded-[9px] bg-[#2C313A] px-4 py-3 text-[16px] font-medium text-white transition-colors hover:bg-[#3a404a] sm:px-6 sm:py-4 sm:text-[23px]">
                 Cancel Sub
               </button>
             </div>
           </div>
 
           {/* Usage overview */}
-          <div className="rounded-xl bg-white p-8">
-            <h2 className="mb-6 text-[33px] font-semibold text-[#2D2F33]">Usage Overview</h2>
+          <div className="rounded-xl bg-white p-6 sm:p-8">
+            <h2 className="mb-6 text-[24px] font-semibold text-[#2D2F33] sm:text-[33px]">Usage Overview</h2>
             <div className="flex flex-col gap-8">
               {USAGE_STATS.map((stat) => (
                 <div key={stat.label} className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[19px] font-medium text-black">{stat.label}</span>
-                    <span className="text-[16px] text-[#686868]">
+                    <span className="text-[16px] font-medium text-black sm:text-[19px]">{stat.label}</span>
+                    <span className="text-[14px] text-[#686868] sm:text-[16px]">
                       {stat.used} / {stat.total}
                     </span>
                   </div>
@@ -249,23 +233,21 @@ export default function BillingPage() {
           </div>
         </div>
 
-        {/* ── Row 2: Choose Your Plan ── */}
-        <div className="rounded-xl bg-white p-8">
-          {/* Header + billing toggle */}
+        {/* Row 2: Choose Your Plan */}
+        <div className="rounded-xl bg-white p-6 sm:p-8">
           <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-[28px] font-semibold text-[#2D2F33]">Choose Your Plan</h2>
-              <p className="text-[15px] text-[#989898]">
+              <h2 className="text-[22px] font-semibold text-[#2D2F33] sm:text-[28px]">Choose Your Plan</h2>
+              <p className="text-[13px] text-[#989898] sm:text-[15px]">
                 Upgrade to unlock more tables, orders, and premium features.
               </p>
             </div>
 
-            {/* Monthly / Yearly toggle */}
             <div className="flex items-center gap-1 rounded-[10px] border border-[#E0E0E0] bg-white p-1">
               <button
                 onClick={() => setBilling('monthly')}
                 className={cn(
-                  'rounded-[8px] px-5 py-2 text-[14px] font-medium transition-colors',
+                  'rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors sm:px-5 sm:text-[14px]',
                   billing === 'monthly'
                     ? 'bg-[#2D2F33] text-white shadow-sm'
                     : 'text-[#686868] hover:text-[#2D2F33]',
@@ -276,7 +258,7 @@ export default function BillingPage() {
               <button
                 onClick={() => setBilling('yearly')}
                 className={cn(
-                  'flex items-center gap-2 rounded-[8px] px-5 py-2 text-[14px] font-medium transition-colors',
+                  'flex items-center gap-2 rounded-[8px] px-4 py-2 text-[13px] font-medium transition-colors sm:px-5 sm:text-[14px]',
                   billing === 'yearly'
                     ? 'bg-[#2D2F33] text-white shadow-sm'
                     : 'text-[#686868] hover:text-[#2D2F33]',
@@ -290,14 +272,12 @@ export default function BillingPage() {
             </div>
           </div>
 
-          {/* Plan cards */}
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {PLANS.map((plan) => (
               <PlanCard key={plan.id} plan={plan} billing={billing} />
             ))}
           </div>
 
-          {/* Contact us */}
           <div className="mt-6">
             <button className="flex items-center gap-3 rounded-full bg-[#F2F2F2] px-6 py-2 text-[#026F4F] transition-colors hover:bg-[#E6F4F0]">
               <Headphones size={24} />
@@ -306,12 +286,12 @@ export default function BillingPage() {
           </div>
         </div>
 
-        {/* ── Row 3: Billing History ── */}
+        {/* Row 3: Billing History */}
         <div className="flex flex-col gap-4">
-          <h2 className="text-[28px] font-semibold text-[#2D2F33]">Billing History</h2>
+          <h2 className="text-[22px] font-semibold text-[#2D2F33] sm:text-[28px]">Billing History</h2>
 
-          <div className="overflow-hidden rounded-xl bg-white">
-            {/* Table header */}
+          {/* Desktop table */}
+          <div className="hidden overflow-hidden rounded-xl bg-white sm:block">
             <div className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-4 bg-[#E9E9E9] px-8 py-4 text-[16px] font-medium text-[#686868]">
               <span>DATE</span>
               <span>AMOUNT</span>
@@ -319,7 +299,6 @@ export default function BillingPage() {
               <span className="w-20 text-right">INVOICE</span>
             </div>
 
-            {/* Rows */}
             <div className="divide-y divide-[#F2F2F2]">
               {BILLING_HISTORY.map((row, i) => (
                 <div
@@ -339,6 +318,26 @@ export default function BillingPage() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            {BILLING_HISTORY.map((row, i) => (
+              <div key={i} className="flex items-center justify-between rounded-xl bg-white px-5 py-4">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[16px] font-medium text-black">{row.date}</span>
+                  <span className="text-[14px] text-[#686868]">{row.amount}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="rounded-full bg-[#93F696] px-3 py-1 text-[13px] font-medium text-[#075D1E]">
+                    {row.status}
+                  </span>
+                  <button className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E9E9E9]">
+                    <Download size={18} className="text-[#2D2F33]" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

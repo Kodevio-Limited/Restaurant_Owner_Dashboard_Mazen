@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div
         className={cn(
           'flex flex-col gap-5 px-4 pb-10 pt-20 transition-[margin-left] duration-300 lg:pt-5',
-          collapsed ? 'lg:ml-[168px]' : 'lg:ml-[260px]',
+          collapsed ? 'lg:ml-[108px]' : 'lg:ml-[260px]',
         )}
       >
         <TopHeader />

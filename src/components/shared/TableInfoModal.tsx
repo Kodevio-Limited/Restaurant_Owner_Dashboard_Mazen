@@ -44,17 +44,18 @@ export function TableInfoModal({
   const s = STATUS_STYLES[table.status];
 
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-[24px] bg-[#F2F2F2] shadow-lg transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          open ? 'translate-x-0' : 'translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -131,47 +132,48 @@ export function TableInfoModal({
                 </button>
               </div>
 
-              <div className="relative mt-7 flex justify-between px-2">
+              <div className="mt-7 flex items-start px-2">
                 {STEPS.map((step, i) => {
                   const Icon = step.icon;
                   const isActive = step.active;
+                  const isLast = i === STEPS.length - 1;
                   return (
-                    <div key={step.key} className="flex flex-col items-center">
-                      <span
-                        className={cn(
-                          'flex h-9 w-9 items-center justify-center rounded-full bg-white',
-                          isActive
-                            ? 'border-2 border-[#358C72] shadow-[0_0_0_3px_rgba(53,140,114,0.15)]'
-                            : 'border border-[#B9B9B9]',
-                        )}
-                      >
-                        <Icon size={18} className={isActive ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
-                      </span>
-                      <span
-                        className={cn(
-                          'mt-1.5 text-xs font-normal leading-4',
-                          isActive ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
-                        )}
-                      >
-                        {step.label}
-                      </span>
+                    <div key={step.key} className="flex items-center">
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={cn(
+                            'flex h-9 w-9 items-center justify-center rounded-full bg-white',
+                            isActive
+                              ? 'border-2 border-[#358C72] shadow-[0_0_0_3px_rgba(53,140,114,0.15)]'
+                              : 'border border-[#B9B9B9]',
+                          )}
+                        >
+                          <Icon size={18} className={isActive ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
+                        </span>
+                        <span
+                          className={cn(
+                            'mt-1.5 text-xs font-normal leading-4',
+                            isActive ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
+                          )}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                      {!isLast && (
+                        <div
+                          className={cn(
+                            'mx-1 h-0.5 w-10 sm:w-14',
+                            STEPS[i + 1].active
+                              ? 'bg-[#358C72]'
+                              : isActive
+                                ? 'bg-[#358C72]'
+                                : 'bg-[#B9B9B9]',
+                          )}
+                        />
+                      )}
                     </div>
                   );
                 })}
-                {/* Stepper lines */}
-                <div className="absolute left-[67px] right-[67px] top-[18px] flex justify-between">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        'h-0 w-24',
-                        i < 2
-                          ? 'outline outline-2 outline-offset-[-1px] outline-[#358C72]'
-                          : 'outline outline-2 outline-offset-[-1px] outline-[#B9B9B9]',
-                      )}
-                    />
-                  ))}
-                </div>
               </div>
             </section>
           )}
@@ -222,6 +224,6 @@ export function TableInfoModal({
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

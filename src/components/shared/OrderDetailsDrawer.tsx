@@ -21,10 +21,12 @@ function parsePrice(p: string): number {
 export function OrderDetailsModal({
   open,
   order,
+  action,
   onClose,
 }: {
   open: boolean;
   order: Order | null;
+  action?: string;
   onClose: () => void;
 }) {
   if (!order) return null;
@@ -36,27 +38,26 @@ export function OrderDetailsModal({
   const money = (n: number) => `$${n.toFixed(2)}`;
 
   return (
-    <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-all duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
-      )}
-      onClick={onClose}
-    >
+    <>
       <div
         className={cn(
-          'relative mx-4 flex max-h-[90vh] w-full max-w-[619px] flex-col overflow-y-auto rounded-[24px] bg-[#F2F2F2] shadow-lg transition-all duration-300',
-          open ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95',
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
-        onClick={(e) => e.stopPropagation()}
-        style={{ borderTopLeftRadius: 24, borderBottomLeftRadius: 24 }}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'translate-x-full',
+        )}
       >
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between px-5 pt-6">
           <button
             onClick={onClose}
             aria-label="Back"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DcDcDc]"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC]"
           >
             <ArrowLeft size={22} />
           </button>
@@ -74,7 +75,7 @@ export function OrderDetailsModal({
         </div>
 
         {/* Body */}
-        <div className="space-y-[15px] px-5 pb-5 pt-8">
+        <div className="space-y-[15px] overflow-y-auto px-5 pb-5 pt-8">
           <section className="rounded-[10px] bg-white p-5">
             <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{order.customer}</h3>
             <div className="mt-3.5 flex flex-col gap-2.5">
@@ -179,15 +180,49 @@ export function OrderDetailsModal({
 
         <div className="shrink-0 border-t border-[#E2E2E2] px-5 py-4">
           <div className="flex items-center justify-between gap-4">
-            <button className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#ea690b]">
-              Mark Ready
-            </button>
-            <button className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]">
-              Mark Paid
-            </button>
+            {action === 'mark_ready' && (
+              <>
+                <button
+                  onClick={onClose}
+                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
+                >
+                  Mark Ready
+                </button>
+              </>
+            )}
+            {action === 'complete' && (
+              <>
+                <button
+                  onClick={onClose}
+                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#ea690b]"
+                >
+                  Mark Ready
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+                >
+                  Mark Paid
+                </button>
+              </>
+            )}
+            {!action && (
+              <button
+                onClick={onClose}
+                className="flex h-[59px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+              >
+                Close
+              </button>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
