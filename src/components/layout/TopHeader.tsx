@@ -3,9 +3,9 @@ import { Bell, ChevronDown, Search } from 'lucide-react';
 
 export function TopHeader() {
   return (
-    <header className="flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2.5 sm:px-4 lg:h-[64px] lg:flex-nowrap lg:gap-x-4 lg:py-0">
+    <header className="relative flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2.5 sm:px-4 lg:h-[64px] lg:flex-nowrap lg:gap-x-4 lg:py-0">
       {/* Left items */}
-      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 lg:flex-nowrap lg:justify-between lg:gap-x-3">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 lg:flex-nowrap lg:justify-start lg:gap-x-3">
         {/* Search */}
         <div className="flex h-10 shrink-0 items-center gap-2 rounded-[55px] bg-[#F2F2F2] px-4">
           <Search size={17} className="shrink-0 text-[#989898]" />
@@ -29,26 +29,26 @@ export function TopHeader() {
         </button>
       </div>
 
-      {/* Right block: shift info + bell + profile */}
-      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-        {/* Shift & Cashier info with vertical divider */}
-        <div className="hidden items-center gap-3 sm:flex">
-          {/* Shift Started */}
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Shift Started:</span>
-            <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">9PM</span>
-          </div>
-
-          {/* Vertical divider */}
-          <span className="h-[32px] w-px bg-[#989898]" />
-
-          {/* Current Cashier */}
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Current Cashier:</span>
-            <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">Mazen Alqassif</span>
-          </div>
+      {/* Center: Shift & Cashier info with vertical divider */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-2.5 sm:flex">
+        {/* Shift Started */}
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Shift Started:</span>
+          <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">9PM</span>
         </div>
 
+        {/* Vertical divider */}
+        <span className="h-[32px] w-px bg-[#B9B9B9]" />
+
+        {/* Current Cashier */}
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Current Cashier:</span>
+          <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">Mazen Alqassif</span>
+        </div>
+      </div>
+
+      {/* Right block: bell + profile */}
+      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
         <button
           className="relative flex h-9 w-9 items-center justify-center rounded-xl text-[#2D2F33] sm:h-10 sm:w-10"
           aria-label="Notifications"
