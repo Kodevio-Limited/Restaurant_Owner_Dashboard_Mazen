@@ -29,14 +29,14 @@ export function TopHeader() {
         </button>
       </div>
 
-      {/* Shift info — hidden on small screens */}
-      <div className="hidden shrink-0 flex-col items-end gap-0.5 xl:flex">
-        <span className="text-[12px] leading-[16px] text-[#989898]">Shift Started: 9AM</span>
-        <span className="text-[12px] leading-[16px] text-[#686868]">Current Cashier: Mazen Alqassi</span>
-      </div>
-
-      {/* Right block: bell + profile */}
+      {/* Right block: shift info + bell + profile */}
       <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+        {/* Shift info */}
+        <div className="hidden flex-col items-end gap-0.5 sm:flex">
+          <span className="text-[11px] leading-[15px] text-[#989898]">Shift Started: 9PM</span>
+          <span className="text-[11px] leading-[15px] text-[#686868]">Current Cashier: Mazen Alqassif</span>
+        </div>
+
         <button
           className="relative flex h-9 w-9 items-center justify-center rounded-xl text-[#2D2F33] sm:h-10 sm:w-10"
           aria-label="Notifications"
