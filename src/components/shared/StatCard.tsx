@@ -16,22 +16,22 @@ interface StatCardProps {
 
 export function StatCard({ label, value, unit, sub, icon }: StatCardProps) {
   return (
-    <div className="relative flex min-h-[169px] w-full flex-1 flex-col justify-center gap-3 rounded-xl bg-white px-5 py-4">
-      <span className="text-[19px] font-medium text-[#686868]">{label}</span>
+    <div className="relative flex min-h-[104px] w-full flex-1 flex-col justify-center gap-2 rounded-xl bg-white px-4 py-3 xl:min-h-[118px]">
+      <span className="pr-9 text-[13px] font-medium leading-snug text-[#686868]">{label}</span>
 
       <div className="flex items-end gap-1">
-        <span className="text-[40px] font-semibold leading-none text-[#000000]">{value}</span>
-        {unit && <span className="mb-1 text-[25px] font-medium leading-none text-[#989898]">{unit}</span>}
+        <span className="text-[24px] font-semibold leading-none text-[#000000] xl:text-[28px]">{value}</span>
+        {unit && <span className="mb-0.5 text-[15px] font-medium leading-none text-[#989898]">{unit}</span>}
       </div>
 
       {sub && (
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5">
           {typeof sub === 'string' ? (
-            <span className="text-base text-[#989898]">{sub}</span>
+            <span className="text-[12px] leading-snug text-[#989898]">{sub}</span>
           ) : (
             <>
-              <TrendingUp size={20} className={sub.positive ? 'text-[#158F15]' : 'text-[#E56767]'} />
-              <span className={sub.positive ? 'text-base text-[#158F15]' : 'text-base text-[#E56767]'}>
+              <TrendingUp size={14} className={sub.positive ? 'text-[#158F15]' : 'text-[#E56767]'} />
+              <span className={`text-[12px] leading-snug ${sub.positive ? 'text-[#158F15]' : 'text-[#E56767]'}`}>
                 {sub.text}
               </span>
             </>
@@ -39,7 +39,7 @@ export function StatCard({ label, value, unit, sub, icon }: StatCardProps) {
         </div>
       )}
 
-      <div className="absolute right-5 top-[18px] flex h-[42px] w-[45px] items-center justify-center rounded-md bg-[#E9E9E9] text-[#2D2F33]">
+      <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-[#E9E9E9] text-[#2D2F33] [&>svg]:h-4 [&>svg]:w-4">
         {icon}
       </div>
     </div>

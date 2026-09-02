@@ -65,36 +65,36 @@ export default function StaffPage() {
     : STAFF.filter((s) => s.role === filter);
 
   return (
-    <main className="flex flex-col gap-8">
+    <main className="flex flex-col gap-5">
 
       {/* ── Header row ── */}
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
             Staff Management
           </h1>
-          <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[23px]">
+          <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
             Manage your team, roles, and access in one place
           </p>
         </div>
 
         <button
           onClick={() => { setEditing(null); setShowAdd(true); }}
-          className="flex h-[48px] items-center gap-3 rounded-full bg-[#026F4F] px-6 text-white transition-colors hover:bg-[#015c42] sm:h-[59px] sm:px-8"
+          className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
         >
-          <Plus size={26} strokeWidth={2} />
-          <span className="font-satoshi text-[18px] font-medium sm:text-[23px]">Add Staff</span>
+          <Plus size={17} strokeWidth={2} />
+          <span className="font-satoshi text-[14px] font-medium sm:text-[15px]">Add Staff</span>
         </button>
       </div>
 
       {/* ── Filter pills ── */}
-      <div className="flex flex-wrap items-center gap-5">
+      <div className="flex flex-wrap items-center gap-2.5">
         {FILTERS.map((f) => (
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={cn(
-              'inline-flex h-[52px] items-center justify-center rounded-full px-[14px] text-[20.5px] leading-[1.4] transition-colors',
+              'inline-flex h-10 items-center justify-center rounded-full px-4 text-[13px] leading-[1.4] transition-colors sm:text-sm',
               filter === f.value
                 ? 'bg-[#026F4F] text-white'
                 : 'bg-white text-[#686868] hover:bg-[#F2F2F2]',
@@ -106,7 +106,7 @@ export default function StaffPage() {
       </div>
 
       {/* ── Staff grid ── */}
-      <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filtered.map((member) => (
           <StaffCard
             key={member.id}

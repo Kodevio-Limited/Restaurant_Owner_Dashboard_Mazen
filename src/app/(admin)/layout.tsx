@@ -13,8 +13,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <Sidebar collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} />
       <div
         className={cn(
-          'flex flex-col gap-5 px-4 pb-10 pt-20 transition-[margin-left] duration-300 lg:pt-5',
-          collapsed ? 'lg:ml-[108px]' : 'lg:ml-[260px]',
+          'flex flex-col gap-4 px-3 pb-8 pt-16 transition-[margin-left] duration-300 sm:px-4 xl:pt-4',
+          collapsed ? 'xl:ml-[108px]' : 'xl:ml-[252px]',
         )}
       >
         <TopHeader />

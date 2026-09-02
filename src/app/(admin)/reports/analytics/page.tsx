@@ -45,14 +45,14 @@ function SelectPill({
   return (
     <button
       className={cn(
-        'flex items-center gap-1.5 rounded-[59px] px-5 py-[13px] text-[#686868]',
+        'flex items-center gap-1.5 rounded-[59px] px-4 py-2.5 text-[#686868]',
         light
           ? 'border border-[#B9B9B9] bg-white'
           : 'border border-[#B9B9B9] bg-white',
         className,
       )}
     >
-      <span className="text-[15px]">{children}</span>
+      <span className="text-[13px] sm:text-sm">{children}</span>
       <ChevronDown size={14} />
     </button>
   );
@@ -60,26 +60,26 @@ function SelectPill({
 
 export default function AnalyticsPage() {
   return (
-    <main className="flex flex-col gap-7">
+    <main className="flex flex-col gap-5">
       {/* Page header */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
             Reports &amp; Analytics
           </h1>
-          <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[23px]">
+          <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
             Track sales, performance, and insights across your business
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <SelectPill>Dhanmondi (This Branch)</SelectPill>
           <SelectPill>Per Month</SelectPill>
         </div>
       </div>
 
       {/* Stat cards */}
-      <div className="flex flex-col gap-6 xl:gap-6">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
           <StatCard
             label="Total Revenue"
             value={<span className="flex items-end gap-1">$<span>1,250</span></span>}
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
           <StatCard
             label="Table Turnover Rate"
             value="48"
@@ -128,11 +128,11 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Revenue + Orders */}
-      <div className="grid grid-cols-1 gap-10 xl:grid-cols-2 xl:gap-7">
-        <div className="h-[378px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="h-[280px] xl:h-[300px]">
           <RevenueOverTime />
         </div>
-        <div className="h-[378px]">
+        <div className="h-[280px] xl:h-[300px]">
           <OrdersOverview />
         </div>
       </div>
@@ -141,21 +141,21 @@ export default function AnalyticsPage() {
       <BranchPerformance />
 
       {/* Top & Least performing */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 xl:gap-[25px]">
-        <div className="min-h-[369px] xl:h-[369px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="min-h-[280px]">
           <ItemsTable title="Top Performing Items" items={TOP_ITEMS} />
         </div>
-        <div className="min-h-[369px] xl:h-[369px]">
+        <div className="min-h-[280px]">
           <ItemsTable title="Least Performing Items" items={LEAST_ITEMS} />
         </div>
       </div>
 
       {/* Sales per hour + tips */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2 xl:gap-[28px]">
-        <div className="h-[369px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="h-[280px] xl:h-[300px]">
           <SalesPerHour />
         </div>
-        <div className="h-[369px]">
+        <div className="h-[280px] xl:h-[300px]">
           <TipsCollection />
         </div>
       </div>

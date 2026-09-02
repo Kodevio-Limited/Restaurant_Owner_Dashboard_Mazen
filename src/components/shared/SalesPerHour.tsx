@@ -27,9 +27,9 @@ const data = [
 
 export function SalesPerHour() {
   return (
-    <div className="flex h-full flex-col rounded-xl bg-white px-[22px] pt-[22px]">
-      <h3 className="text-[33px] font-semibold leading-[46px] text-[#2D2F33]">Sales per Hour (Today)</h3>
-      <div className="mt-3 min-h-0 flex-1">
+    <div className="flex h-full flex-col rounded-xl bg-white p-4">
+      <h3 className="text-lg font-semibold text-[#2D2F33]">Sales per Hour (Today)</h3>
+      <div className="mt-2 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 4, right: 0, left: 4, bottom: 0 }} barCategoryGap="32%">
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />

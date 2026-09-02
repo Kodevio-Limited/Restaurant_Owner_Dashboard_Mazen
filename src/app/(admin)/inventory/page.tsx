@@ -754,9 +754,9 @@ function RecipeTab() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {RECIPES.map((recipe) => (
-          <div key={recipe.id} className="flex w-80 flex-col overflow-hidden rounded-3xl bg-white">
+          <div key={recipe.id} className="flex w-full max-w-80 flex-col overflow-hidden rounded-2xl bg-white">
             <div className="relative flex flex-col gap-2.5 p-[14.64px]">
               <div className="relative h-64 w-full overflow-hidden rounded-xl bg-zinc-100">
                 <div className="flex h-full w-full items-center justify-center">
@@ -1247,19 +1247,19 @@ export default function InventoryPage() {
   const [activeTab, setActiveTab] = useState('Stock');
 
   return (
-    <main className="flex flex-col gap-8">
+    <main className="flex flex-col gap-5">
       {/* Header */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+      <div className="flex flex-col gap-0.5">
+        <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
           Inventory & Recipes
         </h1>
-        <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[24px] xl:leading-8">
+        <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
           Manage your inventory, recipes, purchases, transfers and more
         </p>
       </div>
 
       {/* Filter tabs */}
-      <div className="inline-flex items-center gap-[5.05px] flex-wrap">
+      <div className="inline-flex flex-wrap items-center gap-1.5">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -1267,14 +1267,14 @@ export default function InventoryPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'inline-flex h-12 w-44 items-center justify-center gap-2.5 rounded-3xl px-12 py-2.5 transition-colors',
+                'inline-flex h-10 items-center justify-center gap-2 rounded-3xl px-4 transition-colors',
                 activeTab === tab.id
                   ? 'bg-white text-emerald-700'
                   : 'text-neutral-400 hover:bg-gray-100',
               )}
             >
-              <Icon size={20} />
-              <span className="text-center text-xl font-normal leading-7">{tab.id}</span>
+              <Icon size={15} />
+              <span className="text-center text-sm font-normal leading-5">{tab.id}</span>
             </button>
           );
         })}

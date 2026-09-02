@@ -3,26 +3,26 @@ import { Bell, ChevronDown, Search } from 'lucide-react';
 
 export function TopHeader() {
   return (
-    <header className="flex w-full items-center gap-3 rounded-xl bg-white px-4 py-3 sm:px-6 lg:h-[88px] lg:flex-nowrap lg:gap-x-6 lg:py-0">
+    <header className="flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2.5 sm:px-4 lg:h-[64px] lg:flex-nowrap lg:gap-x-4 lg:py-0">
       {/* Left items */}
-      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3 lg:flex-nowrap lg:justify-between lg:gap-x-4">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 lg:flex-nowrap lg:justify-between lg:gap-x-3">
         {/* Search */}
-        <div className="flex h-[46px] shrink-0 items-center gap-2.5 rounded-[55px] bg-[#F2F2F2] px-4 sm:px-5">
-          <Search size={24} className="shrink-0 text-[#989898]" />
-          <span className="hidden whitespace-nowrap font-satoshi text-[19px] font-medium leading-none text-[#989898] sm:inline">
+        <div className="flex h-10 shrink-0 items-center gap-2 rounded-[55px] bg-[#F2F2F2] px-4">
+          <Search size={17} className="shrink-0 text-[#989898]" />
+          <span className="hidden whitespace-nowrap font-satoshi text-sm font-medium leading-none text-[#989898] md:inline">
             Search Task...
           </span>
         </div>
 
         {/* Restaurant Open */}
         <div className="flex shrink-0 items-center gap-2">
-          <span className="whitespace-nowrap text-[13px] leading-[21px] text-[#37CE2A] sm:text-[15px]">Restaurant Open</span>
-          <span className="inline-block h-[14px] w-[14px] rounded-full bg-[#37CE2A] sm:h-[18px] sm:w-[18px]" />
+          <span className="whitespace-nowrap text-[12px] leading-[18px] text-[#37CE2A] sm:text-[13px]">Restaurant Open</span>
+          <span className="inline-block h-3 w-3 rounded-full bg-[#37CE2A] sm:h-3.5 sm:w-3.5" />
         </div>
 
         {/* Branch selector */}
-        <button className="flex h-[46px] shrink-0 items-center gap-1.5 rounded-[59px] border border-[#B9B9B9] bg-white px-4 sm:px-5">
-          <span className="max-w-[100px] truncate whitespace-nowrap text-[15px] leading-none text-[#686868] sm:max-w-[130px] sm:text-[19px]">
+        <button className="flex h-10 shrink-0 items-center gap-1.5 rounded-[59px] border border-[#B9B9B9] bg-white px-3.5 sm:px-4">
+          <span className="max-w-[100px] truncate whitespace-nowrap text-[13px] leading-none text-[#686868] sm:max-w-[130px] sm:text-sm">
             Dhanmondi
           </span>
           <ChevronDown size={14} className="shrink-0 text-[#686868]" />
@@ -30,17 +30,17 @@ export function TopHeader() {
       </div>
 
       {/* Right block: bell + profile */}
-      <div className="flex shrink-0 items-center gap-3 sm:gap-5">
+      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
         <button
-          className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#2D2F33] sm:h-12 sm:w-12"
+          className="relative flex h-9 w-9 items-center justify-center rounded-xl text-[#2D2F33] sm:h-10 sm:w-10"
           aria-label="Notifications"
         >
-          <Bell size={22} />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#E56767] sm:right-2 sm:top-2" />
+          <Bell size={19} />
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#E56767]" />
         </button>
 
-        <div className="relative h-10 w-10 shrink-0 sm:h-12 sm:w-12 lg:h-[78px] lg:w-[78px]">
-          <Image src="/images/avatar.png" alt="Profile" fill priority sizes="78px" className="rounded-full object-cover" />
+        <div className="relative h-9 w-9 shrink-0 sm:h-10 sm:w-10 lg:h-11 lg:w-11">
+          <Image src="/images/avatar.png" alt="Profile" fill priority sizes="44px" className="rounded-full object-cover" />
         </div>
       </div>
     </header>

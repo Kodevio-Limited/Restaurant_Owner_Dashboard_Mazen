@@ -67,8 +67,8 @@ function SelectInput({ value }: { value: string }) {
 
 function SectionCard({ title, children, className }: { title?: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('rounded-xl bg-white p-5 sm:p-8', className)}>
-      {title && <h3 className="mb-5 text-[22px] font-medium text-[#2D2F33] sm:mb-6 sm:text-[28px]">{title}</h3>}
+    <div className={cn('rounded-xl bg-white p-4 sm:p-5', className)}>
+      {title && <h3 className="mb-4 text-lg font-medium text-[#2D2F33] sm:text-xl">{title}</h3>}
       {children}
     </div>
   );
@@ -79,8 +79,8 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
     <SectionCard>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
         <div>
-          <h3 className="text-[20px] font-medium text-black sm:text-[26px]">{title}</h3>
-          <p className="mt-1 text-sm text-[#989898] sm:text-base">{desc}</p>
+          <h3 className="text-[15px] font-medium text-black sm:text-[17px]">{title}</h3>
+          <p className="mt-0.5 text-[13px] text-[#989898] sm:text-sm">{desc}</p>
         </div>
         <Toggle on={on} onChange={onChange} />
       </div>
@@ -90,7 +90,7 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
 
 function SaveButton() {
   return (
-    <button className="h-14 w-full rounded-full bg-[#026F4F] text-lg font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-56">
+    <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
       Save Changes
     </button>
   );
@@ -227,17 +227,17 @@ function BranchManagementTab({
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {BRANCHES.map((b) => (
-          <div key={b.id} className="flex flex-col rounded-2xl bg-white p-7">
-            <h3 className="mb-6 text-[26px] font-medium text-black">{b.name}</h3>
+          <div key={b.id} className="flex flex-col rounded-2xl bg-white p-5">
+            <h3 className="mb-4 text-[19px] font-medium text-black">{b.name}</h3>
 
-            <div className="flex flex-col gap-5 mb-6">
-              <div className="flex items-center gap-3">
-                <Phone size={24} className="shrink-0 text-[#989898]" />
-                <span className="text-base text-[#989898]">{b.phone}</span>
+            <div className="flex flex-col gap-3.5 mb-5">
+              <div className="flex items-center gap-2.5">
+                <Phone size={17} className="shrink-0 text-[#989898]" />
+                <span className="text-[13px] text-[#989898]">{b.phone}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <Mail size={24} className="shrink-0 text-[#989898]" />
-                <span className="text-base text-[#989898]">{b.email}</span>
+              <div className="flex items-center gap-2.5">
+                <Mail size={17} className="shrink-0 text-[#989898]" />
+                <span className="text-[13px] text-[#989898]">{b.email}</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={24} className="shrink-0 text-[#989898]" />
@@ -340,10 +340,10 @@ function TaxesChargesTab() {
   return (
     <div className="flex flex-col gap-6">
       <SectionCard>
-        <div className="flex items-start justify-between gap-8 mb-8">
+        <div className="flex items-start justify-between gap-6 mb-5">
           <div>
-            <h3 className="text-[28px] font-medium text-black">Value Added Tax (VAT)</h3>
-            <p className="mt-1 text-base text-[#686868]">Configure automated tax calculation on orders.</p>
+            <h3 className="text-[19px] font-medium text-black">Value Added Tax (VAT)</h3>
+            <p className="mt-1 text-sm text-[#686868]">Configure automated tax calculation on orders.</p>
           </div>
           <Toggle on={vatEnabled} onChange={setVatEnabled} />
         </div>
@@ -360,10 +360,10 @@ function TaxesChargesTab() {
 
         <div className="border-t border-[#F2F2F2] mb-8" />
 
-        <div className="flex items-start justify-between gap-8 mb-6">
+        <div className="flex items-start justify-between gap-6 mb-4">
           <div>
-            <h3 className="text-[28px] font-medium text-black">Service Charge</h3>
-            <p className="mt-1 text-base text-[#686868]">Apply automated gratuity or service fees.</p>
+            <h3 className="text-[19px] font-medium text-black">Service Charge</h3>
+            <p className="mt-1 text-sm text-[#686868]">Apply automated gratuity or service fees.</p>
           </div>
           <Toggle on={serviceEnabled} onChange={setServiceEnabled} />
         </div>
@@ -594,7 +594,7 @@ export default function SettingsPage() {
       )}>
         {/* Collapse toggle */}
         <div className="flex items-center justify-between px-4 pt-5 pb-2">
-          {sidebarOpen && <h2 className="text-[28px] font-medium text-black">Settings</h2>}
+          {sidebarOpen && <h2 className="text-xl font-medium text-black">Settings</h2>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F2F2F2] text-[#686868] hover:bg-[#E9E9E9]"
@@ -617,7 +617,7 @@ export default function SettingsPage() {
                 onClick={() => setActive(tab.id)}
                 title={!sidebarOpen ? tab.label : undefined}
                 className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-3.5 text-left text-[17px] font-normal transition-colors',
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-normal transition-colors',
                   isActive
                     ? 'bg-[#F2F2F2] text-black font-medium'
                     : 'text-[#989898] hover:text-black',
@@ -639,14 +639,14 @@ export default function SettingsPage() {
       <div className="flex-1 overflow-y-auto p-4 lg:py-5 lg:pr-5 lg:pl-0">
         {/* Page title */}
         {active && (
-          <div className="mb-7 flex items-center gap-3">
+          <div className="mb-5 flex items-center gap-2.5">
             {(() => {
               const tab = TABS.find(t => t.id === active)!;
               const Icon = tab.icon;
               return (
                 <>
-                  <Icon size={28} className="text-[#2D2F33]" strokeWidth={1.8} />
-                  <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+                  <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
+                  <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
                     {tab.label} Settings
                   </h1>
                 </>

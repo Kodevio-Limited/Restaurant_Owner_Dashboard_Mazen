@@ -46,29 +46,29 @@ export default function TablesPage() {
   const filtered = zone === 'All' ? TABLES : TABLES.filter((t) => t.zone === zone);
 
   return (
-    <main className="flex flex-col gap-8">
+    <main className="flex flex-col gap-5">
 
       {/* ── Header ── */}
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-4">
           {/* Title + subtitle */}
-          <div className="flex flex-col gap-[5px]">
-            <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
               Table Management
             </h1>
-            <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[23px]">
+            <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
               Monitor and update table status with ease
             </p>
           </div>
 
           {/* Zone filter pills */}
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {ZONES.map((z) => (
               <button
                 key={z}
                 onClick={() => setZone(z)}
                 className={cn(
-                  'inline-flex h-[52px] items-center justify-center rounded-full px-[14px] text-[20.5px] leading-[1.4] transition-colors',
+                  'inline-flex h-10 items-center justify-center rounded-full px-4 text-[13px] leading-[1.4] transition-colors sm:text-sm',
                   zone === z
                     ? 'bg-[#026F4F] text-white'
                     : 'bg-white text-[#686868] hover:bg-[#F2F2F2]',
@@ -83,20 +83,20 @@ export default function TablesPage() {
         {/* Add Table button */}
         <button
           onClick={() => { setEditing(null); setShowAdd(true); }}
-          className="flex h-[48px] items-center gap-3 rounded-full bg-[#026F4F] px-6 text-white transition-colors hover:bg-[#015c42] sm:h-[59px] sm:px-8"
+          className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
         >
-          <Plus size={26} strokeWidth={2} />
-          <span className="font-satoshi text-[18px] font-medium sm:text-[23px]">Add Table</span>
+          <Plus size={17} strokeWidth={2} />
+          <span className="font-satoshi text-[14px] font-medium sm:text-[15px]">Add Table</span>
         </button>
       </div>
 
       {/* ── Table grid ── */}
-      <div className="grid grid-cols-1 justify-items-center gap-x-16 gap-y-10 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filtered.map((t) => (
           <button
             key={t.id}
             onClick={() => setSelected(t)}
-            className="cursor-pointer text-left transition-transform hover:-translate-y-0.5 focus:outline-none"
+            className="w-full cursor-pointer text-left transition-transform hover:-translate-y-0.5 focus:outline-none"
           >
             <TableCard
               name={t.name}

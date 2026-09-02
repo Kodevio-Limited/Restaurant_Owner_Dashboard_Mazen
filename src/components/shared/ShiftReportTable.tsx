@@ -21,10 +21,10 @@ const GRID = 'grid grid-cols-[1.3fr_1.1fr_1.2fr_1.5fr_1.3fr_56px] lg:grid-cols-[
 
 export function ShiftReportTable() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-satoshi text-[33px] font-bold text-[#2D2F33]">Shift Z-Reports &amp; Cashier Sessions</h3>
-        <button className="flex items-center gap-1.5 rounded-[45px] border border-[#B9B9B9] bg-white py-[10px] pl-[15px] pr-[10px] text-sm text-[#686868]">
+        <h3 className="font-satoshi text-xl font-bold text-[#2D2F33]">Shift Z-Reports &amp; Cashier Sessions</h3>
+        <button className="flex items-center gap-1.5 rounded-[45px] border border-[#B9B9B9] bg-white px-3.5 py-2 text-[13px] text-[#686868]">
           Per Month
         </button>
       </div>
@@ -32,7 +32,7 @@ export function ShiftReportTable() {
       <div className="w-full overflow-x-auto rounded-xl bg-white">
         {/* Header */}
         <div
-          className={`${GRID} min-w-[780px] items-center gap-x-4 bg-[#E9E9E9] px-9 py-4 text-left text-[15px] font-medium text-[#686868]`}
+          className={`${GRID} min-w-[680px] items-center gap-x-4 bg-[#E9E9E9] px-5 py-3 text-left text-[12px] font-medium text-[#686868]`}
         >
           <span>SESSION DATE</span>
           <span>TIME STARTED</span>
@@ -43,17 +43,17 @@ export function ShiftReportTable() {
         </div>
 
         {/* Rows */}
-        <div className="min-w-[780px] divide-y divide-[#F2F2F2]">
+        <div className="min-w-[680px] divide-y divide-[#F2F2F2]">
           {ROWS.map((row) => (
             <div
               key={row.id}
-              className={`${GRID} items-center gap-x-4 px-9 py-6 text-[15px]`}
+              className={`${GRID} items-center gap-x-4 px-5 py-3.5 text-[13px]`}
             >
               <span className="font-medium text-[#000000]">{row.date}</span>
               <span className="font-medium text-[#000000]">{row.started}</span>
 
               {row.ended === null ? (
-                <span className="inline-flex w-fit items-center rounded-[22px] bg-[#E6FFEB] px-4 py-2 text-[15px] text-[#139615]">
+                <span className="inline-flex w-fit items-center rounded-[22px] bg-[#E6FFEB] px-3 py-1 text-[12px] text-[#139615]">
                   ACTIVE
                 </span>
               ) : (
@@ -63,16 +63,16 @@ export function ShiftReportTable() {
               <span className="font-medium text-[#000000]">{row.cashier}</span>
 
               <span
-                className={row.ended === null ? 'text-[#989898]' : 'text-[19px] font-semibold text-[#026F4F]'}
+                className={row.ended === null ? 'text-[#989898]' : 'text-[15px] font-semibold text-[#026F4F]'}
               >
                 {row.revenue}
               </span>
 
               <button
-                className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-[#E9E9E9] text-[#2D2F33] transition-colors hover:bg-[#026F4F] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E9E9E9] text-[#2D2F33] transition-colors hover:bg-[#026F4F] hover:text-white"
                 aria-label="Download report"
               >
-                <Download size={24} />
+                <Download size={17} />
               </button>
             </div>
           ))}

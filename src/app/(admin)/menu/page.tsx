@@ -72,47 +72,47 @@ export default function MenuPage() {
   const [showItem, setShowItem] = useState(false);
 
   return (
-    <main className="flex flex-col gap-7">
+    <main className="flex flex-col gap-5">
       {/* Header row */}
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="flex max-w-[774px] flex-col gap-7">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex max-w-[774px] flex-col gap-4">
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
               Menu Management
             </h1>
-            <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[24px] xl:leading-8">
+            <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
               Manage your menu items, categories, and customizations
             </p>
           </div>
 
           {/* Category pills */}
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.label}
                 onClick={() => setActive(cat.label)}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-[51.28px] px-3.5 py-2 transition-colors',
+                  'inline-flex items-center gap-2 rounded-[51.28px] py-1.5 pl-1.5 pr-3.5 transition-colors',
                   active === cat.label
                     ? 'bg-[#026F4F] text-white'
                     : 'bg-white text-[#686868] hover:bg-[#F2F2F2]',
                 )}
               >
-                <span className="flex h-9 w-9 items-center justify-center">
-                  <Image src="/images/food-41e5d7.png" alt="" width={35} height={34} className="rounded-full object-cover" />
+                <span className="flex h-7 w-7 items-center justify-center">
+                  <Image src="/images/food-41e5d7.png" alt="" width={28} height={28} className="rounded-full object-cover" />
                 </span>
-                <span className="whitespace-nowrap text-xl font-normal leading-7">{cat.label}</span>
+                <span className="whitespace-nowrap text-sm font-normal leading-5">{cat.label}</span>
               </button>
             ))}
             {/* Add Category */}
             <button
               onClick={() => setShowCategory(true)}
-              className="inline-flex h-12 items-center gap-2 rounded-[51.28px] bg-white px-3.5 py-2 outline outline-2 outline-offset-[-2px] outline-[#686868] transition-colors hover:bg-[#F2F2F2]"
+              className="inline-flex h-10 items-center gap-2 rounded-[51.28px] bg-white px-3.5 outline outline-1 outline-offset-[-1px] outline-[#686868] transition-colors hover:bg-[#F2F2F2]"
             >
-              <span className="flex h-7 w-7 items-center justify-center">
-                <Plus size={16} className="text-[#686868]" />
+              <span className="flex h-6 w-6 items-center justify-center">
+                <Plus size={14} className="text-[#686868]" />
               </span>
-              <span className="whitespace-nowrap text-xl font-normal leading-7 text-[#686868]">Add Category</span>
+              <span className="whitespace-nowrap text-sm font-normal leading-5 text-[#686868]">Add Category</span>
             </button>
           </div>
         </div>
@@ -120,17 +120,17 @@ export default function MenuPage() {
         {/* Add Item */}
         <button
           onClick={() => setShowItem(true)}
-          className="flex h-14 items-center gap-3 rounded-[128px] bg-[#026F4F] px-8 text-white transition-colors hover:bg-[#015c42]"
+          className="flex h-10 items-center gap-2 rounded-[128px] bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
         >
-          <span className="flex h-7 w-7 items-center justify-center">
-            <Plus size={16} className="text-white" />
+          <span className="flex h-5 w-5 items-center justify-center">
+            <Plus size={14} className="text-white" />
           </span>
-          <span className="whitespace-nowrap font-satoshi text-2xl font-medium leading-8">Add Item</span>
+          <span className="whitespace-nowrap font-satoshi text-[15px] font-medium">Add Item</span>
         </button>
       </div>
 
       {/* Menu grid */}
-      <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {MENU_ITEMS.map((item) => (
           <MenuItemCard key={item.id} item={item} />
         ))}

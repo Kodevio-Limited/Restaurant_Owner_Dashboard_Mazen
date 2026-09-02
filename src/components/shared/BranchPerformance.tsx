@@ -73,8 +73,8 @@ function Chip({
         tone === 'active' ? 'text-[#000000]' : 'text-[#000000]',
       )}
     >
-      <span className="h-[15px] w-[15px] rounded-full" style={{ backgroundColor: metric.chip }} />
-      <span className="whitespace-nowrap text-[16px] leading-[22.4px]">{metric.label}</span>
+      <span className="h-3 w-3 rounded-full" style={{ backgroundColor: metric.chip }} />
+      <span className="whitespace-nowrap text-[13px] leading-[18px]">{metric.label}</span>
       {tone === 'active' ? (
         <X size={16} className="text-[#000000]" />
       ) : (
@@ -106,15 +106,15 @@ export function BranchPerformance() {
   const cfg = sizeMap[Math.min(n, 6)] ?? sizeMap[1];
 
   return (
-    <div className="w-full rounded-xl bg-white px-4 pb-5 pt-[18px] sm:px-8 sm:pt-[22px]">
-      <h3 className="text-[33px] font-semibold text-[#2D2F33]">Branch Performance Overview</h3>
+    <div className="w-full rounded-xl bg-white px-4 pb-4 pt-4 sm:px-5">
+      <h3 className="text-lg font-semibold text-[#2D2F33]">Branch Performance Overview</h3>
 
-      <p className="mt-2 text-center text-base leading-7 text-[#989898]">
+      <p className="mt-1.5 text-center text-sm leading-6 text-[#989898]">
         Click a chip to add or remove its metric from the chart. Add up to 6 metrics at once.
       </p>
 
       {/* Active chips (above the line) */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="mt-3 flex flex-wrap items-center gap-2.5">
         {selectedMetrics.map((m) => (
           <div key={m.id} className="rounded-[30px]" style={{ backgroundColor: m.tint }}>
             <Chip metric={m} tone="active" onToggle={() => toggle(m.id)} />
@@ -127,8 +127,8 @@ export function BranchPerformance() {
 
       {/* Add-area (below the line) */}
       {addable.length > 0 ? (
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-2 text-lg font-medium text-[#000000]">ADD ANALYTIC</span>
+        <div className="mt-2.5 flex flex-wrap items-center gap-2.5">
+          <span className="flex items-center gap-2 text-sm font-medium text-[#000000]">ADD ANALYTIC</span>
           {addable.map((m) => (
             <div key={m.id} className="rounded-[30px]" style={{ backgroundColor: m.tint }}>
               <Chip metric={m} tone="add" onToggle={() => toggle(m.id)} />
@@ -137,7 +137,7 @@ export function BranchPerformance() {
         </div>
       ) : null}
 
-      <div className={cn('mt-5 transition-all', n >= 4 ? 'h-[420px]' : 'h-[340px]')}>
+      <div className={cn('mt-4 transition-all', n >= 4 ? 'h-[340px] xl:h-[380px]' : 'h-[280px] xl:h-[300px]')}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={DATA} margin={{ top: 8, right: 8, left: 4, bottom: 0 }} barGap={cfg.gap}>
             {n > 1 && (

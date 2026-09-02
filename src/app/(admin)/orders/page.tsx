@@ -137,21 +137,21 @@ export default function OrdersPage() {
   };
 
   return (
-    <main className="flex flex-col gap-7">
+    <main className="flex flex-col gap-5">
       {/* Page header */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[26px] font-medium leading-[36px] text-[#2D2F33] sm:text-[32px] sm:leading-[46px] xl:text-[40px] xl:leading-[56px]">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
             Orders
           </h1>
-          <p className="text-[15px] text-[#989898] sm:text-[19px] xl:text-[23px]">
+          <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
             Track and manage all dine-in, takeaway, and delivery orders
           </p>
         </div>
       </div>
 
       {/* Status filter bar */}
-      <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+      <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
         {FILTERS.map((f) => {
           const count = ORDERS.filter(f.match).length;
           const isActive = f.id === active;
@@ -161,13 +161,13 @@ export default function OrdersPage() {
               onClick={() => setActive(f.id)}
               aria-pressed={isActive}
               className={cn(
-                'flex shrink-0 items-center gap-3 rounded-[33px] border bg-white py-[10px] pl-5 pr-2 transition-colors',
+                'flex shrink-0 items-center gap-2 rounded-[33px] border bg-white py-1.5 pl-3.5 pr-1.5 transition-colors',
                 isActive ? 'border-[#026F4F] shadow-sm' : 'border-[#E9E9E9] hover:border-[#B9B9B9]',
               )}
             >
               <span
                 className={cn(
-                  'whitespace-nowrap text-[15px] leading-[27px] sm:text-[20px] lg:text-[24px]',
+                  'whitespace-nowrap text-[13px] leading-[20px] sm:text-[15px]',
                   isActive ? 'font-medium text-[#2D2F33]' : 'text-[#686868]',
                 )}
               >
@@ -175,7 +175,7 @@ export default function OrdersPage() {
               </span>
               <span
                 className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-full text-[13.5px] font-medium leading-[19px] sm:h-10 sm:w-10',
+                  'flex h-7 w-7 items-center justify-center rounded-full text-[11.5px] font-medium leading-none',
                   isActive ? 'bg-[#026F4F] text-white' : 'bg-[#E6F1ED] text-[#026F4F]',
                 )}
               >
@@ -188,11 +188,11 @@ export default function OrdersPage() {
 
       {/* Order cards */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filtered.map((order) => (
             <div
               key={order.id}
-              className="w-full max-w-[417px] rounded-[19px] transition-transform hover:-translate-y-0.5"
+              className="w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5"
             >
               <OrderCard order={order} onOpenModal={handleOpenModal} />
             </div>

@@ -25,47 +25,47 @@ export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
   };
 
   return (
-    <div className="relative h-[232px] w-[301px]">
+    <div className="relative h-[186px] w-full max-w-[301px]">
 
       {/* Left vertical rail */}
       <div
-        className="absolute left-0 top-[39.5px] h-[153px] w-[15px] rounded-[48px] border"
+        className="absolute left-0 top-[32px] h-[calc(100%-64px)] w-[13px] rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Right vertical rail */}
       <div
-        className="absolute left-[286px] top-[39.5px] h-[153px] w-[15px] rounded-[48px] border"
+        className="absolute right-0 top-[32px] h-[calc(100%-64px)] w-[13px] rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Top horizontal rail */}
       <div
-        className="absolute left-[74px] top-0 h-[15px] w-[153px] rounded-[48px] border"
+        className="absolute left-1/2 top-0 h-[13px] w-[52%] -translate-x-1/2 rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Bottom horizontal rail */}
       <div
-        className="absolute bottom-0 left-[74px] h-[15px] w-[153px] rounded-[48px] border"
+        className="absolute bottom-0 left-1/2 h-[13px] w-[52%] -translate-x-1/2 rounded-[48px] border"
         style={railStyle}
       />
 
       {/* Main table body */}
       <div
-        className="absolute left-[25px] top-[25px] h-[182px] w-[251px] overflow-hidden rounded-[9px] border border-[#B9B9B9]"
+        className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-lg border border-[#B9B9B9]"
         style={{ backgroundColor: bodyBg }}
       >
-        <span className="absolute left-3 top-[51px] text-[16px] font-medium leading-[1.4] text-[#989898]">
+        <span className="absolute left-2.5 top-[42px] text-[12px] font-medium leading-[1.4] text-[#6E727A]">
           {zone}
         </span>
 
-        <div className="absolute left-3 top-3 flex items-center gap-[26px]">
-          <span className="font-satoshi text-[23px] font-medium leading-[1.4] text-black">
+        <div className="absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
+          <span className="truncate font-satoshi text-[16px] font-medium leading-[1.4] text-black">
             {name}
           </span>
           <span
-            className="inline-flex h-[30px] items-center justify-center rounded-[37px] px-3 text-[13px] font-medium leading-[1.4] text-white"
+            className="inline-flex h-[24px] shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
             style={{ backgroundColor: pillBg }}
           >
             {label}
@@ -73,16 +73,16 @@ export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
         </div>
 
         {(bill || time) && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-10">
+          <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2">
             {bill && (
-              <span className="text-[25px] font-semibold leading-[1.4] text-[#026F4F]">
+              <span className="text-[17px] font-semibold leading-[1.4] text-[#026F4F]">
                 {bill}
               </span>
             )}
             {time && (
               <div className="flex items-center gap-1">
-                <Clock3 size={22} className="shrink-0 text-[#989898]" />
-                <span className="text-[18px] leading-[1.4] text-[#989898]">{time}</span>
+                <Clock3 size={14} className="shrink-0 text-[#989898]" />
+                <span className="text-[12px] leading-[1.4] text-[#989898]">{time}</span>
               </div>
             )}
           </div>

@@ -27,9 +27,9 @@ const data = [
 
 export function RevenueOverTime() {
   return (
-    <div className="flex h-full flex-col rounded-xl bg-white p-[22px]">
-      <h3 className="text-[33px] font-semibold text-[#2D2F33]">Revenue Over Time</h3>
-      <div className="mt-7 min-h-0 flex-1">
+    <div className="flex h-full flex-col rounded-xl bg-white p-4">
+      <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
+      <div className="mt-3 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <defs>
