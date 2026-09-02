@@ -5,19 +5,21 @@ export function TopHeader() {
   return (
     <header className="relative flex w-full items-center gap-2 rounded-xl bg-white px-3 py-2.5 sm:px-4 lg:h-[64px] lg:flex-nowrap lg:py-0">
       {/* Left: Search + Restaurant Open */}
-      <div className="flex shrink-0 items-center gap-2">
-        {/* Search */}
-        <div className="flex h-10 shrink-0 items-center gap-2 rounded-[55px] bg-[#F2F2F2] px-4">
-          <Search size={17} className="shrink-0 text-[#989898]" />
-          <span className="hidden whitespace-nowrap font-satoshi text-sm font-medium leading-none text-[#989898] md:inline">
-            Search Task...
-          </span>
-        </div>
-
-        {/* Restaurant Open */}
+      <div className="flex min-w-0 flex-1 items-center justify-between gap-2 lg:flex-nowrap lg:pr-4">
         <div className="flex shrink-0 items-center gap-2">
-          <span className="whitespace-nowrap text-[12px] leading-[18px] text-[#37CE2A] sm:text-[13px]">Restaurant Open</span>
-          <span className="inline-block h-3 w-3 rounded-full bg-[#37CE2A] sm:h-3.5 sm:w-3.5" />
+          {/* Search */}
+          <div className="flex h-10 shrink-0 items-center gap-2 rounded-[55px] bg-[#F2F2F2] px-4">
+            <Search size={17} className="shrink-0 text-[#989898]" />
+            <span className="hidden whitespace-nowrap font-satoshi text-sm font-medium leading-none text-[#989898] md:inline">
+              Search Task...
+            </span>
+          </div>
+
+          {/* Restaurant Open */}
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="whitespace-nowrap text-[12px] leading-[18px] text-[#37CE2A] sm:text-[13px]">Restaurant Open</span>
+            <span className="inline-block h-3 w-3 rounded-full bg-[#37CE2A] sm:h-3.5 sm:w-3.5" />
+          </div>
         </div>
       </div>
 
@@ -35,7 +37,7 @@ export function TopHeader() {
       </div>
 
       {/* Right: Dhanmondi + Bell + Profile */}
-      <div className="flex shrink-0 items-center gap-2.5 sm:ml-auto sm:gap-3">
+      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
         {/* Branch selector */}
         <button className="flex h-10 shrink-0 items-center gap-1.5 rounded-[59px] border border-[#B9B9B9] bg-white px-3.5 sm:px-4">
           <span className="max-w-[100px] truncate whitespace-nowrap text-[13px] leading-none text-[#686868] sm:max-w-[130px] sm:text-sm">
