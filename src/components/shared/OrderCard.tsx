@@ -31,11 +31,11 @@ export interface Order {
   total: string;
 }
 
-type FlowStep = 'new' | 'accepted' | 'ready' | 'complete';
+export type FlowStep = 'new' | 'accepted' | 'ready' | 'complete';
 
 interface OrderCardProps {
   order: Order;
-  onOpenModal?: (order: Order, action: string) => void;
+  onOpenModal?: (order: Order, action: string, onConfirm?: (nextStep: FlowStep) => void) => void;
 }
 
 export function OrderCard({ order, onOpenModal }: OrderCardProps) {
@@ -44,7 +44,7 @@ export function OrderCard({ order, onOpenModal }: OrderCardProps) {
 
   const handleAccept = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setStep('accepted');
+    onOpenModal?.(order, 'mark_ready', (next) => setStep(next));
   };
 
   const handleCancel = (e: React.MouseEvent) => {
@@ -54,14 +54,12 @@ export function OrderCard({ order, onOpenModal }: OrderCardProps) {
 
   const handleMarkReady = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onOpenModal?.(order, 'mark_ready');
-    setStep('ready');
+    onOpenModal?.(order, 'mark_ready', (next) => setStep(next));
   };
 
   const handleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onOpenModal?.(order, 'complete');
-    setStep('complete');
+    onOpenModal?.(order, 'complete', (next) => setStep(next));
   };
 
   return (
@@ -154,12 +152,21 @@ export function OrderCard({ order, onOpenModal }: OrderCardProps) {
           )}
 
           {step === 'accepted' && (
-            <button
-              onClick={handleMarkReady}
-              className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
-            >
-              Mark Ready
-            </button>
+            <>
+              <button
+                onClick={handleCancel}
+                aria-label="Cancel order"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
+              >
+                <X size={17} strokeWidth={2.2} />
+              </button>
+              <button
+                onClick={handleMarkReady}
+                className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
+              >
+                Mark Ready
+              </button>
+            </>
           )}
 
           {step === 'ready' && (

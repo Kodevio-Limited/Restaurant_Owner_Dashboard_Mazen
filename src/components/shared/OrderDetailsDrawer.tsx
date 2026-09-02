@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { ArrowLeft, X, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
-import { Order } from '@/components/shared/OrderCard';
+import { Order, FlowStep } from '@/components/shared/OrderCard';
 import { cn } from '@/lib/utils';
 
 const STEPS = [
@@ -22,11 +22,13 @@ export function OrderDetailsModal({
   open,
   order,
   action,
+  onConfirm,
   onClose,
 }: {
   open: boolean;
   order: Order | null;
   action?: string;
+  onConfirm?: (nextStep: FlowStep) => void;
   onClose: () => void;
 }) {
   if (!order) return null;
@@ -36,6 +38,16 @@ export function OrderDetailsModal({
   const service = subtotal * 0.1;
   const total = subtotal + service;
   const money = (n: number) => `$${n.toFixed(2)}`;
+
+  const handleConfirm = (nextStep: FlowStep) => {
+    onConfirm?.(nextStep);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    onConfirm?.(action === 'complete' ? 'ready' : 'new');
+    onClose();
+  };
 
   return (
     <>
@@ -48,7 +60,7 @@ export function OrderDetailsModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed right-0 top-0 z-50 flex h-full w-full flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -183,13 +195,13 @@ export function OrderDetailsModal({
             {action === 'mark_ready' && (
               <>
                 <button
-                  onClick={onClose}
+                  onClick={handleCancel}
                   className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={() => handleConfirm('ready')}
                   className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
                 >
                   Mark Ready
@@ -199,13 +211,13 @@ export function OrderDetailsModal({
             {action === 'complete' && (
               <>
                 <button
-                  onClick={onClose}
-                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#ea690b]"
+                  onClick={handleCancel}
+                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
                 >
-                  Mark Ready
+                  Cancel
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={() => handleConfirm('complete')}
                   className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
                 >
                   Mark Paid

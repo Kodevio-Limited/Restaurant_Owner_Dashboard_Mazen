@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, X, Globe, Upload, Plus, Trash2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -100,6 +100,15 @@ export function AddItemModal({
 }) {
   const [customizations, setCustomizations] = useState<number[]>([]);
   const addCustomization = () => setCustomizations((p) => [...p, p.length]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   return (
     <>
@@ -240,10 +249,16 @@ export function AddItemModal({
 
         <div className="shrink-0 border-t border-[#E2E2E2] px-5 py-4">
           <div className="flex items-center justify-between gap-4">
-            <button className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-lg font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]">
+            <button
+              onClick={onClose}
+              className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-lg font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
+            >
               Cancel
             </button>
-            <button className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-lg font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]">
+            <button
+              onClick={onClose}
+              className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-lg font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+            >
               Save
             </button>
           </div>

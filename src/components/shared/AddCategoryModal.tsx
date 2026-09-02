@@ -21,7 +21,7 @@ export function AddCategoryModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed right-0 top-0 z-50 flex h-full w-full flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -43,7 +43,7 @@ export function AddCategoryModal({
           </button>
         </div>
 
-        <div className="space-y-5 px-5 pb-5 pt-8">
+        <div className="space-y-5 overflow-y-auto px-5 pb-5 pt-8">
           <section className="rounded-xl bg-white px-[19px] pb-5 pt-[13px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
             <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Category Image (Optional)</h3>
             <div className="mt-4 flex h-44 w-full items-center justify-center rounded-xl outline outline-2 outline-offset-[-2px] outline-[#989898]">
@@ -81,10 +81,16 @@ export function AddCategoryModal({
 
         <div className="shrink-0 border-t border-[#E2E2E2] px-5 py-4">
           <div className="flex items-center justify-between gap-4">
-            <button className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-lg font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]">
+            <button
+              onClick={onClose}
+              className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-lg font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
+            >
               Cancel
             </button>
-            <button className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-lg font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]">
+            <button
+              onClick={onClose}
+              className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-lg font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+            >
               Save
             </button>
           </div>
