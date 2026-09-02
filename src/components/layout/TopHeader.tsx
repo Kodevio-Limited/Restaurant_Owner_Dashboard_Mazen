@@ -31,10 +31,22 @@ export function TopHeader() {
 
       {/* Right block: shift info + bell + profile */}
       <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-        {/* Shift info */}
-        <div className="hidden flex-col items-end gap-0.5 sm:flex">
-          <span className="text-[11px] leading-[15px] text-[#989898]">Shift Started: 9PM</span>
-          <span className="text-[11px] leading-[15px] text-[#686868]">Current Cashier: Mazen Alqassif</span>
+        {/* Shift & Cashier info with vertical divider */}
+        <div className="hidden items-center gap-3 sm:flex">
+          {/* Shift Started */}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Shift Started:</span>
+            <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">9PM</span>
+          </div>
+
+          {/* Vertical divider */}
+          <span className="h-[32px] w-px bg-[#989898]" />
+
+          {/* Current Cashier */}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[12px] font-normal leading-[16px] text-[#989898]">Current Cashier:</span>
+            <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">Mazen Alqassif</span>
+          </div>
         </div>
 
         <button
