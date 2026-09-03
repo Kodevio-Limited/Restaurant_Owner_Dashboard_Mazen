@@ -123,7 +123,7 @@ export function TableInfoModal({
 
           {/* Active Order (occupied only) */}
           {occupied && (
-            <section className="rounded-[10px] bg-white px-[17px] pb-5 pt-[17px] outline outline-1 outline-[#E9E9E9]">
+            <section className="rounded-[10px] bg-white px-5 pb-5 pt-4 outline outline-1 outline-[#E9E9E9]">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium leading-7 text-[#2D2F33]">Active Order</h3>
                 <button className="flex items-center gap-1.5 text-xs font-medium leading-5 text-[#026F4F]">
@@ -132,7 +132,7 @@ export function TableInfoModal({
                 </button>
               </div>
 
-              <div className="mt-7 flex items-start px-2">
+              <div className="mt-7 flex items-start justify-between overflow-x-auto px-1">
                 {STEPS.map((step, i) => {
                   const Icon = step.icon;
                   const isActive = step.active;
@@ -162,7 +162,7 @@ export function TableInfoModal({
                       {!isLast && (
                         <div
                           className={cn(
-                            'mx-1 h-0.5 w-10 sm:w-14',
+                            'mx-1 h-0.5 w-8 sm:w-12',
                             STEPS[i + 1].active
                               ? 'bg-[#358C72]'
                               : isActive
@@ -182,13 +182,15 @@ export function TableInfoModal({
           <section className="rounded-xl bg-white px-[19px] pb-5 pt-[21px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium leading-7 text-[#2D2F33]">Table Info</h3>
-              <button
-                onClick={() => { onEdit?.(table); onClose(); }}
-                className="flex items-center gap-[5px] text-lg font-normal leading-7 text-[#026F4F]"
-              >
-                <Edit3 size={24} />
-                Edit
-              </button>
+              {!occupied && (
+                <button
+                  onClick={() => { onEdit?.(table); onClose(); }}
+                  className="flex items-center gap-[5px] text-lg font-normal leading-7 text-[#026F4F]"
+                >
+                  <Edit3 size={24} />
+                  Edit
+                </button>
+              )}
             </div>
 
             <div className="mt-11 flex flex-col gap-2">

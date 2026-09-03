@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -26,12 +27,25 @@ const data = [
 ];
 
 export function RevenueOverTime() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const handleClick = (state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      const idx = state.activeTooltipIndex;
+      setActiveIndex((prev) => (prev === idx ? null : idx));
+    }
+  };
+
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
       <div className="mt-3 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            onClick={handleClick}
+          >
             <defs>
               <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#026F4F" stopOpacity={0.28} />
@@ -59,6 +73,9 @@ export function RevenueOverTime() {
               formatter={(v: number) => [`$${v.toLocaleString()}`, 'Revenue']}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
+              active={activeIndex !== null}
+              payload={activeIndex !== null ? [{ value: data[activeIndex].revenue, name: 'Revenue' }] : undefined}
+              label={activeIndex !== null ? data[activeIndex].month : undefined}
             />
             <Area
               type="monotone"
@@ -68,6 +85,7 @@ export function RevenueOverTime() {
               fill="url(#revGrad)"
               dot={false}
               activeDot={{ r: 5, fill: '#026F4F' }}
+              isAnimationActive={false}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -87,24 +87,15 @@ export function AddEditTableModal({
 
         {editMode && (
           <div className="mt-5 flex flex-col items-center gap-3.5 px-5">
-            <span className="text-[32px] font-semibold leading-10 text-black">Table is Ready</span>
+            <span className="text-[32px] font-semibold leading-10 text-black">Edit Table</span>
           </div>
         )}
 
         {/* Form */}
-        <div className={cn('px-5', editMode ? 'pt-8' : 'pt-12')}>
+        <div className={cn('px-5', editMode ? 'pt-5' : 'pt-12')}>
           <div className="rounded-xl bg-white px-[19px] pb-5 pt-[21px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium leading-7 text-[#2D2F33]">Table Info</h3>
-              {editMode && (
-                <span className="flex items-center gap-[5px] text-lg font-normal leading-7 text-[#026F4F]">
-                  <span className="flex h-6 w-6 items-center justify-center">
-                    <span className="h-4 w-4 rounded border border-[#026F4F]" />
-                    <span className="ml-1.5 h-3.5 w-3.5 border-b border-[#026F4F]" />
-                  </span>
-                  Edit
-                </span>
-              )}
             </div>
 
             <div className="mt-11 flex flex-col gap-2">

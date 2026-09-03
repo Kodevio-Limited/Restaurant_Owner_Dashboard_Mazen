@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import {
   Bar,
   BarChart,
@@ -21,12 +22,34 @@ const data = [
 ];
 
 export function OrdersOverview() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
+
+  const handleClick = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      const now = Date.now();
+      const idx = state.activeTooltipIndex;
+
+      if (now - lastClickTime < 300) {
+        setActiveIndex(null);
+      } else {
+        setActiveIndex((prev) => (prev === idx ? null : idx));
+      }
+      setLastClickTime(now);
+    }
+  }, [lastClickTime]);
+
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold leading-none text-[#2D2F33]">Orders Overview</h3>
       <div className="mt-4 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 4, right: 0, left: 4, bottom: 0 }} barCategoryGap="28%">
+          <BarChart
+            data={data}
+            margin={{ top: 4, right: 0, left: 4, bottom: 0 }}
+            barCategoryGap="28%"
+            onClick={handleClick}
+          >
             <defs>
               <linearGradient id="orderGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#026F4F" stopOpacity={0.9} />
@@ -54,8 +77,11 @@ export function OrdersOverview() {
               cursor={{ fill: 'rgba(2,111,79,0.06)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
+              active={activeIndex !== null}
+              payload={activeIndex !== null ? [{ value: data[activeIndex].orders, name: 'Orders' }] : undefined}
+              label={activeIndex !== null ? data[activeIndex].day : undefined}
             />
-            <Bar dataKey="orders" fill="url(#orderGrad)" radius={[7, 7, 0, 0]} maxBarSize={46} />
+            <Bar dataKey="orders" fill="url(#orderGrad)" radius={[7, 7, 0, 0]} maxBarSize={46} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>

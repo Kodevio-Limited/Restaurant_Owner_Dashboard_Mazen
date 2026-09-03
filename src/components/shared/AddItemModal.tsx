@@ -41,8 +41,8 @@ function CustomizationGroup({
         <div className="flex w-64 flex-col gap-2">
           <span className="text-sm font-medium leading-5 text-[#686868]">Selection Type</span>
           <div className="relative flex h-12 items-center rounded-[35.08px] bg-[#E9E9E9]">
-            <button onClick={() => setSelectionType('Single')} className={cn('flex h-10 w-32 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors', selectionType === 'Single' ? 'bg-white text-[#026F4F]' : 'text-[#989898]')}>Single</button>
-            <button onClick={() => setSelectionType('Multi')} className={cn('flex h-10 w-32 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors', selectionType === 'Multi' ? 'bg-white text-[#026F4F]' : 'text-[#989898]')}>Multi</button>
+            <button onClick={() => setSelectionType('Single')} className={cn('flex h-10 w-32 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors', selectionType === 'Single' ? 'bg-[#026F4F] text-white' : 'text-[#989898]')}>Single</button>
+            <button onClick={() => setSelectionType('Multi')} className={cn('flex h-10 w-32 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors', selectionType === 'Multi' ? 'bg-[#026F4F] text-white' : 'text-[#989898]')}>Multi</button>
           </div>
         </div>
 

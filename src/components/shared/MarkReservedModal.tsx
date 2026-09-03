@@ -86,7 +86,7 @@ export function MarkReservedModal({
                     <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">07:30 AM</span>
                   </div>
                 </div>
-                <div className="flex w-60 flex-col gap-2">
+                <div className="flex w-full flex-col gap-2 sm:w-60">
                   <span className="text-base font-medium leading-5 text-[#686868]">Phone Number</span>
                   <div className="flex h-14 items-center rounded-[87px] bg-[#F2F2F2] px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">+155555484</span>

@@ -99,7 +99,7 @@ export function ReservedDetailModal({
                     <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">07:30 AM</span>
                   </div>
                 </div>
-                <div className="flex w-60 flex-col gap-2">
+                <div className="flex w-full flex-col gap-2 sm:w-60">
                   <span className="text-base font-medium leading-5 text-[#686868]">Phone Number</span>
                   <div className="flex h-14 items-center rounded-[87px] bg-[#F2F2F2] px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">+155555484</span>
@@ -113,13 +113,6 @@ export function ReservedDetailModal({
           <section className="rounded-xl bg-white px-[19px] pb-5 pt-[21px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium leading-7 text-[#2D2F33]">Table Info</h3>
-              <span className="flex items-center gap-[5px] text-lg font-normal leading-7 text-[#026F4F]">
-                <span className="flex h-6 w-6 items-center justify-center">
-                  <span className="h-4 w-4 rounded border border-[#026F4F]" />
-                  <span className="ml-1.5 h-3.5 w-3.5 border-b border-[#026F4F]" />
-                </span>
-                Edit
-              </span>
             </div>
 
             <div className="mt-11 flex flex-col gap-2">

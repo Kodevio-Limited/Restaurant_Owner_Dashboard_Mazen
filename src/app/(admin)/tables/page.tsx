@@ -8,6 +8,7 @@ import { AddEditTableModal } from '@/components/shared/AddEditTableModal';
 import { MarkReservedModal } from '@/components/shared/MarkReservedModal';
 import { ReservedDetailModal } from '@/components/shared/ReservedDetailModal';
 import { TableInfoModal } from '@/components/shared/TableInfoModal';
+import { AddTableCategoryModal } from '@/components/shared/AddTableCategoryModal';
 import { cn } from '@/lib/utils';
 
 interface TableDef {
@@ -42,6 +43,7 @@ export default function TablesPage() {
   const [markReservedTable, setMarkReservedTable] = useState<TableDef | null>(null);
   const [reservedTable, setReservedTable]         = useState<TableDef | null>(null);
   const [seatGuests, setSeatGuests] = useState(false);
+  const [showCategory, setShowCategory] = useState(false);
 
   const filtered = zone === 'All' ? TABLES : TABLES.filter((t) => t.zone === zone);
 
@@ -80,14 +82,23 @@ export default function TablesPage() {
           </div>
         </div>
 
-        {/* Add Table button */}
-        <button
-          onClick={() => { setEditing(null); setShowAdd(true); }}
-          className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
-        >
-          <Plus size={17} strokeWidth={2} />
-          <span className="font-satoshi text-[14px] font-medium sm:text-[15px]">Add Table</span>
-        </button>
+        {/* Add Category + Add Table */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setShowCategory(true)}
+            className="inline-flex h-10 items-center gap-2 rounded-[51.28px] bg-white px-3.5 outline outline-1 outline-offset-[-1px] outline-[#686868] transition-colors hover:bg-[#F2F2F2]"
+          >
+            <Plus size={14} className="text-[#686868]" />
+            <span className="whitespace-nowrap text-sm font-normal leading-5 text-[#686868]">Add Category</span>
+          </button>
+          <button
+            onClick={() => { setEditing(null); setShowAdd(true); }}
+            className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
+          >
+            <Plus size={17} strokeWidth={2} />
+            <span className="font-satoshi text-[14px] font-medium sm:text-[15px]">Add Table</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Table grid ── */}
@@ -143,6 +154,10 @@ export default function TablesPage() {
       <SeatGuestsModal
         open={seatGuests}
         onClose={() => setSeatGuests(false)}
+        onSave={() => {
+          setSeatGuests(false);
+          window.location.reload();
+        }}
       />
 
       <TableInfoModal
@@ -151,6 +166,8 @@ export default function TablesPage() {
         onClose={() => setSelected(null)}
         onEdit={(t) => { setSelected(null); setEditing(t); }}
       />
+
+      <AddTableCategoryModal open={showCategory} onClose={() => setShowCategory(false)} />
     </main>
   );
 }

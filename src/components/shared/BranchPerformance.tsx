@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { X, Plus } from 'lucide-react';
 import {
   Bar,
@@ -93,6 +93,23 @@ export function BranchPerformance() {
   const toggle = (id: MetricId) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
+  const [activeBranch, setActiveBranch] = useState<string | null>(null);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
+
+  const handleChartClick = useCallback((state: any) => {
+    if (state && state.activeLabel) {
+      const now = Date.now();
+      const branch = state.activeLabel;
+
+      if (now - lastClickTime < 300) {
+        setActiveBranch(null);
+      } else {
+        setActiveBranch((prev) => (prev === branch ? null : branch));
+      }
+      setLastClickTime(now);
+    }
+  }, [lastClickTime]);
+
   // Sizing so grouped bars stay distinct with a clean gap between branch groups
   const sizeMap: Record<number, { maxBar: number; gap: number }> = {
     1: { maxBar: 55, gap: 6 },
@@ -139,7 +156,7 @@ export function BranchPerformance() {
 
       <div className={cn('mt-4 transition-all', n >= 4 ? 'h-[340px] xl:h-[380px]' : 'h-[280px] xl:h-[300px]')}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={DATA} margin={{ top: 8, right: 8, left: 4, bottom: 0 }} barGap={cfg.gap}>
+          <BarChart data={DATA} margin={{ top: 8, right: 8, left: 4, bottom: 0 }} barGap={cfg.gap} onClick={handleChartClick}>
             {n > 1 && (
               <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             )}
@@ -165,6 +182,8 @@ export function BranchPerformance() {
               cursor={{ fill: 'rgba(137,121,255,0.06)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
+              active={activeBranch !== null}
+              label={activeBranch ?? undefined}
             />
             {selectedMetrics.map((m) => (
               <Bar
@@ -177,6 +196,7 @@ export function BranchPerformance() {
                 maxBarSize={cfg.maxBar}
                 barSize={cfg.maxBar}
                 background={{ fill: 'rgba(214,219,237,0.4)', fillOpacity: 0.8, radius: 2 }}
+                isAnimationActive={false}
               />
             ))}
           </BarChart>

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Phone, Mail, ChevronRight, Trash2 } from 'lucide-react';
 
 export type StaffRole = 'MANAGER' | 'WAITER' | 'KITCHEN STAFF' | 'CASHIER';
@@ -31,6 +32,7 @@ interface StaffCardProps {
 }
 
 export function StaffCard({ member, onEdit, onRemove }: StaffCardProps) {
+  const router = useRouter();
   const roleColor = ROLE_STYLES[member.role];
   const lastNote = member.notes[member.notes.length - 1];
 
@@ -99,23 +101,31 @@ export function StaffCard({ member, onEdit, onRemove }: StaffCardProps) {
       )}
 
       {/* ── Action buttons ── */}
-      <div className="mt-4 flex w-[calc(100%-24px)] items-center gap-2.5">
+      <div className="mt-4 flex w-[calc(100%-24px)] flex-col gap-2.5">
         <button
-          onClick={onEdit}
-          className="flex h-9 flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] font-satoshi text-[12.5px] font-medium text-[#2D2F33] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#DCDCDC]"
+          onClick={() => router.push('/orders')}
+          className="flex h-9 w-full items-center justify-center rounded-[30px] bg-[#026F4F] font-satoshi text-[12.5px] font-medium text-white shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#015c42]"
         >
-          Edit
+          View Details
         </button>
-        <button
-          onClick={onRemove}
-          className={`flex h-9 flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] font-satoshi text-[12.5px] font-medium shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors ${
-            member.active
-              ? 'bg-white text-[#2D2F33] hover:bg-[#F2F2F2]'
-              : 'border-transparent bg-[#026F4F] text-white hover:bg-[#015c42]'
-          }`}
-        >
-          {member.active ? 'Deactivate' : 'Activate'}
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={onEdit}
+            className="flex h-9 flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] font-satoshi text-[12.5px] font-medium text-[#2D2F33] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#DCDCDC]"
+          >
+            Edit
+          </button>
+          <button
+            onClick={onRemove}
+            className={`flex h-9 flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] font-satoshi text-[12.5px] font-medium shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors ${
+              member.active
+                ? 'bg-white text-[#2D2F33] hover:bg-[#F2F2F2]'
+                : 'border-transparent bg-[#026F4F] text-white hover:bg-[#015c42]'
+            }`}
+          >
+            {member.active ? 'Deactivate' : 'Activate'}
+          </button>
+        </div>
       </div>
     </div>
   );
