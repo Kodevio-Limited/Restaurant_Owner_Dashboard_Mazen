@@ -78,53 +78,48 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
-          <StatCard
-            label="Total Revenue"
-            value={<span className="flex items-end gap-1">$<span>1,250</span></span>}
-            sub={{ text: '12.5% from yesterday', positive: true }}
-            icon={<DollarSign size={22} />}
-          />
-          <StatCard label="Total Orders" value="48" sub="Today" icon={<Receipt size={22} />} />
-          <StatCard label="Active Orders" value="12" sub="Kitchen is busy" icon={<Flame size={22} />} />
-          <StatCard label="Active Tables" value="8" sub="Out of 20 tables" icon={<Armchair size={22} />} />
-          <StatCard
-            label="Pending Pay"
-            value={<span className="flex items-end gap-1">$<span>250</span></span>}
-            sub="Action Required"
-            icon={<CreditCard size={22} />}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
-          <StatCard
-            label="Table Turnover Rate"
-            value="48"
-            unit="min"
-            sub={{ text: '3min from yesterday', positive: true }}
-            icon={<Clock3 size={22} />}
-          />
-          <StatCard label="Order Fulfillment Rate" value="18" unit="min" icon={<Timer size={22} />} />
-          <StatCard
-            label="Avg Spend per Table"
-            value="$45.50"
-            sub={{ text: '5.2% from yesterday', positive: true }}
-            icon={<UserCheck size={22} />}
-          />
-          <StatCard
-            label="Cancelled Order"
-            value="32"
-            sub={{ text: '5.2% from yesterday', positive: false }}
-            icon={<XCircle size={22} />}
-          />
-          <StatCard
-            label="Table Utilization"
-            value="40%"
-            sub={{ text: '5.2% from yesterday', positive: true }}
-            icon={<Table2 size={22} />}
-          />
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
+        <StatCard
+          label="Total Revenue"
+          value={<span className="flex items-end gap-1">$<span>1,250</span></span>}
+          sub={{ text: '12.5% from yesterday', positive: true }}
+          icon={<DollarSign size={22} />}
+        />
+        <StatCard label="Total Orders" value="48" sub="Today" icon={<Receipt size={22} />} />
+        <StatCard label="Active Orders" value="12" sub="Kitchen is busy" icon={<Flame size={22} />} />
+        <StatCard label="Active Tables" value="8" sub="Out of 20 tables" icon={<Armchair size={22} />} />
+        <StatCard
+          label="Pending Pay"
+          value={<span className="flex items-end gap-1">$<span>250</span></span>}
+          sub="Action Required"
+          icon={<CreditCard size={22} />}
+        />
+        <StatCard
+          label="Table Turnover Rate"
+          value="48"
+          unit="min"
+          sub={{ text: '3min from yesterday', positive: true }}
+          icon={<Clock3 size={22} />}
+        />
+        <StatCard label="Order Fulfillment Rate" value="18" unit="min" icon={<Timer size={22} />} />
+        <StatCard
+          label="Avg Spend per Table"
+          value="$45.50"
+          sub={{ text: '5.2% from yesterday', positive: true }}
+          icon={<UserCheck size={22} />}
+        />
+        <StatCard
+          label="Cancelled Order"
+          value="32"
+          sub={{ text: '5.2% from yesterday', positive: false }}
+          icon={<XCircle size={22} />}
+        />
+        <StatCard
+          label="Table Utilization"
+          value="40%"
+          sub={{ text: '5.2% from yesterday', positive: true }}
+          icon={<Table2 size={22} />}
+        />
       </div>
 
       {/* Revenue + Orders */}
