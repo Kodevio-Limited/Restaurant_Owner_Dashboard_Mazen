@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { TriangleAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +13,15 @@ export function UnsavedChangesModal({
   onCancel: () => void;
   onLeave: () => void;
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       <div

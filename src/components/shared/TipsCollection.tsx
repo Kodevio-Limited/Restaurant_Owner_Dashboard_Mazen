@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import {
   Bar,
   BarChart,
@@ -21,12 +22,41 @@ const data = [
 ];
 
 export function TipsCollection() {
+  const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const handleClick = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      const idx = state.activeTooltipIndex;
+      setPinnedIndex((prev) => (prev === idx ? null : idx));
+    }
+  }, []);
+
+  const handleMouseMove = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      setHoveredIndex(state.activeTooltipIndex);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+  }, []);
+
+  const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
+
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Tips Collection</h3>
       <div className="mt-2 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 4, right: 0, left: 4, bottom: 0 }} barCategoryGap="30%">
+          <BarChart
+            data={data}
+            margin={{ top: 4, right: 0, left: 4, bottom: 0 }}
+            barCategoryGap="30%"
+            onClick={handleClick}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
             <defs>
               <linearGradient id="tipGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#F97316" stopOpacity={0.95} />
@@ -55,8 +85,11 @@ export function TipsCollection() {
               cursor={{ fill: 'rgba(249,115,22,0.08)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
+              active={displayIndex !== null}
+              payload={displayIndex !== null ? [{ value: data[displayIndex].tips, name: 'Tips' }] : undefined}
+              label={displayIndex !== null ? data[displayIndex].day : undefined}
             />
-            <Bar dataKey="tips" fill="url(#tipGrad)" radius={[6, 6, 0, 0]} maxBarSize={56} />
+            <Bar dataKey="tips" fill="url(#tipGrad)" radius={[6, 6, 0, 0]} maxBarSize={56} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>

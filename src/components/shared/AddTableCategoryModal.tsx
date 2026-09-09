@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowLeft, X } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AddTableCategoryModal({
@@ -10,6 +11,15 @@ export function AddTableCategoryModal({
   open: boolean;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       <div
@@ -36,13 +46,7 @@ export function AddTableCategoryModal({
             <ArrowLeft size={22} />
           </button>
           <h2 className="text-[32px] font-medium leading-10 text-black">Add Category</h2>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
-          >
-            <X size={22} />
-          </button>
+          <div className="h-12 w-12" />
         </div>
 
         {/* Form */}

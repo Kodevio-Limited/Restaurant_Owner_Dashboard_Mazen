@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowLeft, X, ChevronDown } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function SeatGuestsModal({
@@ -12,6 +13,15 @@ export function SeatGuestsModal({
   onClose: () => void;
   onSave?: () => void;
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       <div
@@ -38,13 +48,7 @@ export function SeatGuestsModal({
             <ArrowLeft size={20} />
           </button>
           <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">Add Table</h2>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a] sm:h-12 sm:w-12"
-          >
-            <X size={20} />
-          </button>
+          <div className="h-10 w-10 sm:h-12 sm:w-12" />
         </div>
 
         {/* Form */}

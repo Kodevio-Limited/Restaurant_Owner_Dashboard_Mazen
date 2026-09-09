@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, X, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
 import { Order, FlowStep } from '@/components/shared/OrderCard';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +32,15 @@ export function OrderDetailsModal({
   onConfirm?: (nextStep: FlowStep) => void;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   if (!order) return null;
 
   const itemCount = order.items.reduce((s, i) => s + i.qty, 0);
@@ -77,13 +87,7 @@ export function OrderDetailsModal({
             <h2 className="text-[33px] font-medium leading-[46px] text-black">Order {order.orderNo}</h2>
             <p className="text-[19px] leading-[26.6px] text-[#686868]">Table: {order.table.replace('Table ', '')}</p>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
-          >
-            <X size={22} />
-          </button>
+          <div className="h-12 w-12" />
         </div>
 
         {/* Body */}

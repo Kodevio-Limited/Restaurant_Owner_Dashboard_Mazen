@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { ArrowLeft, Shield, User, Phone, Mail, ChevronRight, Check, Trash2, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { StaffMember } from '@/components/shared/StaffCard';
@@ -61,6 +62,15 @@ export function AddTeamMemberModal({
   onClose: () => void;
 }) {
   const isEdit = !!member;
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   return (
     <>

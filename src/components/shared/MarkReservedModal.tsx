@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowLeft, X, Download, QrCode } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowLeft, Download, QrCode } from 'lucide-react';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +16,15 @@ export function MarkReservedModal({
   onClose: () => void;
   onSave?: () => void;
 }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       <div
@@ -43,13 +53,7 @@ export function MarkReservedModal({
 
           <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">{tableName}</h2>
 
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a] sm:h-12 sm:w-12"
-          >
-            <X size={20} />
-          </button>
+          <div className="h-10 w-10 sm:h-12 sm:w-12" />
         </div>
 
         {/* QR Code */}

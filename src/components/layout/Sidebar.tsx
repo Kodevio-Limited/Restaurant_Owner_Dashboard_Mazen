@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -91,6 +91,15 @@ function NavItems({
 export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
       {/* Mobile hamburger */}
@@ -152,8 +161,8 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
             className={cn(
               'flex items-center transition-colors',
               collapsed
-                ? 'h-[44px] w-[44px] justify-center rounded-full text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]'
-                : 'gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 text-[14px] text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]',
+                ? 'h-[44px] w-[44px] justify-center rounded-full text-[#E56767] hover:bg-[#FFE6E6]'
+                : 'gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 text-[14px] text-[#E56767] hover:bg-[#FFE6E6]',
             )}
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full">
@@ -192,7 +201,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
                 <NavItems showLabels onNavigate={() => setOpen(false)} />
               </div>
               <div className="border-t border-[#F2F2F2] px-3 py-2.5">
-                <button className="flex items-center gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 text-[14px] text-[#989898] hover:bg-[#FFE6E6] hover:text-[#E56767]">
+                <button className="flex items-center gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 text-[14px] text-[#E56767] hover:bg-[#FFE6E6]">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full">
                     <LogOut size={20} strokeWidth={1.8} />
                   </span>

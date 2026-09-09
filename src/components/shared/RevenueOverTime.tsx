@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Area,
   AreaChart,
@@ -26,15 +26,38 @@ const data = [
   { month: 'Dec', revenue: 27000 },
 ];
 
-export function RevenueOverTime() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div className="rounded-[10px] border border-[#E9E9E9] bg-white p-3 shadow-md">
+      <p className="text-sm font-semibold text-[#2D2F33]">{label}</p>
+      <p className="text-sm text-[#026F4F]">${payload[0].value.toLocaleString()}</p>
+    </div>
+  );
+}
 
-  const handleClick = (state: any) => {
+export function RevenueOverTime() {
+  const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const handleClick = useCallback((state: any) => {
     if (state && state.activeTooltipIndex !== undefined) {
       const idx = state.activeTooltipIndex;
-      setActiveIndex((prev) => (prev === idx ? null : idx));
+      setPinnedIndex((prev) => (prev === idx ? null : idx));
     }
-  };
+  }, []);
+
+  const handleMouseMove = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      setHoveredIndex(state.activeTooltipIndex);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+  }, []);
+
+  const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
@@ -45,6 +68,8 @@ export function RevenueOverTime() {
             data={data}
             margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
             onClick={handleClick}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
             <defs>
               <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
@@ -70,12 +95,10 @@ export function RevenueOverTime() {
               width={44}
             />
             <Tooltip
-              formatter={(v: number) => [`$${v.toLocaleString()}`, 'Revenue']}
-              contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
-              labelStyle={{ fontWeight: 600 }}
-              active={activeIndex !== null}
-              payload={activeIndex !== null ? [{ value: data[activeIndex].revenue, name: 'Revenue' }] : undefined}
-              label={activeIndex !== null ? data[activeIndex].month : undefined}
+              content={<CustomTooltip />}
+              active={displayIndex !== null}
+              payload={displayIndex !== null ? [{ value: data[displayIndex].revenue, name: 'Revenue' }] : undefined}
+              label={displayIndex !== null ? data[displayIndex].month : undefined}
             />
             <Area
               type="monotone"

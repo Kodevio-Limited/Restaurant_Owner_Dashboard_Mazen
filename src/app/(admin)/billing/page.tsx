@@ -11,8 +11,8 @@ const PLANS = [
     tagline: 'Essential tools for small cafes and pop-ups.',
     monthlyPrice: 29,
     yearlyPrice: 23,
-    buttonLabel: 'Downgrade',
-    buttonVariant: 'outline' as const,
+    buttonLabel: 'Select Plan',
+    buttonVariant: 'green' as const,
     current: false,
     features: [
       { text: 'Up to 200 orders/mo', available: true },

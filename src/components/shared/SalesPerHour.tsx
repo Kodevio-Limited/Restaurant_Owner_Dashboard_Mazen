@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import {
   Bar,
   BarChart,
@@ -26,12 +27,41 @@ const data = [
 ];
 
 export function SalesPerHour() {
+  const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const handleClick = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      const idx = state.activeTooltipIndex;
+      setPinnedIndex((prev) => (prev === idx ? null : idx));
+    }
+  }, []);
+
+  const handleMouseMove = useCallback((state: any) => {
+    if (state && state.activeTooltipIndex !== undefined) {
+      setHoveredIndex(state.activeTooltipIndex);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+  }, []);
+
+  const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
+
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Sales per Hour (Today)</h3>
       <div className="mt-2 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 4, right: 0, left: 4, bottom: 0 }} barCategoryGap="32%">
+          <BarChart
+            data={data}
+            margin={{ top: 4, right: 0, left: 4, bottom: 0 }}
+            barCategoryGap="32%"
+            onClick={handleClick}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             <XAxis
               dataKey="hour"
@@ -58,6 +88,9 @@ export function SalesPerHour() {
               cursor={{ fill: 'rgba(137,121,255,0.08)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
+              active={displayIndex !== null}
+              payload={displayIndex !== null ? [{ value: data[displayIndex].sales, name: 'Sales' }] : undefined}
+              label={displayIndex !== null ? data[displayIndex].hour : undefined}
             />
             <Bar
               dataKey="sales"
@@ -66,6 +99,7 @@ export function SalesPerHour() {
               radius={[1.5, 1.5, 0, 0]}
               maxBarSize={44}
               background={{ fill: 'rgba(214,219,237,0.4)', fillOpacity: 0.8, radius: 1.5 }}
+              isAnimationActive={false}
             />
           </BarChart>
         </ResponsiveContainer>

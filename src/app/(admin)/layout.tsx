@@ -9,11 +9,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F2]">
+    <div className="h-screen overflow-hidden bg-[#F2F2F2]">
       <Sidebar collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} />
       <div
         className={cn(
-          'flex flex-col gap-4 px-3 pb-8 pt-16 transition-[margin-left] duration-300 sm:px-4 xl:pt-4',
+          'flex h-full flex-col gap-4 overflow-y-auto px-3 pb-8 pt-16 transition-[margin-left] duration-300 sm:px-4 xl:pt-4',
           collapsed ? 'xl:ml-[108px]' : 'xl:ml-[252px]',
         )}
       >
