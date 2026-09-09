@@ -45,9 +45,9 @@ export function EditBranchModal({
           <div className="h-12 w-12" />
         </div>
 
-        <div className="px-5 pt-8 pb-5">
-          <section className="relative h-96 w-full overflow-hidden rounded-xl bg-white outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
-            <div className="absolute left-[19px] top-[25px] flex w-[522px] flex-col gap-3.5">
+        <div className="flex-1 overflow-y-auto px-5 pt-8 pb-5">
+          <section className="w-full rounded-xl bg-white px-[19px] py-[19px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
+            <div className="flex flex-col gap-3.5">
               <div className="flex flex-col gap-2">
                 <span className="text-base font-medium leading-5 text-[#686868]">Branch Name</span>
                 <div className="flex h-14 items-center rounded-[87px] bg-[#F2F2F2] px-4">
@@ -60,13 +60,13 @@ export function EditBranchModal({
                   <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">Full branch address...</span>
                 </div>
               </div>
-              <div className="flex h-20 flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <span className="text-base font-medium leading-5 text-[#686868]">Email</span>
                 <div className="flex h-14 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">Enter your Email</span>
                 </div>
               </div>
-              <div className="flex h-20 flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <span className="text-base font-medium leading-5 text-[#686868]">Contact Phone</span>
                 <div className="flex h-14 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">(555) 000000</span>

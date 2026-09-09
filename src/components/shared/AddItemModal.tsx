@@ -130,9 +130,7 @@ export function AddItemModal({
             <ArrowLeft size={22} />
           </button>
           <h2 className="text-[32px] font-medium leading-10 text-black">Add New Item</h2>
-          <button onClick={onClose} aria-label="Close" className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]">
-            <X size={22} />
-          </button>
+          <div className="h-12 w-12" />
         </div>
 
         <div className="space-y-5 overflow-y-auto px-5 pb-5 pt-8">

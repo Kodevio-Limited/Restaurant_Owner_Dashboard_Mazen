@@ -35,8 +35,8 @@ export function RemoveStaffModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed left-1/2 top-1/2 z-50 flex w-[90vw] max-w-[420px] -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-2xl bg-[#F2F2F2] p-10 shadow-[0_0_20px_rgba(0,0,0,0.15)] transition-all duration-300',
+          open ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -44,14 +44,14 @@ export function RemoveStaffModal({
           <TriangleAlert size={80} className="text-[#EAB308]" strokeWidth={1} />
         </div>
 
-        <div className="mt-6 flex w-full max-w-[420px] flex-col items-center gap-3 px-5">
+        <div className="mt-6 flex w-full flex-col items-center gap-3">
           <h3 className="text-center text-[26px] font-semibold leading-8 text-black">Remove Staff Member</h3>
           <p className="text-center text-base leading-6 text-[#686868]">
             Are you sure you want to remove {memberName}? This action cannot be undone.
           </p>
         </div>
 
-        <div className="mt-6 flex w-full max-w-[420px] items-center justify-between gap-4 px-5">
+        <div className="mt-6 flex w-full items-center justify-between gap-4">
           <button
             onClick={onCancel}
             className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
