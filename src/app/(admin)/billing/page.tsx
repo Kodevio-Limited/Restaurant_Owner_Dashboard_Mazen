@@ -127,9 +127,7 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
       <button
         className={cn(
           'mb-4 w-full rounded-[9px] py-2.5 text-[13px] font-semibold transition-colors',
-          plan.buttonVariant === 'outline'
-            ? 'border border-[#2D2F33] bg-white text-[#2D2F33] hover:bg-[#F2F2F2]'
-            : plan.buttonVariant === 'dark'
+          plan.buttonVariant === 'dark'
             ? 'bg-[#2D2F33] text-white opacity-80 cursor-default'
             : 'bg-[#026F4F] text-white hover:bg-[#015c42]',
         )}
