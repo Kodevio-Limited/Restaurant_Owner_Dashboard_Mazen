@@ -59,10 +59,17 @@ export default function StaffPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<StaffMember | null>(null);
   const [removing, setRemoving] = useState<StaffMember | null>(null);
+  const [staff, setStaff] = useState<StaffMember[]>(STAFF);
 
   const filtered = filter === 'All'
-    ? STAFF
-    : STAFF.filter((s) => s.role === filter);
+    ? staff
+    : staff.filter((s) => s.role === filter);
+
+  const toggleActive = (id: string) => {
+    setStaff((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s))
+    );
+  };
 
   return (
     <main className="flex flex-col gap-5">
@@ -113,6 +120,7 @@ export default function StaffPage() {
             member={member}
             onEdit={() => { setEditing(member); setShowAdd(true); }}
             onRemove={() => setRemoving(member)}
+            onToggleActive={() => toggleActive(member.id)}
           />
         ))}
       </div>

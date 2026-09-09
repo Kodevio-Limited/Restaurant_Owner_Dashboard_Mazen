@@ -28,9 +28,10 @@ interface StaffCardProps {
   member: StaffMember;
   onEdit: () => void;
   onRemove: () => void;
+  onToggleActive: () => void;
 }
 
-export function StaffCard({ member, onEdit, onRemove }: StaffCardProps) {
+export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCardProps) {
   const roleColor = ROLE_STYLES[member.role];
   const lastNote = member.notes[member.notes.length - 1];
 
@@ -107,7 +108,7 @@ export function StaffCard({ member, onEdit, onRemove }: StaffCardProps) {
           Edit
         </button>
         <button
-          onClick={onRemove}
+          onClick={onToggleActive}
           className={`flex h-9 flex-1 items-center justify-center rounded-[30px] font-satoshi text-[12.5px] font-medium shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors ${
             member.active
               ? 'bg-[#E85E5E] text-white hover:bg-[#d94a4a]'
