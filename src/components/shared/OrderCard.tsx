@@ -32,19 +32,20 @@ export interface Order {
 }
 
 export type FlowStep = 'new' | 'accepted' | 'ready' | 'complete';
+export type OrderFlowStep = 'new' | 'accepted' | 'ready' | 'served';
 
 interface OrderCardProps {
   order: Order;
-  onOpenModal?: (order: Order, action: string, onConfirm?: (nextStep: FlowStep) => void) => void;
+  onOpen?: (order: Order) => void;
 }
 
-export function OrderCard({ order, onOpenModal }: OrderCardProps) {
+export function OrderCard({ order, onOpen }: OrderCardProps) {
   const paid = order.status === 'paid';
-  const [step, setStep] = useState<FlowStep>('new');
+  const [step, setStep] = useState<OrderFlowStep>('new');
 
   const handleAccept = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onOpenModal?.(order, 'mark_ready', (next) => setStep(next));
+    setStep('accepted');
   };
 
   const handleCancel = (e: React.MouseEvent) => {
@@ -54,16 +55,19 @@ export function OrderCard({ order, onOpenModal }: OrderCardProps) {
 
   const handleMarkReady = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onOpenModal?.(order, 'mark_ready', (next) => setStep(next));
+    setStep('ready');
   };
 
-  const handleComplete = (e: React.MouseEvent) => {
+  const handleServe = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onOpenModal?.(order, 'complete', (next) => setStep(next));
+    setStep('served');
   };
 
   return (
-    <div className="flex w-full flex-col justify-between gap-4 rounded-2xl bg-white p-4">
+    <div
+      onClick={() => onOpen?.(order)}
+      className="flex w-full cursor-pointer flex-col justify-between gap-4 rounded-2xl bg-white p-4 transition-shadow hover:shadow-md"
+    >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
@@ -171,17 +175,21 @@ export function OrderCard({ order, onOpenModal }: OrderCardProps) {
 
           {step === 'ready' && (
             <button
-              onClick={handleComplete}
+              onClick={handleServe}
               className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#16A34A] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#128a3e]"
             >
-              Complete
+              Serve
             </button>
           )}
 
-          {step === 'complete' && (
-            <span className="flex h-9 items-center justify-center rounded-[62px] bg-[#9CA3AF] px-4 text-[12.5px] font-medium text-white">
-              Completed
-            </span>
+          {step === 'served' && (
+            <button
+              disabled
+              aria-disabled="true"
+              className="flex h-9 cursor-not-allowed items-center justify-center rounded-[62px] bg-[#9CA3AF] px-4 text-[12.5px] font-medium text-white"
+            >
+              Served
+            </button>
           )}
         </div>
       </div>

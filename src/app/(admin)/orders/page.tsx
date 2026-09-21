@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { OrderCard, Order, OrderState, FlowStep } from '@/components/shared/OrderCard';
+import { OrderCard, Order, OrderState } from '@/components/shared/OrderCard';
 import { OrderDetailsModal } from '@/components/shared/OrderDetailsDrawer';
 import { cn } from '@/lib/utils';
 
@@ -143,17 +143,9 @@ const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boo
 export default function OrdersPage() {
   const [active, setActive] = useState<(typeof FILTERS)[number]['id']>('in_progress');
   const [selected, setSelected] = useState<Order | null>(null);
-  const [modalAction, setModalAction] = useState<string>('');
-  const [modalConfirm, setModalConfirm] = useState<((next: FlowStep) => void) | undefined>(undefined);
 
   const activeFilter = FILTERS.find((f) => f.id === active)!;
   const filtered = ORDERS.filter((o) => activeFilter.match(o));
-
-  const handleOpenModal = (order: Order, action: string, onConfirm?: (next: FlowStep) => void) => {
-    setSelected(order);
-    setModalAction(action);
-    setModalConfirm(() => onConfirm);
-  };
 
   return (
     <main className="flex flex-col gap-5">
@@ -213,7 +205,7 @@ export default function OrdersPage() {
               key={order.id}
               className="w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5"
             >
-              <OrderCard order={order} onOpenModal={handleOpenModal} />
+              <OrderCard order={order} onOpen={setSelected} />
             </div>
           ))}
         </div>
@@ -226,9 +218,7 @@ export default function OrdersPage() {
       <OrderDetailsModal
         open={!!selected}
         order={selected}
-        action={modalAction}
-        onConfirm={modalConfirm}
-        onClose={() => { setSelected(null); setModalAction(''); setModalConfirm(undefined); }}
+        onClose={() => setSelected(null)}
       />
     </main>
   );
