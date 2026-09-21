@@ -90,9 +90,11 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
 
 function SaveButton() {
   return (
-    <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
-      Save Changes
-    </button>
+    <div className="sticky bottom-0 z-20 -mb-1 bg-[#F2F2F2] pb-1 pt-3">
+      <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
+        Save Changes
+      </button>
+    </div>
   );
 }
 
@@ -553,7 +555,7 @@ export default function SettingsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <main className="flex min-h-screen flex-col gap-0 rounded-2xl bg-[#F2F2F2] lg:flex-row">
+    <main className="flex flex-col gap-0 rounded-2xl bg-[#F2F2F2] lg:flex-row">
 
       {/* ── Mobile/Tablet: horizontal tab bar ── */}
       <div className="sticky top-0 z-10 lg:hidden">
@@ -631,10 +633,10 @@ export default function SettingsPage() {
       </aside>
 
       {/* ── Content area ── */}
-      <div className="flex-1 overflow-y-auto p-4 lg:py-5 lg:pr-5 lg:pl-0">
+      <div className="flex-1 p-4 lg:py-5 lg:pr-5 lg:pl-0">
         {/* Page title */}
         {active && (
-          <div className="mb-5 flex items-center gap-2.5">
+          <div className="mb-5 flex items-center gap-2.5 bg-[#F2F2F2] lg:sticky lg:top-0 lg:z-20 lg:py-3">
             {(() => {
               const tab = TABS.find(t => t.id === active)!;
               const Icon = tab.icon;
