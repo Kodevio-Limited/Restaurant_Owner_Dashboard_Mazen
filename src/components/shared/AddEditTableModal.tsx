@@ -184,7 +184,7 @@ export function AddEditTableModal({
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-[#E2E2E2] px-4 py-3 sm:px-5 sm:py-3.5">
+        <div className="shrink-0 border-t border-[#E2E2E2] px-4 pt-3 pb-2.5 sm:px-5 sm:pt-3.5 sm:pb-3">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={() => { editMode ? onMarkReserved?.() : onClose(); }}
