@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -103,6 +104,14 @@ export function RevenueOverTime() {
               payload={selectedIndex !== null ? [{ value: data[selectedIndex].revenue, name: 'Revenue' }] : undefined}
               label={selectedIndex !== null ? data[selectedIndex].month : undefined}
             />
+            {selectedIndex !== null && (
+              <ReferenceLine
+                x={data[selectedIndex].month}
+                stroke="#026F4F"
+                strokeWidth={1.5}
+                strokeDasharray="4 4"
+              />
+            )}
             <Area
               type="monotone"
               dataKey="revenue"
