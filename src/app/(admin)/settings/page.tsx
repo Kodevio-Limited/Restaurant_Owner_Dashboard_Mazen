@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  ChevronRight, MapPin, Phone, Mail, Globe, Camera,
+  ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
   Percent, FileText, Plus, User,
 } from 'lucide-react';
@@ -49,18 +49,56 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 function TextInput({ value, placeholder }: { value?: string; placeholder?: string }) {
+  const [val, setVal] = useState(value ?? '');
   return (
-    <div className="flex h-14 items-center rounded-[87px] bg-[#F2F2F2] px-5">
-      <span className="text-base font-medium text-[#989898]">{value ?? placeholder}</span>
-    </div>
+    <input
+      type="text"
+      value={val}
+      placeholder={placeholder}
+      onChange={(e) => setVal(e.target.value)}
+      className="h-14 w-full rounded-[87px] bg-[#F2F2F2] px-5 text-base font-medium text-[#2D2F33] outline-none transition-shadow placeholder:text-[#989898] focus:ring-2 focus:ring-[#026F4F]/30"
+    />
   );
 }
 
-function SelectInput({ value }: { value: string }) {
+function SelectInput({ value, options = [] }: { value: string; options?: string[] }) {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(value);
+
   return (
-    <div className="flex h-14 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-5">
-      <span className="text-base font-medium text-[#989898]">{value}</span>
-      <ChevronRight size={16} className="text-[#989898] rotate-90" />
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex h-14 w-full items-center justify-between rounded-[87px] bg-[#F2F2F2] px-5 text-left transition-colors hover:bg-[#EAEAEA]"
+      >
+        <span className="truncate text-base font-medium text-[#2D2F33]">{selected}</span>
+        <ChevronDown
+          size={16}
+          className={cn('shrink-0 text-[#989898] transition-transform', open && 'rotate-180')}
+        />
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-60 overflow-y-auto rounded-2xl bg-white py-1 shadow-lg outline outline-1 outline-[#E9E9E9]">
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => { setSelected(option); setOpen(false); }}
+                className={cn(
+                  'block w-full truncate px-5 py-2.5 text-left text-sm transition-colors hover:bg-[#F2F2F2] sm:text-base',
+                  selected === option ? 'font-medium text-[#026F4F]' : 'text-[#2D2F33]',
+                )}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -103,6 +141,9 @@ function SaveButton() {
 function GeneralBrandTab() {
   const [expandMenu, setExpandMenu] = useState(true);
   const [requireCustomer, setRequireCustomer] = useState(true);
+  const [brandColor, setBrandColor] = useState('#026F4F');
+  const [logoName, setLogoName] = useState<string | null>(null);
+  const [address, setAddress] = useState('');
 
   return (
     <div className="flex flex-col gap-6">
@@ -122,11 +163,11 @@ function GeneralBrandTab() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <FieldLabel>Currency</FieldLabel>
-            <SelectInput value="EGP" />
+            <SelectInput value="EGP" options={['EGP', 'USD', 'EUR', 'GBP', 'SAR', 'AED']} />
           </div>
           <div className="flex flex-col gap-2">
             <FieldLabel>TimeZone</FieldLabel>
-            <SelectInput value="Eastern Time (ET)" />
+            <SelectInput value="Eastern Time (ET)" options={['Eastern Time (ET)', 'Central Time (CT)', 'Mountain Time (MT)', 'Pacific Time (PT)', 'UTC']} />
           </div>
         </div>
       </SectionCard>
@@ -135,11 +176,19 @@ function GeneralBrandTab() {
       <SectionCard title="Branding & Appearance">
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
           {/* Logo upload */}
-          <div className="flex h-44 w-72 shrink-0 flex-col items-center justify-center gap-2 rounded-lg border border-[#B9B9B9] bg-[#F2F2F2]">
+          <label className="flex h-44 w-72 shrink-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-[#B9B9B9] bg-[#F2F2F2] transition-colors hover:border-[#026F4F]">
+            <input
+              type="file"
+              accept="image/png,image/jpeg"
+              className="sr-only"
+              onChange={(e) => setLogoName(e.target.files?.[0]?.name ?? null)}
+            />
             <Camera size={44} className="text-[#686868]" />
-            <span className="text-base font-medium text-[#2D2F33]">Upload Logo</span>
+            <span className="max-w-[90%] truncate text-base font-medium text-[#2D2F33]">
+              {logoName ?? 'Upload Logo'}
+            </span>
             <span className="text-xs text-[#989898]">PNG, JPG up to 2MB</span>
-          </div>
+          </label>
 
           {/* Two columns: Color + Language */}
           <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:gap-8">
@@ -149,15 +198,32 @@ function GeneralBrandTab() {
                 This color will be applied to buttons, links, and customer-facing menus.
               </span>
               <div className="mt-2 flex items-center gap-3">
-                <div className="h-11 w-11 rounded-md bg-[#026F4F]" />
+                <label
+                  className="relative h-11 w-11 shrink-0 cursor-pointer overflow-hidden rounded-md"
+                  style={{ backgroundColor: brandColor }}
+                >
+                  <input
+                    type="color"
+                    value={brandColor}
+                    onChange={(e) => setBrandColor(e.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    aria-label="Primary brand color"
+                  />
+                </label>
                 <div className="flex h-9 w-36 items-center rounded border border-[#B9B9B9] px-3">
-                  <span className="text-xs text-black"># 026f4f</span>
+                  <input
+                    type="text"
+                    value={brandColor}
+                    onChange={(e) => setBrandColor(e.target.value)}
+                    className="w-full bg-transparent text-xs text-black outline-none"
+                    aria-label="Primary brand color hex"
+                  />
                 </div>
               </div>
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <FieldLabel>Language</FieldLabel>
-              <SelectInput value="English" />
+              <SelectInput value="English" options={['English', 'Arabic', 'Spanish', 'French']} />
             </div>
           </div>
         </div>
@@ -175,9 +241,15 @@ function GeneralBrandTab() {
 
         {/* Search bar + button */}
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="flex flex-1 h-14 items-center gap-2 rounded-full bg-[#F2F2F2] px-5">
-            <Search size={20} className="text-[#989898]" />
-            <span className="text-base text-[#989898]">Search for your branch address...</span>
+          <div className="flex h-14 flex-1 items-center gap-2 rounded-full bg-[#F2F2F2] px-5">
+            <Search size={20} className="shrink-0 text-[#989898]" />
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Search for your branch address..."
+              className="h-full w-full bg-transparent text-base text-[#2D2F33] outline-none placeholder:text-[#989898]"
+            />
           </div>
           <button className="flex h-14 shrink-0 items-center justify-center gap-2 rounded-full bg-[#026F4F] px-6 text-white shadow-md hover:bg-[#015c42] sm:w-60">
             <Crosshair size={20} />
@@ -208,7 +280,7 @@ function GeneralBrandTab() {
           </div>
           <div className="flex flex-col gap-2">
             <FieldLabel>Allowed Radius</FieldLabel>
-            <SelectInput value="50 Meters" />
+            <SelectInput value="50 Meters" options={['25 Meters', '50 Meters', '100 Meters', '200 Meters']} />
           </div>
         </div>
       </SectionCard>
@@ -317,13 +389,13 @@ function PaymentConfigTab() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <span className="text-lg font-medium text-[#2D2F33]">Default Payment Method</span>
               <div className="w-full sm:w-52">
-                <SelectInput value="Card (terminal)" />
+                <SelectInput value="Card (terminal)" options={['Card (terminal)', 'Cash', 'Online Payment']} />
               </div>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <span className="text-lg font-medium text-[#2D2F33]">When Is Payment Required</span>
               <div className="w-full sm:w-52">
-                <SelectInput value="After Order" />
+                <SelectInput value="After Order" options={['Before Order', 'After Order']} />
               </div>
             </div>
           </div>
@@ -356,7 +428,7 @@ function TaxesChargesTab() {
           </div>
           <div className="flex flex-col gap-2">
             <FieldLabel>Tax Calculation Method</FieldLabel>
-            <SelectInput value="Inclusive (VAT included in prices)" />
+            <SelectInput value="Inclusive (VAT included in prices)" options={['Inclusive (VAT included in prices)', 'Exclusive (VAT added to prices)']} />
           </div>
         </div>
 
@@ -372,7 +444,7 @@ function TaxesChargesTab() {
         <div className="w-1/2">
           <div className="flex flex-col gap-2">
             <FieldLabel>Service Percentage (%)</FieldLabel>
-            <SelectInput value="12%" />
+            <SelectInput value="12%" options={['5%', '10%', '12%', '15%']} />
           </div>
         </div>
       </SectionCard>
