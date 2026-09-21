@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, type WheelEvent as ReactWheelEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -37,54 +37,42 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export function RevenueOverTime() {
-  const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const handleClick = useCallback((state: any) => {
-    if (state && state.activeTooltipIndex !== undefined) {
-      const idx = state.activeTooltipIndex;
-      setPinnedIndex((prev) => (prev === idx ? null : idx));
-    }
+    const idx = state?.activeTooltipIndex;
+    if (idx === undefined || idx === null) return;
+    setSelectedIndex((prev) => (prev === idx ? null : idx));
   }, []);
 
-  const handleMouseMove = useCallback((state: any) => {
-    if (state && state.activeTooltipIndex !== undefined) {
-      setHoveredIndex(state.activeTooltipIndex);
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setHoveredIndex(null);
-  }, []);
-
-  const handleWheel = useCallback(
-    (e: ReactWheelEvent) => {
-      // Prevent the page from scrolling while the indicator is being moved.
+  useEffect(() => {
+    const el = chartRef.current;
+    if (!el) return;
+    const handleWheel = (e: WheelEvent) => {
+      // Keep the page fixed in place; wheel only moves the pointer.
       e.preventDefault();
       // Scroll up (negative) => move right, scroll down (positive) => move left.
-      const delta = Math.sign(e.deltaY);
-      setPinnedIndex((prev) => {
-        const base = prev ?? hoveredIndex ?? 0;
-        const next = base - delta;
+      const direction = Math.sign(e.deltaY);
+      setSelectedIndex((prev) => {
+        const base = prev ?? 0;
+        const next = base - direction;
         return Math.max(0, Math.min(data.length - 1, next));
       });
-    },
-    [hoveredIndex],
-  );
-
-  const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
+    };
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
-      <div className="mt-3 min-h-0 flex-1" onWheel={handleWheel}>
+      <div ref={chartRef} className="mt-3 min-h-0 flex-1 cursor-pointer">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
             margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
             onClick={handleClick}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
           >
             <defs>
               <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
@@ -111,9 +99,9 @@ export function RevenueOverTime() {
             />
             <Tooltip
               content={<CustomTooltip />}
-              active={displayIndex !== null}
-              payload={displayIndex !== null ? [{ value: data[displayIndex].revenue, name: 'Revenue' }] : undefined}
-              label={displayIndex !== null ? data[displayIndex].month : undefined}
+              active={selectedIndex !== null}
+              payload={selectedIndex !== null ? [{ value: data[selectedIndex].revenue, name: 'Revenue' }] : undefined}
+              label={selectedIndex !== null ? data[selectedIndex].month : undefined}
             />
             <Area
               type="monotone"
@@ -121,9 +109,13 @@ export function RevenueOverTime() {
               stroke="#026F4F"
               strokeWidth={2.5}
               fill="url(#revGrad)"
-              dot={false}
-              activeDot={{ r: 5, fill: '#026F4F' }}
               isAnimationActive={false}
+              activeDot={false}
+              dot={(props: any) => {
+                const { index, cx, cy } = props;
+                if (index !== selectedIndex) return <g key={`dot-${index}`} />;
+                return <circle key={`dot-${index}`} cx={cx} cy={cy} r={5} fill="#026F4F" />;
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
