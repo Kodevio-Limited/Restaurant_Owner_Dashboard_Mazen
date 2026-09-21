@@ -23,26 +23,14 @@ const data = [
 
 export function TipsCollection() {
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const handleClick = useCallback((state: any) => {
-    if (state && state.activeTooltipIndex !== undefined) {
-      const idx = state.activeTooltipIndex;
-      setPinnedIndex((prev) => (prev === idx ? null : idx));
-    }
+    const idx = state?.activeTooltipIndex;
+    if (idx === undefined || idx === null) return;
+    setPinnedIndex((prev) => (prev === idx ? null : idx));
   }, []);
 
-  const handleMouseMove = useCallback((state: any) => {
-    if (state && state.activeTooltipIndex !== undefined) {
-      setHoveredIndex(state.activeTooltipIndex);
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setHoveredIndex(null);
-  }, []);
-
-  const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
+  const displayIndex = pinnedIndex;
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
@@ -54,8 +42,6 @@ export function TipsCollection() {
             margin={{ top: 4, right: 0, left: 4, bottom: 0 }}
             barCategoryGap="30%"
             onClick={handleClick}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
           >
             <defs>
               <linearGradient id="tipGrad" x1="0" y1="0" x2="0" y2="1">
