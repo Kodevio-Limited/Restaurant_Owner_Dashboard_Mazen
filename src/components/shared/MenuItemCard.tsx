@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Pencil, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface MenuItem {
   id: string;
@@ -16,7 +17,12 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
       {/* Image */}
       <div className="relative mx-3 mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-[#F2F2F2]">
         <Image src="/images/food-41e5d7.png" alt={item.name} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 33vw, 50vw" className="object-cover" />
-        <span className="absolute left-2 top-2 inline-flex items-center gap-3 rounded-md bg-[#026F4F] px-2 py-1 text-[10.5px] font-medium leading-4 text-white">
+        <span
+          className={cn(
+            'absolute left-2 top-2 inline-flex items-center gap-3 rounded-md px-2 py-1 text-[10.5px] font-medium leading-4 text-white',
+            item.available ? 'bg-[#026F4F]' : 'bg-[#E85E5E]',
+          )}
+        >
           {item.available ? 'AVAILABLE' : 'UNAVAILABLE'}
         </span>
       </div>
