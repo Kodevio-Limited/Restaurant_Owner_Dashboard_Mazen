@@ -14,7 +14,7 @@ export interface OrderItem {
   qty: number;
 }
 
-export type OrderState = 'pending' | 'in_progress' | 'ready' | 'completed' | 'canceled' | 'refunded';
+export type OrderState = 'pending' | 'preparing' | 'in_progress' | 'ready' | 'completed' | 'canceled' | 'refunded';
 
 export interface Order {
   id: string;

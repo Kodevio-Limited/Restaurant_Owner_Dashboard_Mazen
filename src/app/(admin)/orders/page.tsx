@@ -53,6 +53,21 @@ const ORDERS: Order[] = [
     ],
   },
   {
+    id: '7',
+    customer: 'Kristin Watson',
+    orderNo: '#045',
+    status: 'unpaid',
+    state: 'preparing',
+    time: '7 Apr, 11:45 AM',
+    table: 'Table 09',
+    extraItems: 1,
+    total: '$32.40',
+    items: [
+      { id: 'm', name: 'Shoyu Ramen', note: 'Extra Spicy', price: '$15.99', qty: 1 },
+      { id: 'n', name: 'Gyoza', note: '', price: '$6.50', qty: 2 },
+    ],
+  },
+  {
     id: '3',
     customer: 'Guy Hawkins',
     orderNo: '#042',
@@ -117,6 +132,7 @@ const ORDERS: Order[] = [
 const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boolean }[] = [
   { id: 'all', label: 'All', match: () => true },
   { id: 'pending', label: 'Pending', match: (o) => o.state === 'pending' },
+  { id: 'preparing', label: 'Preparing', match: (o) => o.state === 'preparing' },
   { id: 'in_progress', label: 'In Progress', match: (o) => o.state === 'in_progress' },
   { id: 'ready', label: 'Ready', match: (o) => o.state === 'ready' },
   { id: 'completed', label: 'Completed', match: (o) => o.state === 'completed' },
