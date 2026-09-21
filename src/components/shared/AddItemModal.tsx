@@ -313,7 +313,7 @@ export function AddItemModal({
             <div className="px-[19px] pt-[19px]">
               <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Product Image</h3>
             </div>
-            <label className="mx-[19px] mb-5 mt-4 flex h-44 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl px-4 text-center outline outline-2 outline-offset-[-2px] outline-[#989898] transition-colors hover:outline-[#026F4F]">
+            <label className="mx-[19px] mb-5 mt-4 flex h-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl p-6 text-center outline outline-2 outline-offset-[-2px] outline-[#989898] transition-colors hover:outline-[#026F4F]">
               <input
                 type="file"
                 accept="image/png,image/jpeg"
@@ -321,7 +321,7 @@ export function AddItemModal({
                 onChange={(e) => setImageName(e.target.files?.[0]?.name ?? null)}
               />
               <Upload size={40} className="text-[#989898]" />
-              <span className="text-lg font-semibold leading-7 text-[#026F4F]">
+              <span className="block max-w-full text-lg font-semibold leading-7 text-[#026F4F]">
                 {imageName ?? 'Upload Photo'}
                 {!imageName && (
                   <span className="text-base font-medium leading-6 text-[#989898]"> or drag and drop</span>
