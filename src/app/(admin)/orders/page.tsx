@@ -133,7 +133,6 @@ const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boo
   { id: 'all', label: 'All', match: () => true },
   { id: 'pending', label: 'Pending', match: (o) => o.state === 'pending' },
   { id: 'preparing', label: 'Preparing', match: (o) => o.state === 'preparing' },
-  { id: 'in_progress', label: 'In Progress', match: (o) => o.state === 'in_progress' },
   { id: 'ready', label: 'Ready', match: (o) => o.state === 'ready' },
   { id: 'completed', label: 'Completed', match: (o) => o.state === 'completed' },
   { id: 'canceled', label: 'Canceled', match: (o) => o.state === 'canceled' },

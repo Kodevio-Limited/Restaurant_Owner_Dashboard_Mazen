@@ -309,11 +309,9 @@ export function AddItemModal({
         </div>
 
         <div className="space-y-5 overflow-y-auto px-5 pb-5 pt-8">
-          <section className="rounded-xl bg-white outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
-            <div className="px-[19px] pt-[19px]">
-              <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Product Image</h3>
-            </div>
-            <label className="mx-[19px] mb-5 mt-4 flex h-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl p-6 text-center outline outline-2 outline-offset-[-2px] outline-[#989898] transition-colors hover:outline-[#026F4F]">
+          <section className="rounded-xl bg-white p-[19px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
+            <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Product Image</h3>
+            <label className="mt-4 flex min-h-[176px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#989898] p-6 text-center transition-colors hover:border-[#026F4F]">
               <input
                 type="file"
                 accept="image/png,image/jpeg"
