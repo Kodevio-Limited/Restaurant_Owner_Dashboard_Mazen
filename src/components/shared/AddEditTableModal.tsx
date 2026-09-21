@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { ArrowLeft, Download, ChevronDown, QrCode } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Download, ChevronDown } from 'lucide-react';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
@@ -10,6 +10,8 @@ interface AddEditTableData {
   zone: string;
   capacity: number;
 }
+
+const CATEGORIES = ['Indoor', 'Outdoor', 'Patio'] as const;
 
 export function AddEditTableModal({
   open,
@@ -24,14 +26,40 @@ export function AddEditTableModal({
 }) {
   const editMode = !!table;
 
+  const [category, setCategory] = useState<string>(editMode ? table?.zone : 'Indoor');
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editMode && table) setCategory(table.zone);
+  }, [editMode, table]);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      setOpenDropdown(false);
     }
     return () => { document.body.style.overflow = ''; };
   }, [open]);
+
+  const handleDownload = () => {
+    const svg = qrRef.current?.querySelector('svg');
+    if (!svg) return;
+    const clone = svg.cloneNode(true) as SVGElement;
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const data = new XMLSerializer().serializeToString(clone);
+    const blob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `table-qr-${(editMode ? table?.name : 'new-table').toLowerCase().replace(/\s+/g, '-')}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -75,19 +103,19 @@ export function AddEditTableModal({
 
         {/* QR Code */}
         <div className="flex flex-col items-center gap-4 px-4 pt-4 sm:px-5 sm:pt-6">
-          <div className="flex h-[120px] w-[120px] items-center justify-center rounded-xl bg-white outline outline-1 outline-[#E9E9E9] sm:h-[154px] sm:w-[154px]">
+          <div
+            ref={qrRef}
+            className="flex h-[120px] w-[120px] items-center justify-center rounded-xl bg-white outline outline-1 outline-[#E9E9E9] sm:h-[154px] sm:w-[154px]"
+          >
             <QrCodePlaceholder size={110} />
           </div>
-          <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(242,211,255,0.54)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)] sm:text-base">
-              <Download size={20} />
-              Download
-            </button>
-            <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(53,140,114,0.12)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)] sm:text-base">
-              <QrCode size={20} />
-              Generate
-            </button>
-          </div>
+          <button
+            onClick={handleDownload}
+            className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(242,211,255,0.54)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)] sm:text-base"
+          >
+            <Download size={20} />
+            Download
+          </button>
         </div>
 
         {editMode && (
@@ -118,21 +146,45 @@ export function AddEditTableModal({
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5 sm:gap-2">
+              <div className="relative flex flex-col gap-1.5 sm:gap-2">
                 <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Category</span>
-                <div className="flex h-11 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">
-                    {editMode ? table.zone : 'Indoor'}
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown((v) => !v)}
+                  className="flex h-11 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 text-left sm:h-14"
+                >
+                  <span className={cn('font-satoshi text-sm font-medium leading-5 sm:text-base sm:leading-6', category ? 'text-[#2D2F33]' : 'text-[#989898]')}>
+                    {category || 'Select category'}
                   </span>
-                  <ChevronDown size={16} className="text-[#989898]" />
-                </div>
+                  <ChevronDown size={16} className={cn('text-[#989898] transition-transform', openDropdown && 'rotate-180')} />
+                </button>
+                {openDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setOpenDropdown(false)} />
+                    <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-2xl bg-white shadow-lg outline outline-1 outline-[#E9E9E9]">
+                      {CATEGORIES.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => { setCategory(c); setOpenDropdown(false); }}
+                          className={cn(
+                            'block w-full px-4 py-2.5 text-left font-satoshi text-sm leading-5 transition-colors hover:bg-[#F2F2F2] sm:text-base sm:leading-6',
+                            category === c ? 'text-[#026F4F]' : 'text-[#2D2F33]',
+                          )}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-[#E2E2E2] px-4 py-3 sm:px-5 sm:py-4">
+        <div className="shrink-0 border-t border-[#E2E2E2] px-4 py-3 sm:px-5 sm:py-3.5">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={() => { editMode ? onMarkReserved?.() : onClose(); }}

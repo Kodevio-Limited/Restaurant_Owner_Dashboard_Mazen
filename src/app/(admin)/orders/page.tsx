@@ -170,7 +170,7 @@ export default function OrdersPage() {
             >
               <span
                 className={cn(
-                  'whitespace-nowrap text-[13px] leading-[20px] sm:text-[15px]',
+                  'whitespace-nowrap text-[14px] leading-[23px] sm:text-[15px]',
                   isActive ? 'font-medium text-[#2D2F33]' : 'text-[#686868]',
                 )}
               >
