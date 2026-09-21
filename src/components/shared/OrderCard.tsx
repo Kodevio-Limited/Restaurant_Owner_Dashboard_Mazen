@@ -42,23 +42,19 @@ interface OrderCardProps {
 export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCardProps) {
   const paid = order.status === 'paid';
 
-  const handleAccept = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleAccept = () => {
     onStepChange?.('accepted');
   };
 
-  const handleCancel = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCancel = () => {
     onStepChange?.('new');
   };
 
-  const handleMarkReady = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleMarkReady = () => {
     onStepChange?.('ready');
   };
 
-  const handleServe = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleServe = () => {
     onStepChange?.('served');
   };
 
