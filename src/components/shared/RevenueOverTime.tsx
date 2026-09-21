@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type WheelEvent as ReactWheelEvent } from 'react';
 import {
   Area,
   AreaChart,
@@ -57,12 +57,19 @@ export function RevenueOverTime() {
     setHoveredIndex(null);
   }, []);
 
+  const handleWheel = useCallback((e: ReactWheelEvent) => {
+    // Keep the page fixed in place vertically while navigating the chart
+    // left/right, so vertical scrolling does not jump the page up/down.
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    e.preventDefault();
+  }, []);
+
   const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
-      <div className="mt-3 min-h-0 flex-1">
+      <div className="mt-3 min-h-0 flex-1" onWheel={handleWheel}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
