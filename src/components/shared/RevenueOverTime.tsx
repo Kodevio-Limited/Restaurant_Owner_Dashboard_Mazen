@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -27,18 +26,9 @@ const data = [
   { month: 'Dec', revenue: 27000 },
 ];
 
-function CustomTooltip({ active, payload, label }: any) {
-  if (!active || !payload || !payload.length) return null;
-  return (
-    <div className="rounded-[10px] border border-[#E9E9E9] bg-white p-3 shadow-md">
-      <p className="text-sm font-semibold text-[#2D2F33]">{label}</p>
-      <p className="text-sm text-[#026F4F]">${payload[0].value.toLocaleString()}</p>
-    </div>
-  );
-}
-
 export function RevenueOverTime() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [dotPos, setDotPos] = useState<{ x: number; y: number } | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleClick = useCallback((state: any) => {
@@ -65,10 +55,12 @@ export function RevenueOverTime() {
     return () => el.removeEventListener('wheel', handleWheel);
   }, []);
 
+  const selected = selectedIndex !== null ? data[selectedIndex] : null;
+
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
       <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
-      <div ref={chartRef} className="mt-3 min-h-0 flex-1 cursor-pointer">
+      <div ref={chartRef} className="relative mt-3 min-h-0 flex-1 cursor-pointer">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
@@ -98,15 +90,12 @@ export function RevenueOverTime() {
               tick={{ fontSize: 12, fill: 'rgba(0,0,0,0.4)', fontWeight: 500 }}
               width={44}
             />
-            <Tooltip
-              content={<CustomTooltip />}
-              active={selectedIndex !== null}
-              payload={selectedIndex !== null ? [{ value: data[selectedIndex].revenue, name: 'Revenue' }] : undefined}
-              label={selectedIndex !== null ? data[selectedIndex].month : undefined}
-            />
-            {selectedIndex !== null && (
+            {selectedIndex !== null && selected && (
               <ReferenceLine
-                x={data[selectedIndex].month}
+                segment={[
+                  { x: selected.month, y: 0 },
+                  { x: selected.month, y: selected.revenue },
+                ]}
                 stroke="#026F4F"
                 strokeWidth={1.5}
                 strokeDasharray="4 4"
@@ -123,11 +112,37 @@ export function RevenueOverTime() {
               dot={(props: any) => {
                 const { index, cx, cy } = props;
                 if (index !== selectedIndex) return <g key={`dot-${index}`} />;
-                return <circle key={`dot-${index}`} cx={cx} cy={cy} r={5} fill="#026F4F" />;
+                return (
+                  <circle
+                    key={`dot-${index}`}
+                    cx={cx}
+                    cy={cy}
+                    r={5}
+                    fill="#026F4F"
+                    ref={(node) => {
+                      if (!node) return;
+                      setDotPos((prev) =>
+                        prev && prev.x === cx && prev.y === cy ? prev : { x: cx, y: cy },
+                      );
+                    }}
+                  />
+                );
               }}
             />
           </AreaChart>
         </ResponsiveContainer>
+
+        {selected && dotPos && (
+          <div
+            className="pointer-events-none absolute z-10"
+            style={{ left: dotPos.x, top: dotPos.y, transform: 'translate(-50%, calc(-100% - 12px))' }}
+          >
+            <div className="rounded-[10px] border border-[#E9E9E9] bg-white p-3 shadow-md">
+              <p className="text-sm font-semibold text-[#2D2F33]">{selected.month}</p>
+              <p className="text-sm text-[#026F4F]">${selected.revenue.toLocaleString()}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
