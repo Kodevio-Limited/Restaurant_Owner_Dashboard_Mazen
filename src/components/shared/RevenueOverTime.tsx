@@ -57,12 +57,20 @@ export function RevenueOverTime() {
     setHoveredIndex(null);
   }, []);
 
-  const handleWheel = useCallback((e: ReactWheelEvent) => {
-    // Keep the page fixed in place vertically while navigating the chart
-    // left/right, so vertical scrolling does not jump the page up/down.
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    e.preventDefault();
-  }, []);
+  const handleWheel = useCallback(
+    (e: ReactWheelEvent) => {
+      // Prevent the page from scrolling while the indicator is being moved.
+      e.preventDefault();
+      // Scroll up (negative) => move right, scroll down (positive) => move left.
+      const delta = Math.sign(e.deltaY);
+      setPinnedIndex((prev) => {
+        const base = prev ?? hoveredIndex ?? 0;
+        const next = base - delta;
+        return Math.max(0, Math.min(data.length - 1, next));
+      });
+    },
+    [hoveredIndex],
+  );
 
   const displayIndex = pinnedIndex !== null ? pinnedIndex : hoveredIndex;
 
