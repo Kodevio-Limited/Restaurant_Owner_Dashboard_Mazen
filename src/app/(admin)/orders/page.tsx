@@ -116,7 +116,6 @@ const ORDERS: Order[] = [
 
 const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boolean }[] = [
   { id: 'all', label: 'All', match: () => true },
-  { id: 'active', label: 'Active', match: (o) => o.state === 'active' },
   { id: 'in_progress', label: 'In Progress', match: (o) => o.state === 'in_progress' },
   { id: 'paid', label: 'Paid', match: (o) => o.state === 'paid' },
   { id: 'unpaid', label: 'Unpaid', match: (o) => o.state === 'unpaid' },
