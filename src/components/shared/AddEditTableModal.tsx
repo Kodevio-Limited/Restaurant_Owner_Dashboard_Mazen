@@ -125,7 +125,7 @@ export function AddEditTableModal({
         )}
 
         {/* Form */}
-        <div className={cn('px-4 sm:px-5', editMode ? 'pt-4 sm:pt-5' : 'pt-8 sm:pt-12')}>
+        <div className={cn('px-4 pb-5 sm:px-5 sm:pb-6', editMode ? 'pt-4 sm:pt-5' : 'pt-8 sm:pt-12')}>
           <div className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[21px]">
             <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">Table Info</h3>
 
@@ -184,7 +184,7 @@ export function AddEditTableModal({
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-[#E2E2E2] px-4 pt-3 pb-2.5 sm:px-5 sm:pt-3.5 sm:pb-3">
+        <div className="mt-auto shrink-0 border-t border-[#E2E2E2] px-4 pt-3 pb-2.5 sm:px-5 sm:pt-3.5 sm:pb-3">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={() => { editMode ? onMarkReserved?.() : onClose(); }}
