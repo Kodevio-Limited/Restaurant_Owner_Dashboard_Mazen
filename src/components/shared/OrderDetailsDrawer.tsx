@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
-import { Order, FlowStep } from '@/components/shared/OrderCard';
+import { Order, OrderFlowStep } from '@/components/shared/OrderCard';
 import { cn } from '@/lib/utils';
 
 const STEPS = [
@@ -13,7 +13,12 @@ const STEPS = [
   { key: 'served', label: 'Served', icon: BadgeCheck },
 ];
 
-const ACTIVE_STEPS = ['placed', 'preparing'];
+const STEP_PROGRESS: Record<OrderFlowStep, number> = {
+  new: 1,
+  accepted: 2,
+  ready: 3,
+  served: 4,
+};
 
 function parsePrice(p: string): number {
   return parseFloat(p.replace(/[$,\s]/g, ''));
@@ -22,14 +27,14 @@ function parsePrice(p: string): number {
 export function OrderDetailsModal({
   open,
   order,
-  action,
-  onConfirm,
+  step = 'new',
+  onStepChange,
   onClose,
 }: {
   open: boolean;
   order: Order | null;
-  action?: string;
-  onConfirm?: (nextStep: FlowStep) => void;
+  step?: OrderFlowStep;
+  onStepChange?: (step: OrderFlowStep) => void;
   onClose: () => void;
 }) {
   useEffect(() => {
@@ -49,15 +54,7 @@ export function OrderDetailsModal({
   const total = subtotal + service;
   const money = (n: number) => `$${n.toFixed(2)}`;
 
-  const handleConfirm = (nextStep: FlowStep) => {
-    onConfirm?.(nextStep);
-    onClose();
-  };
-
-  const handleCancel = () => {
-    onConfirm?.(action === 'complete' ? 'ready' : 'new');
-    onClose();
-  };
+  const progress = STEP_PROGRESS[step];
 
   return (
     <>
@@ -109,22 +106,22 @@ export function OrderDetailsModal({
           <section className="rounded-[10px] bg-white px-5 pb-4 pt-2.5">
             <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">Status</h3>
             <div className="relative mt-7 flex justify-between px-2">
-              {STEPS.map((step, i) => {
-                const Icon = step.icon;
-                const active = ACTIVE_STEPS.includes(step.key);
+              {STEPS.map((stage, i) => {
+                const Icon = stage.icon;
+                const active = i < progress;
                 return (
-                  <div key={step.key} className="flex flex-col items-center">
+                  <div key={stage.key} className="flex flex-col items-center">
                     <span
                       className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white"
                       style={{
                         border: `1px ${active ? '#358C72' : '#B9B9B9'} solid`,
-                        boxShadow: i < 2 ? '0 0 0 3px rgba(53,140,114,0.15)' : undefined,
+                        boxShadow: active ? '0 0 0 3px rgba(53,140,114,0.15)' : undefined,
                       }}
                     >
                       <Icon size={20} className={active ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
                     </span>
                     <span className={cn('mt-1.5 text-[12px] leading-[16.8px]', active ? 'text-[#026F4F]' : 'text-[#B9B9B9]')}>
-                      {step.label}
+                      {stage.label}
                     </span>
                   </div>
                 );
@@ -196,44 +193,37 @@ export function OrderDetailsModal({
 
         <div className="shrink-0 border-t border-[#E2E2E2] px-5 py-4">
           <div className="flex items-center justify-between gap-4">
-            {action === 'mark_ready' && (
-              <>
-                <button
-                  onClick={handleCancel}
-                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleConfirm('ready')}
-                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
-                >
-                  Mark Ready
-                </button>
-              </>
-            )}
-            {action === 'complete' && (
-              <>
-                <button
-                  onClick={handleCancel}
-                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleConfirm('complete')}
-                  className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
-                >
-                  Mark Paid
-                </button>
-              </>
-            )}
-            {!action && (
+            {step === 'new' && (
               <button
-                onClick={onClose}
-                className="flex h-[59px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+                onClick={() => onStepChange?.('accepted')}
+                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#64C864] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#4fb84f]"
               >
-                Close
+                Accept Order
+              </button>
+            )}
+            {step === 'accepted' && (
+              <button
+                onClick={() => onStepChange?.('ready')}
+                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
+              >
+                Mark Ready
+              </button>
+            )}
+            {step === 'ready' && (
+              <button
+                onClick={() => onStepChange?.('served')}
+                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#16A34A] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#128a3e]"
+              >
+                Serve
+              </button>
+            )}
+            {step === 'served' && (
+              <button
+                disabled
+                aria-disabled="true"
+                className="flex h-[59px] flex-1 cursor-not-allowed items-center justify-center rounded-[30px] bg-[#9CA3AF] text-[19px] font-medium text-white"
+              >
+                Served
               </button>
             )}
           </div>

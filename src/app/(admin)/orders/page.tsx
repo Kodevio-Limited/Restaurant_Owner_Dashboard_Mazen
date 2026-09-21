@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { OrderCard, Order, OrderState } from '@/components/shared/OrderCard';
+import { OrderCard, Order, OrderState, OrderFlowStep } from '@/components/shared/OrderCard';
 import { OrderDetailsModal } from '@/components/shared/OrderDetailsDrawer';
 import { cn } from '@/lib/utils';
 
@@ -143,9 +143,14 @@ const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boo
 export default function OrdersPage() {
   const [active, setActive] = useState<(typeof FILTERS)[number]['id']>('in_progress');
   const [selected, setSelected] = useState<Order | null>(null);
+  const [steps, setSteps] = useState<Record<string, OrderFlowStep>>({});
 
   const activeFilter = FILTERS.find((f) => f.id === active)!;
   const filtered = ORDERS.filter((o) => activeFilter.match(o));
+
+  const getStep = (id: string): OrderFlowStep => steps[id] ?? 'new';
+  const setStep = (id: string, step: OrderFlowStep) =>
+    setSteps((prev) => ({ ...prev, [id]: step }));
 
   return (
     <main className="flex flex-col gap-5">
@@ -205,7 +210,12 @@ export default function OrdersPage() {
               key={order.id}
               className="w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5"
             >
-              <OrderCard order={order} onOpen={setSelected} />
+              <OrderCard
+                order={order}
+                step={getStep(order.id)}
+                onStepChange={(s) => setStep(order.id, s)}
+                onOpen={setSelected}
+              />
             </div>
           ))}
         </div>
@@ -218,6 +228,8 @@ export default function OrdersPage() {
       <OrderDetailsModal
         open={!!selected}
         order={selected}
+        step={selected ? getStep(selected.id) : 'new'}
+        onStepChange={(s) => selected && setStep(selected.id, s)}
         onClose={() => setSelected(null)}
       />
     </main>

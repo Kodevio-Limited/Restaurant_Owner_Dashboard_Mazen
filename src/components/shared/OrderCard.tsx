@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { CalendarDays, Table as TableIcon, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -31,36 +30,36 @@ export interface Order {
   total: string;
 }
 
-export type FlowStep = 'new' | 'accepted' | 'ready' | 'complete';
 export type OrderFlowStep = 'new' | 'accepted' | 'ready' | 'served';
 
 interface OrderCardProps {
   order: Order;
+  step?: OrderFlowStep;
+  onStepChange?: (step: OrderFlowStep) => void;
   onOpen?: (order: Order) => void;
 }
 
-export function OrderCard({ order, onOpen }: OrderCardProps) {
+export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCardProps) {
   const paid = order.status === 'paid';
-  const [step, setStep] = useState<OrderFlowStep>('new');
 
   const handleAccept = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setStep('accepted');
+    onStepChange?.('accepted');
   };
 
   const handleCancel = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setStep('new');
+    onStepChange?.('new');
   };
 
   const handleMarkReady = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setStep('ready');
+    onStepChange?.('ready');
   };
 
   const handleServe = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setStep('served');
+    onStepChange?.('served');
   };
 
   return (
