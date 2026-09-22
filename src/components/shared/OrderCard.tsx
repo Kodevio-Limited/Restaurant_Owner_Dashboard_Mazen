@@ -122,31 +122,31 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between gap-2 border-t border-[#F2F2F2] pt-3">
-        <div className="flex flex-col">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 border-t border-[#F2F2F2] pt-3">
+        <div className="flex shrink-0 flex-col">
           <span className="text-[10.5px] leading-[15px] text-[#686868]">
             {order.extraItems > 0 ? `+${order.extraItems} Items` : '\u00A0'}
           </span>
           <span className="text-[15px] font-semibold leading-[21px] text-[#026F4F]">{order.total}</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {step === 'new' && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
-                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#E85E5E] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
+                className="flex h-9 shrink-0 items-center justify-center gap-1 rounded-[10px] bg-[#E85E5E] px-2.5 text-[11.5px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
               >
-                <X size={15} strokeWidth={2.5} />
+                <X size={14} strokeWidth={2.5} />
                 <span>Reject</span>
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleAccept(); }}
                 aria-label="Accept order"
-                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#64C864] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#4fb84f]"
+                className="flex h-9 shrink-0 items-center justify-center gap-1 rounded-[10px] bg-[#64C864] px-2.5 text-[11.5px] font-medium text-white transition-colors hover:bg-[#4fb84f]"
               >
-                <Check size={15} strokeWidth={2.8} />
+                <Check size={14} strokeWidth={2.8} />
                 <span>Accept</span>
               </button>
             </>
@@ -157,14 +157,14 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
               <button
                 onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
-                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#E85E5E] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
+                className="flex h-9 shrink-0 items-center justify-center gap-1 rounded-[10px] bg-[#E85E5E] px-2.5 text-[11.5px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
               >
-                <X size={15} strokeWidth={2.5} />
+                <X size={14} strokeWidth={2.5} />
                 <span>Reject</span>
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleMarkReady(); }}
-                className="flex h-10 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
+                className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-3.5 text-[12px] font-medium text-white transition-colors hover:bg-[#ea690b]"
               >
                 Mark Ready
               </button>
@@ -174,7 +174,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
           {step === 'ready' && (
             <button
               onClick={(e) => { e.stopPropagation(); handleServe(); }}
-              className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#16A34A] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#128a3e]"
+              className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#16A34A] px-4 text-[12px] font-medium text-white transition-colors hover:bg-[#128a3e]"
             >
               Serve
             </button>
@@ -184,7 +184,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
             <button
               disabled
               aria-disabled="true"
-              className="flex h-9 cursor-not-allowed items-center justify-center rounded-[62px] bg-[#9CA3AF] px-4 text-[12.5px] font-medium text-white"
+              className="flex h-9 cursor-not-allowed items-center justify-center rounded-[62px] bg-[#9CA3AF] px-4 text-[12px] font-medium text-white"
             >
               Served
             </button>
