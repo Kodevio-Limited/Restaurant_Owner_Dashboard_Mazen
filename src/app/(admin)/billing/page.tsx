@@ -102,7 +102,7 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
     >
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="rounded-full bg-[#026F4F] px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white">
+          <span className="whitespace-nowrap rounded-full bg-[#026F4F] px-3 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white">
             {plan.badge}
           </span>
         </div>
