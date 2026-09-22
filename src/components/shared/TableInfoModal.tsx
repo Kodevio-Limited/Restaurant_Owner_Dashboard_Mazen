@@ -102,7 +102,7 @@ export function TableInfoModal({
                     key={idx}
                     className="inline-flex items-center rounded-full bg-[#026F4F]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#026F4F]"
                   >
-                    Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                    {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
                   </span>
                 ))}
               </div>
@@ -182,7 +182,7 @@ export function TableInfoModal({
                       key={idx}
                       className="inline-flex items-center rounded-lg border border-[#026F4F]/20 bg-[#026F4F]/5 px-2.5 py-1 text-xs font-semibold text-[#026F4F]"
                     >
-                      Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                      {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
                     </span>
                   ))}
                 </div>

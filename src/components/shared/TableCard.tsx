@@ -58,7 +58,7 @@ export function TableCard({ name, zone, status, bill, time, orderNumbers }: Tabl
         style={{ backgroundColor: bodyBg }}
       >
         <div className="absolute left-2.5 right-2.5 top-2.5 flex items-start justify-between gap-2">
-          <div className="flex flex-col min-w-0">
+          <div className="flex min-w-0 flex-col">
             <span className="truncate font-satoshi text-[16px] font-medium leading-[1.4] text-black">
               {name}
             </span>
@@ -67,9 +67,9 @@ export function TableCard({ name, zone, status, bill, time, orderNumbers }: Tabl
             </span>
           </div>
 
-          <div className="flex flex-col items-end gap-1 shrink-0">
+          <div className="flex min-w-[70px] shrink-0 flex-col items-center gap-1">
             <span
-              className="inline-flex h-[24px] shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
+              className="inline-flex h-[24px] w-full shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
               style={{ backgroundColor: pillBg }}
             >
               {label}
@@ -77,13 +77,13 @@ export function TableCard({ name, zone, status, bill, time, orderNumbers }: Tabl
 
             {/* List of order numbers under occupied */}
             {status === 'occupied' && orderNumbers && orderNumbers.length > 0 && (
-              <div className="flex max-h-[64px] flex-col items-end gap-1 overflow-y-auto pr-0.5 pt-0.5">
+              <div className="flex max-h-[64px] w-full flex-col items-center gap-1 overflow-y-auto pt-0.5">
                 {orderNumbers.map((orderNo, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center rounded-full bg-white/85 px-2 py-0.5 font-satoshi text-[10.5px] font-semibold leading-tight text-[#026F4F] shadow-xs"
+                    className="inline-flex w-full items-center justify-center rounded-full bg-white/85 py-0.5 font-satoshi text-[11px] font-semibold leading-tight text-[#026F4F] shadow-xs"
                   >
-                    Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                    {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
                   </span>
                 ))}
               </div>
