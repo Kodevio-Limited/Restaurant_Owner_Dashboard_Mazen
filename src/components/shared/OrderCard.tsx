@@ -136,16 +136,18 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
               <button
                 onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
+                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#E85E5E] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
               >
-                <X size={17} strokeWidth={2.2} />
+                <X size={15} strokeWidth={2.5} />
+                <span>Reject</span>
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleAccept(); }}
                 aria-label="Accept order"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#64C864] text-white transition-colors hover:bg-[#4fb84f]"
+                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#64C864] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#4fb84f]"
               >
-                <Check size={17} strokeWidth={2.6} />
+                <Check size={15} strokeWidth={2.8} />
+                <span>Accept</span>
               </button>
             </>
           )}
@@ -155,13 +157,14 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
               <button
                 onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
+                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-[#E85E5E] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
               >
-                <X size={17} strokeWidth={2.2} />
+                <X size={15} strokeWidth={2.5} />
+                <span>Reject</span>
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleMarkReady(); }}
-                className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
+                className="flex h-10 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
               >
                 Mark Ready
               </button>
