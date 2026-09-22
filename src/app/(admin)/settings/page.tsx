@@ -778,7 +778,7 @@ export default function SettingsPage() {
             {(() => {
               const tab = TABS.find((t) => t.id === active)!;
               const Icon = tab.icon;
-              const hasSaveButton = ['general', 'payment', 'taxes', 'receipt'].includes(active);
+              const showQuickScroll = active === 'general' || active === 'notification';
               return (
                 <>
                   <div className="flex items-center gap-2.5">
@@ -787,7 +787,7 @@ export default function SettingsPage() {
                       {tab.label} Settings
                     </h1>
                   </div>
-                  {hasSaveButton && (
+                  {showQuickScroll && (
                     <button
                       type="button"
                       onClick={scrollToBottom}
@@ -823,7 +823,7 @@ export default function SettingsPage() {
       />
 
       {/* Floating Quick Scroll button */}
-      {active && ['general', 'payment', 'taxes', 'receipt'].includes(active) && (
+      {active && (active === 'general' || active === 'notification') && (
         <button
           type="button"
           onClick={isNearBottom ? scrollToTop : scrollToBottom}
