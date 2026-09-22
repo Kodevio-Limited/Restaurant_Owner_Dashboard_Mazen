@@ -94,10 +94,10 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
   return (
     <div
       className={cn(
-        'relative flex flex-col rounded-[14px] border p-5',
+        'relative flex flex-col rounded-[14px] p-5 border-2',
         plan.current
-          ? 'border-2 border-[#026F4F] shadow-sm'
-          : 'border border-[#989898]',
+          ? 'border-[#026F4F] shadow-sm'
+          : 'border-[#989898]/60',
       )}
     >
       {plan.badge && (
@@ -108,25 +108,30 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
         </div>
       )}
 
-      <div className="flex items-center gap-2 pb-1">
-        <span className="text-[17px] font-bold text-[#2D2F33]">{plan.name}</span>
-        {plan.current && (
-          <span className="rounded-lg bg-[#E6F4F0] px-2 py-0.5 text-[11px] font-semibold text-[#026F4F]">
-            Current
-          </span>
-        )}
-      </div>
+      {/* Header section with consistent heights so buttons align horizontally across plans */}
+      <div className="flex flex-col">
+        <div className="flex h-7 items-center gap-2">
+          <span className="text-[17px] font-bold text-[#2D2F33]">{plan.name}</span>
+          {plan.current && (
+            <span className="rounded-lg bg-[#E6F4F0] px-2 py-0.5 text-[11px] font-semibold text-[#026F4F]">
+              Current
+            </span>
+          )}
+        </div>
 
-      <p className="pb-4 text-[13px] text-[#989898]">{plan.tagline}</p>
+        <p className="mt-1 min-h-[58px] text-[13px] leading-[1.4] text-[#989898]">
+          {plan.tagline}
+        </p>
 
-      <div className="pb-4">
-        <span className="text-[28px] font-bold text-[#2D2F33]">${price}</span>
-        <span className="text-[13px] text-[#989898]">/mo</span>
+        <div className="py-4">
+          <span className="text-[28px] font-bold text-[#2D2F33]">${price}</span>
+          <span className="text-[13px] text-[#989898]">/mo</span>
+        </div>
       </div>
 
       <button
         className={cn(
-          'mb-4 w-full rounded-[9px] py-2.5 text-[13px] font-semibold transition-colors',
+          'mb-4 flex h-10 w-full items-center justify-center rounded-[9px] text-[13px] font-semibold transition-colors',
           plan.buttonVariant === 'dark'
             ? 'bg-[#2D2F33] text-white opacity-80 cursor-default'
             : 'bg-[#026F4F] text-white hover:bg-[#015c42]',
