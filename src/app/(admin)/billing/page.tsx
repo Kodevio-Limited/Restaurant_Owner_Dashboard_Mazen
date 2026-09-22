@@ -322,8 +322,8 @@ export default function BillingPage() {
               ))}
             </div>
 
-            {/* End cap — background matches page so table feels clearly closed */}
-            <div className="h-3 rounded-b-xl bg-[#F2F2F2]" />
+            {/* End cap — bold closing strip matching table header colour */}
+            <div className="h-4 rounded-b-xl bg-[#E9E9E9]" />
           </div>
 
           {/* Mobile cards */}
@@ -347,7 +347,7 @@ export default function BillingPage() {
           </div>
 
           {/* Mobile end cap */}
-          <div className="h-3 rounded-b-xl bg-[#F2F2F2] sm:hidden" />
+          <div className="h-4 rounded-xl bg-[#E9E9E9] sm:hidden" />
         </div>
       </div>
     </main>
