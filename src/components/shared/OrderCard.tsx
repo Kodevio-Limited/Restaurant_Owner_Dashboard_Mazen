@@ -134,14 +134,14 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
           {step === 'new' && (
             <>
               <button
-                onClick={handleCancel}
+                onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
               >
                 <X size={17} strokeWidth={2.2} />
               </button>
               <button
-                onClick={handleAccept}
+                onClick={(e) => { e.stopPropagation(); handleAccept(); }}
                 aria-label="Accept order"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#64C864] text-white transition-colors hover:bg-[#4fb84f]"
               >
@@ -153,14 +153,14 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
           {step === 'accepted' && (
             <>
               <button
-                onClick={handleCancel}
+                onClick={(e) => { e.stopPropagation(); handleCancel(); }}
                 aria-label="Cancel order"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
               >
                 <X size={17} strokeWidth={2.2} />
               </button>
               <button
-                onClick={handleMarkReady}
+                onClick={(e) => { e.stopPropagation(); handleMarkReady(); }}
                 className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#F97316] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#ea690b]"
               >
                 Mark Ready
@@ -170,7 +170,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
 
           {step === 'ready' && (
             <button
-              onClick={handleServe}
+              onClick={(e) => { e.stopPropagation(); handleServe(); }}
               className="flex h-9 shrink-0 items-center justify-center rounded-[62px] bg-[#16A34A] px-4 text-[12.5px] font-medium text-white transition-colors hover:bg-[#128a3e]"
             >
               Serve
