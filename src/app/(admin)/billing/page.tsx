@@ -321,6 +321,19 @@ export default function BillingPage() {
                 </div>
               ))}
             </div>
+
+            {/* Desktop table footer */}
+            <div className="flex items-center justify-between border-t border-[#F2F2F2] px-5 py-3">
+              <span className="text-[12px] text-[#989898]">
+                Showing {BILLING_HISTORY.length} of {BILLING_HISTORY.length} records
+              </span>
+              <span className="flex items-center gap-1.5 text-[12px] text-[#026F4F]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                All records shown
+              </span>
+            </div>
           </div>
 
           {/* Mobile cards */}
@@ -341,6 +354,17 @@ export default function BillingPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Mobile footer */}
+          <div className="flex items-center justify-between rounded-xl bg-white px-4 py-3 sm:hidden">
+            <span className="text-[12px] text-[#989898]">{BILLING_HISTORY.length} records total</span>
+            <span className="flex items-center gap-1.5 text-[12px] text-[#026F4F]">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              All records shown
+            </span>
           </div>
         </div>
       </div>
