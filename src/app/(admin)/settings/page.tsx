@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
-  Percent, FileText, Plus, User,
+  Percent, FileText, Plus, User, ArrowDown, ArrowUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditBranchModal } from '@/components/shared/EditBranchModal';
@@ -128,7 +128,7 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
 
 function SaveButton() {
   return (
-    <div className="pt-6 pb-8">
+    <div id="save-changes-section" className="pt-6 pb-8">
       <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
         Save Changes
       </button>
@@ -652,6 +652,45 @@ export default function SettingsPage() {
   const [active, setActive] = useState<TabId | null>('general');
   const [editBranch, setEditBranch] = useState<typeof BRANCHES[0] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isNearBottom, setIsNearBottom] = useState(false);
+
+  useEffect(() => {
+    const getScrollContainer = () =>
+      document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
+
+    const container = getScrollContainer();
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      setIsNearBottom(scrollTop + clientHeight >= scrollHeight - 160);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [active]);
+
+  const scrollToBottom = () => {
+    const saveEl = document.getElementById('save-changes-section');
+    if (saveEl) {
+      saveEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    } else {
+      const container =
+        document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
+      if (container) {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+      }
+    }
+  };
+
+  const scrollToTop = () => {
+    const container =
+      document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <main className="flex flex-col gap-0 rounded-2xl bg-[#F2F2F2] lg:flex-row">
@@ -733,18 +772,31 @@ export default function SettingsPage() {
 
       {/* ── Content area ── */}
       <div className="flex-1 p-4 lg:py-5 lg:pr-5 lg:pl-0">
-        {/* Page title */}
+        {/* Page title & quick scroll */}
         {active && (
-          <div className="mb-5 flex items-center gap-2.5 bg-[#F2F2F2] lg:sticky lg:top-0 lg:z-20 lg:py-3">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 bg-[#F2F2F2] lg:sticky lg:top-0 lg:z-20 lg:py-3">
             {(() => {
-              const tab = TABS.find(t => t.id === active)!;
+              const tab = TABS.find((t) => t.id === active)!;
               const Icon = tab.icon;
+              const hasSaveButton = ['general', 'payment', 'taxes', 'receipt'].includes(active);
               return (
                 <>
-                  <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
-                  <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
-                    {tab.label} Settings
-                  </h1>
+                  <div className="flex items-center gap-2.5">
+                    <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
+                    <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
+                      {tab.label} Settings
+                    </h1>
+                  </div>
+                  {hasSaveButton && (
+                    <button
+                      type="button"
+                      onClick={scrollToBottom}
+                      className="flex items-center gap-2 rounded-full border border-[#026F4F]/30 bg-white px-4 py-2 text-sm font-medium text-[#026F4F] shadow-sm transition-all hover:border-[#026F4F] hover:bg-[#026F4F] hover:text-white active:scale-95"
+                    >
+                      <ArrowDown size={16} />
+                      <span>Quick Scroll to Bottom</span>
+                    </button>
+                  )}
                 </>
               );
             })()}
@@ -769,6 +821,28 @@ export default function SettingsPage() {
         branch={editBranch}
         onClose={() => setEditBranch(null)}
       />
+
+      {/* Floating Quick Scroll button */}
+      {active && ['general', 'payment', 'taxes', 'receipt'].includes(active) && (
+        <button
+          type="button"
+          onClick={isNearBottom ? scrollToTop : scrollToBottom}
+          title={isNearBottom ? 'Back to top' : 'Quick scroll to bottom'}
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-[#026F4F] px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-[#015c42] hover:shadow-xl active:scale-95 focus:outline-none"
+        >
+          {isNearBottom ? (
+            <>
+              <ArrowUp size={16} />
+              <span className="hidden sm:inline">Back to Top</span>
+            </>
+          ) : (
+            <>
+              <ArrowDown size={16} />
+              <span>Quick Scroll</span>
+            </>
+          )}
+        </button>
+      )}
     </main>
   );
 }
