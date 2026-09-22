@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
-interface TableInfoData {
+export interface TableInfoData {
   id: string;
   name: string;
   zone: 'Indoor' | 'Outdoor' | 'Patio';
@@ -13,6 +13,7 @@ interface TableInfoData {
   bill?: string;
   time?: string;
   capacity: number;
+  orderNumbers?: string[];
 }
 
 const STATUS_STYLES: Record<string, { label: string; bg: string }> = {
@@ -33,12 +34,17 @@ export function TableInfoModal({
   table,
   onClose,
   onEdit,
+  onAddOrder,
 }: {
   open: boolean;
   table: TableInfoData | null;
   onClose: () => void;
   onEdit?: (table: TableInfoData) => void;
+  onAddOrder?: (tableId: string, orderNo: string) => void;
 }) {
+  const [showAddOrder, setShowAddOrder] = useState(false);
+  const [newOrderNo, setNewOrderNo] = useState('');
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -79,7 +85,7 @@ export function TableInfoModal({
             <ArrowLeft size={20} />
           </button>
 
-          <div className="flex flex-col items-center gap-2 sm:gap-3">
+          <div className="flex flex-col items-center gap-2 sm:gap-2.5">
             <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">{table.name}</h2>
             <span
               className="inline-flex items-center rounded-[37px] px-3 py-[6px] text-xs font-medium leading-5 text-white"
@@ -87,6 +93,20 @@ export function TableInfoModal({
             >
               {s.label}
             </span>
+
+            {/* List of order numbers under occupied */}
+            {occupied && table.orderNumbers && table.orderNumbers.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-0.5">
+                {table.orderNumbers.map((orderNo, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center rounded-full bg-[#026F4F]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#026F4F]"
+                  >
+                    Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="h-10 w-10 sm:h-12 sm:w-12" />
@@ -129,12 +149,84 @@ export function TableInfoModal({
           {occupied && (
             <section className="rounded-[10px] bg-white px-4 pb-4 pt-3 outline outline-1 outline-[#E9E9E9] sm:px-5 sm:pb-5 sm:pt-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">Active Order</h3>
-                <button className="flex items-center gap-1.5 text-xs font-medium leading-5 text-[#026F4F]">
-                  View Details
-                  <ArrowUpRight size={16} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">
+                    Active Orders
+                  </h3>
+                  {table.orderNumbers && table.orderNumbers.length > 0 && (
+                    <span className="rounded-full bg-[#026F4F]/10 px-2 py-0.5 text-xs font-semibold text-[#026F4F]">
+                      {table.orderNumbers.length}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={() => setShowAddOrder(!showAddOrder)}
+                    className="inline-flex items-center gap-1 rounded-full bg-[#026F4F]/10 px-2.5 py-1 text-xs font-semibold text-[#026F4F] transition-colors hover:bg-[#026F4F]/20"
+                  >
+                    <Plus size={13} />
+                    Add Order
+                  </button>
+                  <button className="flex items-center gap-1 text-xs font-medium leading-5 text-[#026F4F]">
+                    View Details
+                    <ArrowUpRight size={16} />
+                  </button>
+                </div>
               </div>
+
+              {/* Order Numbers tags */}
+              {table.orderNumbers && table.orderNumbers.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {table.orderNumbers.map((orderNo, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center rounded-lg border border-[#026F4F]/20 bg-[#026F4F]/5 px-2.5 py-1 text-xs font-semibold text-[#026F4F]"
+                    >
+                      Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Quick Add Order form */}
+              {showAddOrder && (
+                <div className="mt-3 flex items-center gap-2 rounded-lg bg-[#F8F9FA] p-2">
+                  <input
+                    type="text"
+                    value={newOrderNo}
+                    onChange={(e) => setNewOrderNo(e.target.value)}
+                    placeholder="#0049"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newOrderNo.trim()) {
+                        const formatted = newOrderNo.trim().startsWith('#') ? newOrderNo.trim() : `#${newOrderNo.trim()}`;
+                        onAddOrder?.(table.id, formatted);
+                        setNewOrderNo('');
+                        setShowAddOrder(false);
+                      }
+                    }}
+                    className="h-8 w-32 rounded-lg border border-[#D1D5DB] px-2.5 text-xs text-black focus:border-[#026F4F] focus:outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      if (newOrderNo.trim()) {
+                        const formatted = newOrderNo.trim().startsWith('#') ? newOrderNo.trim() : `#${newOrderNo.trim()}`;
+                        onAddOrder?.(table.id, formatted);
+                        setNewOrderNo('');
+                        setShowAddOrder(false);
+                      }
+                    }}
+                    className="h-8 rounded-lg bg-[#026F4F] px-3 text-xs font-medium text-white transition-colors hover:bg-[#015c42]"
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => { setShowAddOrder(false); setNewOrderNo(''); }}
+                    className="h-8 rounded-lg bg-[#E9E9E9] px-2.5 text-xs text-[#686868] transition-colors hover:bg-[#dcdcdc]"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
 
               <div className="mt-5 flex items-start justify-between overflow-x-auto px-1 sm:mt-7">
                 {STEPS.map((step, i) => {

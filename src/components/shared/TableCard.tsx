@@ -14,9 +14,10 @@ interface TableCardProps {
   status: TableStatus;
   bill?: string;
   time?: string;
+  orderNumbers?: string[];
 }
 
-export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
+export function TableCard({ name, zone, status, bill, time, orderNumbers }: TableCardProps) {
   const { label, pillBg, bodyBg } = STATUS_CONFIG[status];
 
   const railStyle: React.CSSProperties = {
@@ -56,20 +57,38 @@ export function TableCard({ name, zone, status, bill, time }: TableCardProps) {
         className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-lg border border-[#B9B9B9]"
         style={{ backgroundColor: bodyBg }}
       >
-        <span className="absolute left-2.5 top-[42px] text-[12px] font-medium leading-[1.4] text-[#6E727A]">
-          {zone}
-        </span>
+        <div className="absolute left-2.5 right-2.5 top-2.5 flex items-start justify-between gap-2">
+          <div className="flex flex-col min-w-0">
+            <span className="truncate font-satoshi text-[16px] font-medium leading-[1.4] text-black">
+              {name}
+            </span>
+            <span className="text-[12px] font-medium leading-[1.4] text-[#6E727A]">
+              {zone}
+            </span>
+          </div>
 
-        <div className="absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
-          <span className="truncate font-satoshi text-[16px] font-medium leading-[1.4] text-black">
-            {name}
-          </span>
-          <span
-            className="inline-flex h-[24px] shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
-            style={{ backgroundColor: pillBg }}
-          >
-            {label}
-          </span>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <span
+              className="inline-flex h-[24px] shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
+              style={{ backgroundColor: pillBg }}
+            >
+              {label}
+            </span>
+
+            {/* List of order numbers under occupied */}
+            {status === 'occupied' && orderNumbers && orderNumbers.length > 0 && (
+              <div className="flex max-h-[64px] flex-col items-end gap-1 overflow-y-auto pr-0.5 pt-0.5">
+                {orderNumbers.map((orderNo, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center rounded-full bg-white/85 px-2 py-0.5 font-satoshi text-[10.5px] font-semibold leading-tight text-[#026F4F] shadow-xs"
+                  >
+                    Order {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {(bill || time) && (

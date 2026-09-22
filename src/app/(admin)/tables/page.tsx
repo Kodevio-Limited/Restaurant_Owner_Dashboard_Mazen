@@ -19,15 +19,16 @@ interface TableDef {
   bill?: string;
   time?: string;
   capacity: number;
+  orderNumbers?: string[];
 }
 
-const TABLES: TableDef[] = [
-  { id: 't1', name: 'Table A08', zone: 'Indoor',  status: 'occupied',  bill: '$65.00', time: '35 mins', capacity: 4 },
+const INITIAL_TABLES: TableDef[] = [
+  { id: 't1', name: 'Table A08', zone: 'Indoor',  status: 'occupied',  bill: '$65.00', time: '35 mins', capacity: 4, orderNumbers: ['#0044', '#0048'] },
   { id: 't2', name: 'Table A09', zone: 'Indoor',  status: 'available',                                   capacity: 4 },
   { id: 't3', name: 'Table B02', zone: 'Indoor',  status: 'reserved',                                    capacity: 6 },
-  { id: 't4', name: 'Table B03', zone: 'Indoor',  status: 'occupied',  bill: '$24.50', time: '12 mins', capacity: 4 },
+  { id: 't4', name: 'Table B03', zone: 'Indoor',  status: 'occupied',  bill: '$24.50', time: '12 mins', capacity: 4, orderNumbers: ['#0043'] },
   { id: 't5', name: 'Table C01', zone: 'Outdoor', status: 'available',                                   capacity: 2 },
-  { id: 't6', name: 'Table C02', zone: 'Outdoor', status: 'occupied',  bill: '$81.20', time: '48 mins', capacity: 6 },
+  { id: 't6', name: 'Table C02', zone: 'Outdoor', status: 'occupied',  bill: '$81.20', time: '48 mins', capacity: 6, orderNumbers: ['#0039', '#0041', '#0045'] },
   { id: 't7', name: 'Table D01', zone: 'Patio',   status: 'reserved',                                    capacity: 4 },
   { id: 't8', name: 'Table D02', zone: 'Patio',   status: 'available',                                   capacity: 4 },
 ];
@@ -36,6 +37,7 @@ const ZONES = ['All', 'Indoor', 'Outdoor', 'Patio'] as const;
 type Zone = typeof ZONES[number];
 
 export default function TablesPage() {
+  const [tables, setTables] = useState<TableDef[]>(INITIAL_TABLES);
   const [zone, setZone]   = useState<Zone>('All');
   const [showAdd, setShowAdd]       = useState(false);
   const [editing, setEditing]       = useState<TableDef | null>(null);
@@ -45,7 +47,7 @@ export default function TablesPage() {
   const [seatGuests, setSeatGuests] = useState(false);
   const [showCategory, setShowCategory] = useState(false);
 
-  const filtered = zone === 'All' ? TABLES : TABLES.filter((t) => t.zone === zone);
+  const filtered = zone === 'All' ? tables : tables.filter((t) => t.zone === zone);
 
   return (
     <main className="flex flex-col gap-5">
@@ -115,6 +117,7 @@ export default function TablesPage() {
               status={t.status}
               bill={t.bill}
               time={t.time}
+              orderNumbers={t.orderNumbers}
             />
           </button>
         ))}
@@ -165,6 +168,20 @@ export default function TablesPage() {
         table={selected}
         onClose={() => setSelected(null)}
         onEdit={(t) => { setSelected(null); setEditing(t); }}
+        onAddOrder={(tableId, newOrderNo) => {
+          setTables((prev) =>
+            prev.map((t) =>
+              t.id === tableId
+                ? { ...t, orderNumbers: [...(t.orderNumbers || []), newOrderNo] }
+                : t
+            )
+          );
+          setSelected((prev) =>
+            prev && prev.id === tableId
+              ? { ...prev, orderNumbers: [...(prev.orderNumbers || []), newOrderNo] }
+              : prev
+          );
+        }}
       />
 
       <AddTableCategoryModal open={showCategory} onClose={() => setShowCategory(false)} />
