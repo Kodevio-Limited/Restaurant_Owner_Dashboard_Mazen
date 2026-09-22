@@ -128,7 +128,7 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
 
 function SaveButton() {
   return (
-    <div className="sticky bottom-0 z-20 -mb-1 bg-[#F2F2F2] pb-1 pt-3">
+    <div className="pt-6 pb-8">
       <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
         Save Changes
       </button>
@@ -144,6 +144,7 @@ function GeneralBrandTab() {
   const [brandColor, setBrandColor] = useState('#026F4F');
   const [logoName, setLogoName] = useState<string | null>(null);
   const [address, setAddress] = useState('');
+  const [mapInteractive, setMapInteractive] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
@@ -258,14 +259,40 @@ function GeneralBrandTab() {
         </div>
 
         {/* Map */}
-        <div className="mb-5 h-96 overflow-hidden rounded-xl">
+        <div
+          className="relative mb-5 h-96 overflow-hidden rounded-xl"
+          onMouseLeave={() => setMapInteractive(false)}
+        >
           <iframe
             src="https://www.openstreetmap.org/export/embed.html?bbox=31.2357%2C29.9792%2C31.2857%2C30.0192&layer=mapnik&marker=30.0%2C31.26"
-            className="h-full w-full border-0"
+            className={cn(
+              'h-full w-full border-0',
+              !mapInteractive && 'pointer-events-none',
+            )}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Branch Location Map"
           />
+          {!mapInteractive && (
+            <div
+              onClick={() => setMapInteractive(true)}
+              className="absolute inset-0 flex items-center justify-center bg-black/5 cursor-pointer transition-colors hover:bg-black/10"
+            >
+              <span className="flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-medium text-[#2D2F33] shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg">
+                <MapPin size={16} className="text-[#026F4F]" />
+                Click to interact with map
+              </span>
+            </div>
+          )}
+          {mapInteractive && (
+            <button
+              type="button"
+              onClick={() => setMapInteractive(false)}
+              className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/75 px-3 py-1.5 text-xs font-medium text-white shadow backdrop-blur-sm hover:bg-black/90 transition-colors"
+            >
+              Done interacting
+            </button>
+          )}
         </div>
 
         {/* Coordinates */}

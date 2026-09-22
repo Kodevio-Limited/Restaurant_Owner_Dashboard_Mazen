@@ -140,11 +140,11 @@ const FILTERS: { id: OrderState | 'all'; label: string; match: (o: Order) => boo
 ];
 
 export default function OrdersPage() {
-  const [active, setActive] = useState<(typeof FILTERS)[number]['id']>('in_progress');
+  const [active, setActive] = useState<(typeof FILTERS)[number]['id']>('all');
   const [selected, setSelected] = useState<Order | null>(null);
   const [steps, setSteps] = useState<Record<string, OrderFlowStep>>({});
 
-  const activeFilter = FILTERS.find((f) => f.id === active)!;
+  const activeFilter = FILTERS.find((f) => f.id === active) ?? FILTERS[0];
   const filtered = ORDERS.filter((o) => activeFilter.match(o));
 
   const getStep = (id: string): OrderFlowStep => steps[id] ?? 'new';
