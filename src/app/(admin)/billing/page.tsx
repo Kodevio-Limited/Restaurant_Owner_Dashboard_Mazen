@@ -172,30 +172,35 @@ export default function BillingPage() {
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
           {/* Current plan */}
           <div
-            className="relative flex flex-col gap-4 overflow-hidden rounded-xl p-5 sm:p-6"
+            className="flex flex-col gap-4 overflow-hidden rounded-xl p-5 sm:p-6"
             style={{ background: 'linear-gradient(180deg, #484959 0%, #0E1116 100%)' }}
           >
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-[22px] font-semibold text-white sm:text-[28px]">Pro Plan</span>
-              <span className="rounded-full bg-[#1FB711] px-2.5 py-0.5 text-[11px] font-medium text-white">
-                ACTIVE
-              </span>
-            </div>
+            {/* Header: Plan info + Renewal */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-[22px] font-semibold text-white sm:text-[28px]">Pro Plan</span>
+                  <span className="rounded-full bg-[#1FB711] px-2.5 py-0.5 text-[11px] font-medium text-white">
+                    ACTIVE
+                  </span>
+                </div>
 
-            <p className="text-[13px] text-[#C8C8C8] sm:text-sm">
-              Perfect for growing restaurants managing high volumes.
-            </p>
+                <p className="text-[13px] text-[#C8C8C8] sm:text-sm">
+                  Perfect for growing restaurants managing high volumes.
+                </p>
+              </div>
+
+              {/* Renewal info */}
+              <div className="shrink-0 rounded-xl border border-[#989898] bg-[#2A2C37] px-4 py-2.5">
+                <p className="text-[12px] text-[#989898] sm:text-[13px]">Next Renewal</p>
+                <p className="text-[15px] font-medium text-white sm:text-[19px]">Aug 25, 2026</p>
+              </div>
+            </div>
 
             <p>
               <span className="text-[24px] font-semibold text-white sm:text-[30px]">$49</span>
               <span className="text-[13px] text-white sm:text-[15px]">/Month</span>
             </p>
-
-            {/* Renewal info */}
-            <div className="mt-1 rounded-xl border border-[#989898] bg-[#2A2C37] px-4 py-2.5 sm:absolute sm:right-6 sm:top-5">
-              <p className="text-[12px] text-[#989898] sm:text-[13px]">Next Renewal</p>
-              <p className="text-[15px] font-medium text-white sm:text-[19px]">Aug 25, 2026</p>
-            </div>
 
             <div className="border-t border-white/20" />
 
