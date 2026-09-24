@@ -4,20 +4,19 @@ import { useState, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
-  Percent, FileText, Plus, User, ArrowDown, ArrowUp,
+  FileText, Plus, User, ArrowDown, ArrowUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditBranchModal } from '@/components/shared/EditBranchModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type TabId = 'general' | 'branches' | 'payment' | 'taxes' | 'receipt' | 'notification';
+type TabId = 'general' | 'branches' | 'payment-taxes' | 'receipt' | 'notification';
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'general',      label: 'General & Brand',    icon: Globe      },
   { id: 'branches',     label: 'Branch Management',  icon: Building2  },
-  { id: 'payment',      label: 'Payment Config',      icon: CreditCard },
-  { id: 'taxes',        label: 'Taxes & Charges',     icon: Percent    },
+  { id: 'payment-taxes', label: 'Payment and Taxes', icon: CreditCard },
   { id: 'receipt',      label: 'Receipt Format',      icon: FileText   },
   { id: 'notification', label: 'Notification',        icon: Bell       },
 ];
@@ -112,6 +111,8 @@ function SectionCard({ title, children, className }: { title?: string; children:
   );
 }
 
+type Requirement = 'required' | 'optional';
+
 function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string; on?: boolean; onChange?: (v: boolean) => void }) {
   return (
     <SectionCard>
@@ -126,9 +127,42 @@ function ToggleRow({ title, desc, on, onChange }: { title: string; desc: string;
   );
 }
 
+function RequirementSegment({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: Requirement;
+  onChange: (v: Requirement) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className={cn('flex rounded-full bg-[#F2F2F2] p-1', disabled && 'pointer-events-none opacity-50')}>
+      {(['required', 'optional'] as Requirement[]).map((opt) => (
+        <button
+          key={opt}
+          type="button"
+          onClick={() => onChange(opt)}
+          className={cn(
+            'rounded-full px-4 py-1.5 text-[13px] font-medium capitalize transition-all',
+            value === opt
+              ? 'bg-[#026F4F] text-white shadow-xs'
+              : 'text-[#686868] hover:text-[#2D2F33]',
+          )}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function SaveButton() {
   return (
-    <div id="save-changes-section" className="pt-6 pb-8">
+    <div
+      id="save-changes-section"
+      className="sticky bottom-0 z-20 -mx-1 border-t border-[#E9E9E9] bg-[#F2F2F2]/95 py-4 backdrop-blur-sm"
+    >
       <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
         Save Changes
       </button>
@@ -141,10 +175,38 @@ function SaveButton() {
 function GeneralBrandTab() {
   const [expandMenu, setExpandMenu] = useState(true);
   const [requireCustomer, setRequireCustomer] = useState(true);
+  const [customerFields, setCustomerFields] = useState<Record<'phone' | 'name' | 'email', Requirement>>(() => {
+    if (typeof window === 'undefined') return { phone: 'optional', name: 'optional', email: 'optional' };
+    try {
+      const raw = window.localStorage.getItem('rod-customer-fields');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const pick = (v: unknown): Requirement => (v === 'required' ? 'required' : 'optional');
+        return { phone: pick(parsed?.phone), name: pick(parsed?.name), email: pick(parsed?.email) };
+      }
+    } catch {
+      // fall through to defaults
+    }
+    return { phone: 'optional', name: 'optional', email: 'optional' };
+  });
   const [brandColor, setBrandColor] = useState('#026F4F');
   const [logoName, setLogoName] = useState<string | null>(null);
   const [address, setAddress] = useState('');
   const [mapInteractive, setMapInteractive] = useState(false);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('rod-customer-fields', JSON.stringify(customerFields));
+    } catch {
+      // storage unavailable — selection simply won't persist
+    }
+  }, [customerFields]);
+
+  const CUSTOMER_FIELDS: { key: 'phone' | 'name' | 'email'; label: string; desc: string; icon: React.ElementType }[] = [
+    { key: 'phone', label: 'Phone Number', desc: 'Customer phone number at checkout', icon: Phone },
+    { key: 'name', label: 'Full Name', desc: 'Customer full name at checkout', icon: User },
+    { key: 'email', label: 'Email', desc: 'Receipt email at checkout', icon: Mail },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -233,6 +295,36 @@ function GeneralBrandTab() {
       {/* Toggles */}
       <ToggleRow title="Expand Menu bar" desc="Toggle the main navigation sidebar to show full text labels or just icons." on={expandMenu} onChange={setExpandMenu} />
       <ToggleRow title="Require Customer Information from Cashier" desc="When enabled, cashiers must enter customer details (like name or phone number) before completing an order." on={requireCustomer} onChange={setRequireCustomer} />
+
+      {/* Per-field customer information requirements */}
+      <SectionCard title="Customer Information Fields">
+        <p className="-mt-2 mb-4 text-[13px] text-[#989898] sm:text-sm">
+          Choose whether the cashier must collect each field before completing an order.
+        </p>
+        <div className="flex flex-col divide-y divide-[#F2F2F2]">
+          {CUSTOMER_FIELDS.map((field) => {
+            const Icon = field.icon;
+            return (
+              <div key={field.key} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F2F2F2]">
+                    <Icon size={18} className="text-[#686868]" />
+                  </div>
+                  <div>
+                    <p className="text-[15px] font-medium text-black">{field.label}</p>
+                    <p className="text-xs text-[#989898]">{field.desc}</p>
+                  </div>
+                </div>
+                <RequirementSegment
+                  value={customerFields[field.key]}
+                  disabled={!requireCustomer}
+                  onChange={(v) => setCustomerFields((prev) => ({ ...prev, [field.key]: v }))}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </SectionCard>
 
       {/* Location */}
       <SectionCard title="Location & QR Ordering Restriction">
@@ -428,8 +520,6 @@ function PaymentConfigTab() {
           </div>
         </SectionCard>
       </div>
-
-      <SaveButton />
     </div>
   );
 }
@@ -475,7 +565,15 @@ function TaxesChargesTab() {
           </div>
         </div>
       </SectionCard>
+    </div>
+  );
+}
 
+function PaymentTaxesTab() {
+  return (
+    <div className="flex flex-col gap-6">
+      <PaymentConfigTab />
+      <TaxesChargesTab />
       <SaveButton />
     </div>
   );
@@ -810,8 +908,7 @@ export default function SettingsPage() {
             onDelete={() => {}}
           />
         )}
-        {active === 'payment'      && <PaymentConfigTab />}
-        {active === 'taxes'        && <TaxesChargesTab />}
+        {active === 'payment-taxes' && <PaymentTaxesTab />}
         {active === 'receipt'      && <ReceiptFormatTab />}
         {active === 'notification' && <NotificationTab />}
       </div>
