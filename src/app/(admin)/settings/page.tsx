@@ -230,7 +230,7 @@ function GeneralBrandTab() {
           </div>
           <div className="flex flex-col gap-2">
             <FieldLabel>TimeZone</FieldLabel>
-            <SelectInput value="Eastern Time (ET)" options={['Eastern Time (ET)', 'Central Time (CT)', 'Mountain Time (MT)', 'Pacific Time (PT)', 'UTC']} />
+            <SelectInput value="Egypt Standard Time (EET)" options={['Egypt Standard Time (EET)', 'Eastern Time (ET)', 'Central Time (CT)', 'Mountain Time (MT)', 'Pacific Time (PT)', 'UTC']} />
           </div>
         </div>
       </SectionCard>
