@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { TableCard, TableStatus } from '@/components/shared/TableCard';
 import { SeatGuestsModal } from '@/components/shared/SeatGuestsModal';
-import { AddEditTableModal, SaveTableData } from '@/components/shared/AddEditTableModal';
+import { AddEditTableModal } from '@/components/shared/AddEditTableModal';
 import { MarkReservedModal } from '@/components/shared/MarkReservedModal';
 import { ReservedDetailModal } from '@/components/shared/ReservedDetailModal';
 import { TableInfoModal } from '@/components/shared/TableInfoModal';
@@ -50,29 +50,6 @@ export default function TablesPage() {
   const [deleteTarget, setDeleteTarget] = useState<TableDef | null>(null);
 
   const filtered = zone === 'All' ? tables : tables.filter((t) => t.zone === zone);
-
-  const handleSaveTable = (data: SaveTableData) => {
-    if (editing) {
-      setTables((prev) =>
-        prev.map((t) =>
-          t.id === editing.id
-            ? { ...t, name: data.name, zone: data.zone as TableDef['zone'], capacity: data.capacity }
-            : t,
-        ),
-      );
-      setSelected((prev) => (prev && prev.id === editing.id
-        ? { ...prev, name: data.name, zone: data.zone as TableDef['zone'], capacity: data.capacity }
-        : prev));
-    } else {
-      const id = `t${Date.now()}`;
-      setTables((prev) => [
-        ...prev,
-        { id, name: data.name, zone: data.zone as TableDef['zone'], status: 'available' as TableStatus, capacity: data.capacity },
-      ]);
-    }
-    setShowAdd(false);
-    setEditing(null);
-  };
 
   const handleDeleteTable = (target: TableDef | null) => {
     if (!target) return;
@@ -142,7 +119,7 @@ export default function TablesPage() {
       {/* ── Table grid ── */}
       <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filtered.map((t) => (
-          <div key={t.id} className="group relative w-full">
+          <div key={t.id} className="group relative mx-auto w-full max-w-[301px]">
             <button
               onClick={() => setSelected(t)}
               aria-label={`View ${t.name}`}
@@ -157,7 +134,7 @@ export default function TablesPage() {
                 orderNumbers={t.orderNumbers}
               />
             </button>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
               <div className="flex items-center gap-1 rounded-full bg-white/90 p-1 shadow-sm ring-1 ring-black/5 backdrop-blur-sm">
                 <button
                   type="button"
@@ -191,11 +168,8 @@ export default function TablesPage() {
         onClose={() => { setShowAdd(false); setEditing(null); }}
         onMarkReserved={() => {
           setMarkReservedTable(editing);
-          setShowAdd(false);
           setEditing(null);
         }}
-        onSave={handleSaveTable}
-        onDelete={() => setDeleteTarget(editing)}
       />
 
       <MarkReservedModal
@@ -232,7 +206,6 @@ export default function TablesPage() {
         table={selected}
         onClose={() => setSelected(null)}
         onEdit={(t) => { setSelected(null); setEditing(t); }}
-        onDelete={(t) => { setSelected(null); setDeleteTarget(t); }}
         onAddOrder={(tableId, newOrderNo) => {
           setTables((prev) =>
             prev.map((t) =>

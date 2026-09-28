@@ -60,6 +60,21 @@ function TextInput({ value, placeholder }: { value?: string; placeholder?: strin
   );
 }
 
+function NumberInput({ value, min = 0, max = 100, placeholder }: { value?: string | number; min?: number; max?: number; placeholder?: string }) {
+  const [val, setVal] = useState(value ?? '');
+  return (
+    <input
+      type="number"
+      value={val}
+      min={min}
+      max={max}
+      placeholder={placeholder}
+      onChange={(e) => setVal(e.target.value)}
+      className="h-14 w-full rounded-[87px] bg-[#F2F2F2] px-5 text-base font-medium text-[#2D2F33] outline-none transition-shadow placeholder:text-[#989898] focus:ring-2 focus:ring-[#026F4F]/30"
+    />
+  );
+}
+
 function SelectInput({ value, options = [] }: { value: string; options?: string[] }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(value);
@@ -161,7 +176,7 @@ function SaveButton() {
   return (
     <div
       id="save-changes-section"
-      className="sticky bottom-0 z-20 -mx-1 border-t border-[#E9E9E9] bg-[#F2F2F2]/95 py-4 backdrop-blur-sm"
+      className="-mx-1 border-t border-[#E9E9E9] bg-[#F2F2F2] py-4"
     >
       <button className="h-11 w-full rounded-full bg-[#026F4F] text-[15px] font-medium text-white shadow-md transition-colors hover:bg-[#015c42] sm:w-48">
         Save Changes
@@ -403,8 +418,6 @@ function GeneralBrandTab() {
           </div>
         </div>
       </SectionCard>
-
-      <SaveButton />
     </div>
   );
 }
@@ -561,7 +574,7 @@ function TaxesChargesTab() {
         <div className="w-1/2">
           <div className="flex flex-col gap-2">
             <FieldLabel>Service Percentage (%)</FieldLabel>
-            <SelectInput value="12%" options={['5%', '10%', '12%', '15%']} />
+            <NumberInput value={12} min={0} max={100} placeholder="Enter service %" />
           </div>
         </div>
       </SectionCard>
@@ -574,7 +587,6 @@ function PaymentTaxesTab() {
     <div className="flex flex-col gap-6">
       <PaymentConfigTab />
       <TaxesChargesTab />
-      <SaveButton />
     </div>
   );
 }
@@ -626,7 +638,6 @@ function ReceiptFormatTab() {
           </div>
         </SectionCard>
 
-        <SaveButton />
       </div>
 
       {/* Right: receipt preview */}
@@ -751,40 +762,49 @@ export default function SettingsPage() {
   const [editBranch, setEditBranch] = useState<typeof BRANCHES[0] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isNearBottom, setIsNearBottom] = useState(false);
+  const [canScroll, setCanScroll] = useState(false);
+
+  // Tabs with a form get the sticky Save Changes footer.
+  const showSave = active === 'general' || active === 'payment-taxes' || active === 'receipt';
+  // Single dynamic quick-scroll pill lives on long (scrollable) tabs.
+  const showScroller = active === 'general' || active === 'notification';
+
+  const getScrollContainer = () => document.getElementById('admin-main-scroll');
 
   useEffect(() => {
-    const getScrollContainer = () =>
-      document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
-
     const container = getScrollContainer();
     if (!container) return;
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
-      setIsNearBottom(scrollTop + clientHeight >= scrollHeight - 160);
+      setCanScroll(scrollHeight > clientHeight + 40);
+      setIsNearBottom(scrollTop + clientHeight >= scrollHeight - 120);
     };
 
-    container.addEventListener('scroll', handleScroll, { passive: true });
+    // Reset to top whenever the tab changes, then measure.
+    container.scrollTo({ top: 0 });
     handleScroll();
-    return () => container.removeEventListener('scroll', handleScroll);
+    // Re-measure once late-loading content (e.g. the map iframe) settles.
+    const t = window.setTimeout(handleScroll, 150);
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    return () => {
+      window.clearTimeout(t);
+      container.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, [active]);
 
   const scrollToBottom = () => {
-    const saveEl = document.getElementById('save-changes-section');
-    if (saveEl) {
-      saveEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    } else {
-      const container =
-        document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
-      if (container) {
-        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-      }
+    const container = getScrollContainer();
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
     }
   };
 
   const scrollToTop = () => {
-    const container =
-      document.getElementById('admin-main-scroll') || document.querySelector('main')?.parentElement;
+    const container = getScrollContainer();
     if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -870,32 +890,19 @@ export default function SettingsPage() {
 
       {/* ── Content area ── */}
       <div className="flex-1 p-4 lg:py-5 lg:pr-5 lg:pl-0">
-        {/* Page title & quick scroll */}
+        {/* Page title */}
         {active && (
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 bg-[#F2F2F2] lg:sticky lg:top-0 lg:z-20 lg:py-3">
             {(() => {
               const tab = TABS.find((t) => t.id === active)!;
               const Icon = tab.icon;
-              const showQuickScroll = active === 'general' || active === 'notification';
               return (
-                <>
-                  <div className="flex items-center gap-2.5">
-                    <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
-                    <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
-                      {tab.label} Settings
-                    </h1>
-                  </div>
-                  {showQuickScroll && (
-                    <button
-                      type="button"
-                      onClick={scrollToBottom}
-                      className="flex items-center gap-2 rounded-full border border-[#026F4F]/30 bg-white px-4 py-2 text-sm font-medium text-[#026F4F] shadow-sm transition-all hover:border-[#026F4F] hover:bg-[#026F4F] hover:text-white active:scale-95"
-                    >
-                      <ArrowDown size={16} />
-                      <span>Quick Scroll to Bottom</span>
-                    </button>
-                  )}
-                </>
+                <div className="flex items-center gap-2.5">
+                  <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
+                  <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
+                    {tab.label} Settings
+                  </h1>
+                </div>
               );
             })()}
           </div>
@@ -911,6 +918,9 @@ export default function SettingsPage() {
         {active === 'payment-taxes' && <PaymentTaxesTab />}
         {active === 'receipt'      && <ReceiptFormatTab />}
         {active === 'notification' && <NotificationTab />}
+
+        {/* Save Changes — one sticky footer for every form tab */}
+        {showSave && <SaveButton />}
       </div>
 
       <EditBranchModal
@@ -919,13 +929,17 @@ export default function SettingsPage() {
         onClose={() => setEditBranch(null)}
       />
 
-      {/* Floating Quick Scroll button */}
-      {active && (active === 'general' || active === 'notification') && (
+      {/* Floating Quick Scroll button — single dynamic pill */}
+      {showScroller && canScroll && (
         <button
           type="button"
           onClick={isNearBottom ? scrollToTop : scrollToBottom}
           title={isNearBottom ? 'Back to top' : 'Quick scroll to bottom'}
-          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-[#026F4F] px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-[#015c42] hover:shadow-xl active:scale-95 focus:outline-none"
+          className={cn(
+            'fixed right-6 z-30 flex items-center gap-2 rounded-full bg-[#026F4F] px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-[#015c42] hover:shadow-xl active:scale-95 focus:outline-none',
+            // Lift above the sticky Save Changes footer when both are visible.
+            showSave ? 'bottom-24' : 'bottom-6',
+          )}
         >
           {isNearBottom ? (
             <>

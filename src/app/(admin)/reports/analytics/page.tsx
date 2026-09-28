@@ -85,7 +85,7 @@ export default function AnalyticsPage() {
           sub={{ text: '12.5% from yesterday', positive: true }}
           icon={<DollarSign size={22} />}
         />
-        <StatCard label="Total Orders" value="48" sub="Today" icon={<Receipt size={22} />} />
+        <StatCard label="Total Orders" value="48" sub="Today" icon={<Receipt size={22} />} action={{ label: 'View', href: '/orders' }} />
         <StatCard label="Active Orders" value="12" sub="Kitchen is busy" icon={<Flame size={22} />} />
         <StatCard label="Active Tables" value="8" sub="Out of 20 tables" icon={<Armchair size={22} />} />
         <StatCard
@@ -113,6 +113,7 @@ export default function AnalyticsPage() {
           value="32"
           sub={{ text: '5.2% from yesterday', positive: false }}
           icon={<XCircle size={22} />}
+          action={{ label: 'View', href: '/orders' }}
         />
         <StatCard
           label="Table Utilization"
