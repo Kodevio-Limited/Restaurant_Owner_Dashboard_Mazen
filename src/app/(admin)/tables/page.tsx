@@ -157,23 +157,28 @@ export default function TablesPage() {
                 orderNumbers={t.orderNumbers}
               />
             </button>
-            <div className="absolute right-2 top-2 flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setEditing(t); setShowAdd(false); }}
-                aria-label={`Edit ${t.name}`}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/95 text-[#686868] shadow-md outline outline-1 outline-[#B9B9B9] transition-colors hover:bg-white hover:text-[#026F4F]"
-              >
-                <Pencil size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
-                aria-label={`Delete ${t.name}`}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E85E5E] text-white shadow-md transition-colors hover:bg-[#d94a4a]"
-              >
-                <Trash2 size={15} />
-              </button>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+              <div className="flex items-center gap-1 rounded-full bg-white/90 p-1 shadow-sm ring-1 ring-black/5 backdrop-blur-sm">
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setEditing(t); setShowAdd(false); }}
+                  aria-label={`Edit ${t.name}`}
+                  title="Edit"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#F2F2F2] hover:text-[#026F4F]"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+                <span className="h-4 w-px bg-black/10" aria-hidden="true" />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
+                  aria-label={`Delete ${t.name}`}
+                  title="Delete"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#FDECEC] hover:text-[#E85E5E]"
+                >
+                  <Trash2 size={14} strokeWidth={1.75} />
+                </button>
+              </div>
             </div>
           </div>
         ))}
