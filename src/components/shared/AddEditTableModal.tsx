@@ -1,17 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Download, ChevronDown, Trash2 } from 'lucide-react';
+import { ArrowLeft, Download, ChevronDown } from 'lucide-react';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
-export interface AddEditTableData {
-  name: string;
-  zone: string;
-  capacity: number;
-}
-
-export interface SaveTableData {
+interface AddEditTableData {
   name: string;
   zone: string;
   capacity: number;
@@ -24,31 +18,21 @@ export function AddEditTableModal({
   table,
   onClose,
   onMarkReserved,
-  onSave,
-  onDelete,
 }: {
   open: boolean;
   table?: AddEditTableData | null;
   onClose: () => void;
   onMarkReserved?: () => void;
-  onSave?: (data: SaveTableData) => void;
-  onDelete?: () => void;
 }) {
   const editMode = !!table;
 
-  const [name, setName] = useState('');
-  const [capacity, setCapacity] = useState('2');
-  const [category, setCategory] = useState<string>('Indoor');
+  const [category, setCategory] = useState<string>(editMode ? table?.zone : 'Indoor');
   const [openDropdown, setOpenDropdown] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open) {
-      setName(table?.name ?? '');
-      setCapacity(String(table?.capacity ?? 2));
-      setCategory(table?.zone ?? 'Indoor');
-    }
-  }, [open, table]);
+    if (editMode && table) setCategory(table.zone);
+  }, [editMode, table]);
 
   useEffect(() => {
     if (open) {
@@ -70,7 +54,7 @@ export function AddEditTableModal({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `table-qr-${(editMode ? table?.name ?? 'table' : name || 'new-table').toLowerCase().replace(/\s+/g, '-')}.svg`;
+    link.download = `table-qr-${(editMode ? table?.name : 'new-table').toLowerCase().replace(/\s+/g, '-')}.svg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -105,7 +89,7 @@ export function AddEditTableModal({
 
           <div className="flex flex-col items-center gap-2 sm:gap-3">
             <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">
-              {editMode ? table?.name : 'Add Table'}
+              {editMode ? table.name : 'Add Table'}
             </h2>
             {editMode && (
               <span className="inline-flex items-center rounded-[37px] bg-[#1FB711] px-3 py-[6px] text-xs font-medium leading-5 text-white">
@@ -135,16 +119,8 @@ export function AddEditTableModal({
         </div>
 
         {editMode && (
-          <div className="mt-4 flex items-center justify-center gap-3 px-4 sm:mt-5 sm:px-5">
+          <div className="mt-4 flex flex-col items-center gap-2 px-4 sm:mt-5 sm:gap-3.5 sm:px-5">
             <span className="text-[22px] font-semibold leading-8 text-black sm:text-[32px] sm:leading-10">Edit Table</span>
-            <button
-              type="button"
-              onClick={onDelete}
-              aria-label="Delete table"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
-            >
-              <Trash2 size={18} />
-            </button>
           </div>
         )}
 
@@ -155,27 +131,20 @@ export function AddEditTableModal({
 
             <div className="mt-5 flex flex-col gap-2 sm:mt-11">
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <label htmlFor="table-name" className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Table Name / Number</label>
-                <input
-                  id="table-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Table 12"
-                  className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 font-satoshi text-sm font-medium leading-5 text-[#2D2F33] placeholder:text-[#989898] focus:outline-none focus:ring-2 focus:ring-[#026F4F]/40 sm:h-14 sm:text-base sm:leading-6"
-                />
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Table Name / Number</span>
+                <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">
+                    {editMode ? table.name : 'e.g. Table 12'}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <label htmlFor="table-capacity" className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Seating Capacity</label>
-                <input
-                  id="table-capacity"
-                  type="number"
-                  min={1}
-                  value={capacity}
-                  onChange={(e) => setCapacity(e.target.value)}
-                  placeholder="2"
-                  className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 font-satoshi text-sm font-medium leading-5 text-[#2D2F33] placeholder:text-[#989898] focus:outline-none focus:ring-2 focus:ring-[#026F4F]/40 sm:h-14 sm:text-base sm:leading-6"
-                />
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Seating Capacity</span>
+                <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">
+                    {editMode ? table.capacity : '2'}
+                  </span>
+                </div>
               </div>
               <div className="relative flex flex-col gap-1.5 sm:gap-2">
                 <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Category</span>
@@ -217,57 +186,15 @@ export function AddEditTableModal({
         {/* Footer */}
         <div className="mt-auto shrink-0 border-t border-[#E2E2E2] px-4 pt-3 pb-2.5 sm:px-5 sm:pt-3.5 sm:pb-3">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
-            {editMode ? (
-              <>
-                <button
-                  type="button"
-                  onClick={onDelete}
-                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[30px] bg-[#E85E5E] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#d94a4a] sm:h-14 sm:text-lg"
-                >
-                  <Trash2 size={18} />
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { onMarkReserved?.(); }}
-                  className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC] sm:h-14 sm:text-lg"
-                >
-                  Mark Reserved
-                </button>
-                <button
-                  type="button"
-                  disabled={!name.trim()}
-                  onClick={() => {
-                    const parsed = Math.max(1, parseInt(capacity, 10) || 1);
-                    onSave?.({ name: name.trim(), zone: category, capacity: parsed });
-                  }}
-                  className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] disabled:cursor-not-allowed disabled:opacity-50 sm:h-14 sm:text-lg"
-                >
-                  Save Changes
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC] sm:h-14 sm:text-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  disabled={!name.trim()}
-                  onClick={() => {
-                    const parsed = Math.max(1, parseInt(capacity, 10) || 1);
-                    onSave?.({ name: name.trim(), zone: category, capacity: parsed });
-                  }}
-                  className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] disabled:cursor-not-allowed disabled:opacity-50 sm:h-14 sm:text-lg"
-                >
-                  Save Table
-                </button>
-              </>
-            )}
+            <button
+              onClick={() => { editMode ? onMarkReserved?.() : onClose(); }}
+              className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC] sm:h-14 sm:text-lg"
+            >
+              {editMode ? 'Mark Reserved' : 'Cancel'}
+            </button>
+            <button className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] sm:h-14 sm:text-lg">
+              {editMode ? 'Seat Guests' : 'Save Table'}
+            </button>
           </div>
         </div>
       </div>
