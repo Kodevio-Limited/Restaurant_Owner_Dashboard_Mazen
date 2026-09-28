@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
+import { ArrowLeft, Download, ArrowUpRight, Edit3, Trash2, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
@@ -34,12 +34,14 @@ export function TableInfoModal({
   table,
   onClose,
   onEdit,
+  onDelete,
   onAddOrder,
 }: {
   open: boolean;
   table: TableInfoData | null;
   onClose: () => void;
   onEdit?: (table: TableInfoData) => void;
+  onDelete?: (table: TableInfoData) => void;
   onAddOrder?: (tableId: string, orderNo: string) => void;
 }) {
   const [showAddOrder, setShowAddOrder] = useState(false);
@@ -274,7 +276,7 @@ export function TableInfoModal({
           <section className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[21px]">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">Table Info</h3>
-              {!occupied && (
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => { onEdit?.(table); onClose(); }}
                   className="flex items-center gap-1 text-base font-normal leading-6 text-[#026F4F] sm:gap-[5px] sm:text-lg sm:leading-7"
@@ -282,7 +284,15 @@ export function TableInfoModal({
                   <Edit3 size={20} />
                   Edit
                 </button>
-              )}
+                <button
+                  onClick={() => { onDelete?.(table); }}
+                  aria-label={`Delete ${table.name}`}
+                  className="flex items-center gap-1 text-base font-normal leading-6 text-[#E85E5E] sm:gap-[5px] sm:text-lg sm:leading-7"
+                >
+                  <Trash2 size={20} />
+                  Delete
+                </button>
+              </div>
             </div>
 
             <div className="mt-5 flex flex-col gap-2 sm:mt-11">

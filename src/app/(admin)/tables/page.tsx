@@ -1,14 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { TableCard, TableStatus } from '@/components/shared/TableCard';
 import { SeatGuestsModal } from '@/components/shared/SeatGuestsModal';
-import { AddEditTableModal } from '@/components/shared/AddEditTableModal';
+import { AddEditTableModal, SaveTableData } from '@/components/shared/AddEditTableModal';
 import { MarkReservedModal } from '@/components/shared/MarkReservedModal';
 import { ReservedDetailModal } from '@/components/shared/ReservedDetailModal';
 import { TableInfoModal } from '@/components/shared/TableInfoModal';
 import { AddTableCategoryModal } from '@/components/shared/AddTableCategoryModal';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
 
 interface TableDef {
@@ -46,8 +47,43 @@ export default function TablesPage() {
   const [reservedTable, setReservedTable]         = useState<TableDef | null>(null);
   const [seatGuests, setSeatGuests] = useState(false);
   const [showCategory, setShowCategory] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<TableDef | null>(null);
 
   const filtered = zone === 'All' ? tables : tables.filter((t) => t.zone === zone);
+
+  const handleSaveTable = (data: SaveTableData) => {
+    if (editing) {
+      setTables((prev) =>
+        prev.map((t) =>
+          t.id === editing.id
+            ? { ...t, name: data.name, zone: data.zone as TableDef['zone'], capacity: data.capacity }
+            : t,
+        ),
+      );
+      setSelected((prev) => (prev && prev.id === editing.id
+        ? { ...prev, name: data.name, zone: data.zone as TableDef['zone'], capacity: data.capacity }
+        : prev));
+    } else {
+      const id = `t${Date.now()}`;
+      setTables((prev) => [
+        ...prev,
+        { id, name: data.name, zone: data.zone as TableDef['zone'], status: 'available' as TableStatus, capacity: data.capacity },
+      ]);
+    }
+    setShowAdd(false);
+    setEditing(null);
+  };
+
+  const handleDeleteTable = (target: TableDef | null) => {
+    if (!target) return;
+    setTables((prev) => prev.filter((t) => t.id !== target.id));
+    setSelected((prev) => (prev && prev.id === target.id ? null : prev));
+    setEditing((prev) => (prev && prev.id === target.id ? null : prev));
+    setReservedTable((prev) => (prev && prev.id === target.id ? null : prev));
+    setMarkReservedTable((prev) => (prev && prev.id === target.id ? null : prev));
+    setDeleteTarget(null);
+    setShowAdd(false);
+  };
 
   return (
     <main className="flex flex-col gap-5">
@@ -106,20 +142,40 @@ export default function TablesPage() {
       {/* ── Table grid ── */}
       <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filtered.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setSelected(t)}
-            className="w-full cursor-pointer text-left transition-transform hover:-translate-y-0.5 focus:outline-none"
-          >
-            <TableCard
-              name={t.name}
-              zone={t.zone}
-              status={t.status}
-              bill={t.bill}
-              time={t.time}
-              orderNumbers={t.orderNumbers}
-            />
-          </button>
+          <div key={t.id} className="group relative w-full">
+            <button
+              onClick={() => setSelected(t)}
+              aria-label={`View ${t.name}`}
+              className="w-full cursor-pointer text-left transition-transform hover:-translate-y-0.5 focus:outline-none"
+            >
+              <TableCard
+                name={t.name}
+                zone={t.zone}
+                status={t.status}
+                bill={t.bill}
+                time={t.time}
+                orderNumbers={t.orderNumbers}
+              />
+            </button>
+            <div className="absolute right-2 top-2 flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setEditing(t); setShowAdd(false); }}
+                aria-label={`Edit ${t.name}`}
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/95 text-[#686868] shadow-md outline outline-1 outline-[#B9B9B9] transition-colors hover:bg-white hover:text-[#026F4F]"
+              >
+                <Pencil size={15} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setDeleteTarget(t); }}
+                aria-label={`Delete ${t.name}`}
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E85E5E] text-white shadow-md transition-colors hover:bg-[#d94a4a]"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -130,8 +186,11 @@ export default function TablesPage() {
         onClose={() => { setShowAdd(false); setEditing(null); }}
         onMarkReserved={() => {
           setMarkReservedTable(editing);
+          setShowAdd(false);
           setEditing(null);
         }}
+        onSave={handleSaveTable}
+        onDelete={() => setDeleteTarget(editing)}
       />
 
       <MarkReservedModal
@@ -168,6 +227,7 @@ export default function TablesPage() {
         table={selected}
         onClose={() => setSelected(null)}
         onEdit={(t) => { setSelected(null); setEditing(t); }}
+        onDelete={(t) => { setSelected(null); setDeleteTarget(t); }}
         onAddOrder={(tableId, newOrderNo) => {
           setTables((prev) =>
             prev.map((t) =>
@@ -185,6 +245,15 @@ export default function TablesPage() {
       />
 
       <AddTableCategoryModal open={showCategory} onClose={() => setShowCategory(false)} />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={`Delete ${deleteTarget?.name ?? 'table'}?`}
+        description={`This will permanently remove ${deleteTarget?.name ?? 'this table'}${deleteTarget?.orderNumbers?.length ? ` and its ${deleteTarget.orderNumbers.length} linked order${deleteTarget.orderNumbers.length > 1 ? 's' : ''}` : ''}. This action cannot be undone.`}
+        confirmLabel="Delete"
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => handleDeleteTable(deleteTarget)}
+      />
     </main>
   );
 }
