@@ -49,7 +49,7 @@ export function StatCard({ label, value, unit, sub, icon, action }: StatCardProp
       {action && (
         <Link
           href={action.href}
-          className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-[#FEF6D8] px-3 py-1.5 text-[12px] font-medium text-[#8A6D00] transition-colors hover:bg-[#FCEFB4]"
+          className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-[rgba(53,140,114,0.12)] px-3 py-1.5 text-[12px] font-medium text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)]"
         >
           <span>{action.label}</span>
           <ArrowUpRight size={13} />

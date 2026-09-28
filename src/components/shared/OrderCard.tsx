@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { CalendarDays, Table as TableIcon, Check, X } from 'lucide-react';
+import { ArrowRight, CalendarDays, Table as TableIcon, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface OrderItem {
@@ -42,6 +42,12 @@ interface OrderCardProps {
 export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCardProps) {
   const paid = order.status === 'paid';
 
+  // Cards stay identical in size no matter how big the order is: only the
+  // first two lines render, anything beyond that folds into the +N counter.
+  const MAX_VISIBLE_ITEMS = 2;
+  const visibleItems = order.items.slice(0, MAX_VISIBLE_ITEMS);
+  const hiddenCount = order.extraItems + Math.max(0, order.items.length - MAX_VISIBLE_ITEMS);
+
   const handleAccept = () => {
     onStepChange?.('accepted');
   };
@@ -61,7 +67,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
   return (
     <div
       onClick={() => onOpen?.(order)}
-      className="flex w-full cursor-pointer flex-col justify-between gap-4 rounded-2xl bg-white p-4 transition-shadow hover:shadow-md"
+      className="flex h-full w-full cursor-pointer flex-col justify-between gap-4 rounded-2xl bg-white p-4 transition-shadow hover:shadow-md"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
@@ -80,24 +86,37 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
         <span className="shrink-0 text-[12px] leading-[18px] text-[#989898]">{order.orderNo}</span>
       </div>
 
-      {/* Meta */}
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-1.5">
-          <CalendarDays size={15} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
-          <span className="text-[12px] leading-[17px] text-[#989898]">{order.time}</span>
+      {/* Meta + View Details (same row) */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <div className="flex items-center gap-1.5">
+            <CalendarDays size={15} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
+            <span className="truncate text-[12px] leading-[17px] text-[#989898]">{order.time}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <TableIcon size={15} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
+            <span className="truncate text-[12px] leading-[17px] text-[#989898]">{order.table}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <TableIcon size={15} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
-          <span className="text-[12px] leading-[17px] text-[#989898]">{order.table}</span>
-        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); onOpen?.(order); }}
+          aria-label={`View details of order ${order.orderNo}`}
+          className="flex shrink-0 flex-col items-center justify-center rounded-xl bg-[#FEF6D8] px-3.5 py-2 text-center text-[#8A6D00] transition-colors hover:bg-[#FCEFB4]"
+        >
+          <span className="text-[12px] font-semibold leading-[16px]">View</span>
+          <span className="flex items-center justify-center gap-1 text-[12px] font-semibold leading-[16px]">
+            Details
+            <ArrowRight size={13} strokeWidth={2.4} />
+          </span>
+        </button>
       </div>
 
-      {/* Items */}
-      <div className="flex flex-col gap-3">
-        {order.items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-2">
+      {/* Items — fixed two-row block so every card is the same size */}
+      <div className="flex min-h-[116px] flex-col gap-3">
+        {visibleItems.map((item) => (
+          <div key={item.id} className="flex h-[52px] items-center justify-between gap-2 overflow-hidden">
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="relative h-[46px] w-[42px] shrink-0 overflow-hidden rounded-md bg-[#F2F2F2]">
+              <div className="relative h-[52px] w-[42px] shrink-0 overflow-hidden rounded-md bg-[#F2F2F2]">
                 <Image
                   src="/images/food-41e5d7.png"
                   alt={item.name}
@@ -106,10 +125,10 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
                   className="object-cover"
                 />
               </div>
-              <div className="flex min-w-0 flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col justify-center gap-0.5">
                 <span className="truncate text-[13px] font-medium leading-[18px] text-[#2D2F33]">{item.name}</span>
                 {item.note && (
-                  <span className="text-[10.5px] leading-[14px] text-[#989898]">&ldquo;{item.note}&rdquo;</span>
+                  <span className="truncate text-[10.5px] leading-[14px] text-[#989898]">&ldquo;{item.note}&rdquo;</span>
                 )}
                 <span className="text-[12px] font-semibold leading-[17px] text-[#026F4F]">{item.price}</span>
               </div>
@@ -125,7 +144,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 border-t border-[#F2F2F2] pt-3">
         <div className="flex shrink-0 flex-col">
           <span className="text-[10.5px] leading-[15px] text-[#686868]">
-            {order.extraItems > 0 ? `+${order.extraItems} Items` : '\u00A0'}
+            {hiddenCount > 0 ? `+${hiddenCount} Items` : '\u00A0'}
           </span>
           <span className="text-[15px] font-semibold leading-[21px] text-[#026F4F]">{order.total}</span>
         </div>
