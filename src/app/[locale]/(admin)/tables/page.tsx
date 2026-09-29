@@ -146,14 +146,17 @@ export default function TablesPage() {
                 orderNumbers={tab.orderNumbers}
               />
             </button>
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+            {/* Hover-reveal only on devices with a fine pointer + hover (desktop mouse).
+                Touch screens (iPad, tablets, phones) have no hover, so the
+                actions stay always visible there. */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-opacity duration-200 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:opacity-0 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:group-focus-within:opacity-100 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100">
               <div className="flex items-center gap-1 rounded-full bg-white/90 p-1 shadow-sm ring-1 ring-black/5 backdrop-blur-sm">
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setEditing(tab); setShowAdd(false); }}
                   aria-label={isAr ? `تعديل ${tab.name_ar ?? tab.name}` : `Edit ${tab.name}`}
                   title={isAr ? 'تعديل' : 'Edit'}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#F2F2F2] hover:text-[#026F4F]"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#F2F2F2] hover:text-[#026F4F] [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:w-10"
                 >
                   <Pencil size={14} strokeWidth={1.75} />
                 </button>
@@ -163,7 +166,7 @@ export default function TablesPage() {
                   onClick={(e) => { e.stopPropagation(); setDeleteTarget(tab); }}
                   aria-label={isAr ? `حذف ${tab.name_ar ?? tab.name}` : `Delete ${tab.name}`}
                   title={isAr ? 'حذف' : 'Delete'}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#FDECEC] hover:text-[#E85E5E]"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#FDECEC] hover:text-[#E85E5E] [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:w-10"
                 >
                   <Trash2 size={14} strokeWidth={1.75} />
                 </button>
