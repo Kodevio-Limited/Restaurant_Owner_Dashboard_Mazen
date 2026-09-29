@@ -1,0 +1,524 @@
+{
+  "meta": {
+    "root": {
+      "title": "Restaurant Dashboard — Merchant Portal",
+      "description": "Restaurant owner dashboard for Reports, Orders, Menu, Tables, Staff, Billing & Settings."
+    },
+    "analytics": {
+      "title": "Reports & Analytics",
+      "description": "Track sales, performance, and insights"
+    },
+    "orders": {
+      "title": "Orders",
+      "description": "Track and manage all orders"
+    },
+    "menu": {
+      "title": "Menu Management",
+      "description": "Manage menu items and categories"
+    },
+    "tables": {
+      "title": "Table Management",
+      "description": "Monitor and update table status"
+    },
+    "staff": {
+      "title": "Staff Management",
+      "description": "Manage your team and roles"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Configure your restaurant settings"
+    },
+    "billing": {
+      "title": "Subscription & Billing",
+      "description": "Manage your plan and billing"
+    },
+    "inventory": {
+      "title": "Inventory",
+      "description": "Track stock and inventory"
+    },
+    "login": {
+      "title": "Sign In",
+      "description": "Access your account"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Recover your account access"
+    },
+    "createPassword": {
+      "title": "Create Password",
+      "description": "Set up your new password"
+    },
+    "verifyEmail": {
+      "title": "Verify Email",
+      "description": "Confirm your identity"
+    },
+    "chooseBranch": {
+      "title": "Choose Branch",
+      "description": "Select your working branch"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "close": "Close",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "edit": "Edit",
+      "add": "Add",
+      "remove": "Remove",
+      "view": "View",
+      "search": "Search",
+      "logout": "Log Out",
+      "signIn": "Sign In",
+      "back": "Back",
+      "next": "Next",
+      "done": "Done",
+      "upload": "Upload",
+      "download": "Download",
+      "select": "Select",
+      "update": "Update",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "networkError": "Something went wrong. Please try again.",
+      "unsavedChanges": "You have unsaved changes"
+    },
+    "status": {
+      "open": "Open",
+      "closed": "Closed",
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "completed": "Completed",
+      "canceled": "Canceled",
+      "refunded": "Refunded",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "available": "Available",
+      "occupied": "Occupied",
+      "reserved": "Reserved"
+    }
+  },
+  "nav": {
+    "orders": "Orders",
+    "menu": "Menu",
+    "tables": "Tables",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings",
+    "billing": "Billing",
+    "logout": "Log Out",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
+  },
+  "topHeader": {
+    "searchPlaceholder": "Search Task...",
+    "restaurantOpen": "Restaurant Open",
+    "shiftStarted": "Shift Started:",
+    "shiftTime": "9PM",
+    "currentCashier": "Current Cashier:",
+    "cashierName": "Mazen Alqassif",
+    "notifications": "Notifications",
+    "profileAlt": "Profile photo",
+    "branchSelector": "Dhanmondi"
+  },
+  "languageToggle": {
+    "english": "English",
+    "arabic": "العربية",
+    "switchToAr": "Switch to Arabic",
+    "switchToEn": "Switch to English"
+  },
+  "analytics": {
+    "title": "Reports & Analytics",
+    "subtitle": "Track sales, performance, and insights across your business",
+    "branch": "Dhanmondi (This Branch)",
+    "perMonth": "Per Month",
+    "cards": {
+      "totalRevenue": "Total Revenue",
+      "totalOrders": "Total Orders",
+      "activeOrders": "Active Orders",
+      "activeTables": "Active Tables",
+      "pendingPay": "Pending Pay",
+      "tableTurnoverRate": "Table Turnover Rate",
+      "orderFulfillmentRate": "Order Fulfillment Rate",
+      "avgSpendPerTable": "Avg Spend per Table",
+      "cancelledOrder": "Cancelled Order",
+      "tableUtilization": "Table Utilization",
+      "kitchenIsBusy": "Kitchen is busy",
+      "outOfTables": "Out of {total} tables",
+      "actionRequired": "Action Required",
+      "today": "Today",
+      "fromYesterday": "{value} from yesterday",
+      "fromYesterdayNeg": "{value} from yesterday"
+    },
+    "topPerformingItems": "Top Performing Items",
+    "leastPerformingItems": "Least Performing Items",
+    "shiftReports": "Shift Reports",
+    "item": "Item",
+    "qty": "Qty",
+    "revenue": "Revenue"
+  },
+  "orders": {
+    "title": "Orders",
+    "subtitle": "Track and manage all dine-in, takeaway, and delivery orders",
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "completed": "Completed",
+      "canceled": "Canceled",
+      "refunded": "Refunded"
+    },
+    "noOrdersForStatus": "No orders found for this status.",
+    "orderNo": "Order No",
+    "table": "Table",
+    "total": "Total",
+    "moreItems": "+{count} more",
+    "viewDetails": "View Details",
+    "updateStatus": "Update Status",
+    "markPreparing": "Mark as Preparing",
+    "markReady": "Mark as Ready",
+    "markCompleted": "Mark as Completed"
+  },
+  "menu": {
+    "title": "Menu Management",
+    "subtitle": "Manage your menu items, categories, and customizations",
+    "addCategory": "Add Category",
+    "addItem": "Add Item",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "editItem": "Edit Item",
+    "deleteItem": "Delete Item",
+    "categoryName": "Category Name",
+    "itemName": "Item Name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "all": "All"
+  },
+  "tables": {
+    "title": "Table Management",
+    "subtitle": "Monitor and update table status with ease",
+    "addCategory": "Add Category",
+    "addTable": "Add Table",
+    "zones": {
+      "all": "All",
+      "indoor": "Indoor",
+      "outdoor": "Outdoor",
+      "patio": "Patio"
+    },
+    "tableName": "Table Name",
+    "capacity": "Capacity",
+    "zone": "Zone",
+    "viewTable": "View {name}",
+    "editTable": "Edit {name}",
+    "deleteTable": "Delete {name}",
+    "confirmDelete": "Delete {name}?",
+    "deleteWarning": "This will permanently remove {name}. This action cannot be undone.",
+    "seatGuests": "Seat Guests",
+    "markReserved": "Mark Reserved",
+    "guestName": "Guest Name",
+    "guestCount": "Number of Guests",
+    "date": "Date",
+    "time": "Time",
+    "note": "Note",
+    "orderNumbers": "Order Numbers"
+  },
+  "staff": {
+    "title": "Staff Management",
+    "subtitle": "Manage your team, roles, and access in one place",
+    "addStaff": "Add Staff",
+    "filters": {
+      "all": "All",
+      "manager": "Manager",
+      "waiter": "Waiter",
+      "kitchenStaff": "Kitchen Staff",
+      "cashier": "Cashier"
+    },
+    "roles": {
+      "MANAGER": "Manager",
+      "WAITER": "Waiter",
+      "KITCHEN STAFF": "Kitchen Staff",
+      "CASHIER": "Cashier"
+    },
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "role": "Role",
+    "active": "Active",
+    "inactive": "Inactive",
+    "removeStaff": "Remove Staff Member",
+    "confirmRemove": "Are you sure you want to remove {name}? This action cannot be undone.",
+    "editMember": "Edit Member",
+    "addMember": "Add Team Member"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure your restaurant settings",
+    "tabs": {
+      "general": "General & Brand",
+      "branches": "Branch Management",
+      "paymentTaxes": "Payment and Taxes",
+      "receipt": "Receipt Format",
+      "notification": "Notification"
+    },
+    "general": {
+      "businessDetails": "Business Details",
+      "businessName": "Business Name",
+      "email": "Email",
+      "currency": "Currency",
+      "timezone": "TimeZone",
+      "branding": "Branding & Appearance",
+      "uploadLogo": "Upload Logo",
+      "logoHint": "PNG, JPG up to 2MB",
+      "brandColor": "Primary Brand Color",
+      "brandColorDesc": "This color will be applied to buttons, links, and customer-facing menus.",
+      "language": "Language",
+      "expandMenuBar": "Expand Menu bar",
+      "expandMenuBarDesc": "Toggle the main navigation sidebar to show full text labels or just icons.",
+      "requireCustomer": "Require Customer Information from Cashier",
+      "requireCustomerDesc": "When enabled, cashiers must enter customer details before completing an order.",
+      "customerInfoFields": "Customer Information Fields",
+      "customerInfoDesc": "Choose whether the cashier must collect each field before completing an order.",
+      "fields": {
+        "phone": "Phone Number",
+        "phoneDesc": "Customer phone number at checkout",
+        "name": "Full Name",
+        "nameDesc": "Customer full name at checkout",
+        "email": "Email",
+        "emailDesc": "Receipt email at checkout"
+      },
+      "location": "Location & QR Ordering Restriction",
+      "locationDesc": "Restrict customers from scanning your QR code if they are not physically at the branch.",
+      "searchAddress": "Search for your branch address...",
+      "useCurrentLocation": "Use Current Location",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "allowedRadius": "Allowed Radius",
+      "clickToInteract": "Click to interact with map",
+      "doneInteracting": "Done interacting",
+      "brandColorAria": "Primary brand color",
+      "brandColorHexAria": "Primary brand color hex",
+      "emailPlaceholder": "Enter your Email...",
+      "locationDescLong": "Restrict customers from scanning your QR code or placing orders if they are not physically at the branch.",
+      "mapTitle": "Branch Location Map",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "branches": {
+      "title": "Branch Management",
+      "edit": "Edit",
+      "delete": "Delete",
+      "addBranch": "Add Branch",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address"
+    },
+    "editBranch": {
+      "back": "Back",
+      "title": "Edit Branch",
+      "branchName": "Branch Name",
+      "branchNamePlaceholder": "e.g. Downtown (Main)",
+      "address": "Address",
+      "addressPlaceholder": "Full branch address...",
+      "email": "Email",
+      "emailPlaceholder": "Enter your Email",
+      "phone": "Contact Phone",
+      "phonePlaceholder": "(555) 000000",
+      "cancel": "Cancel",
+      "saveBranch": "Save Branch"
+    },
+    "payment": {
+      "customerPaymentOptions": "Customer Payment Options",
+      "payOnline": "Pay Online",
+      "payOnlineDesc": "Allow customers to pay digitally before or during their order via web link.",
+      "getCheck": "Get the Check",
+      "getCheckDesc": "Allow customers to request the bill and pay physically at the restaurant.",
+      "behaviorSettings": "Behavior Settings",
+      "defaultPaymentMethod": "Default Payment Method",
+      "whenIsPaymentRequired": "When Is Payment Required",
+      "vat": "Value Added Tax (VAT)",
+      "vatDesc": "Configure automated tax calculation on orders.",
+      "vatPercentage": "VAT Percentage (%)",
+      "taxMethod": "Tax Calculation Method",
+      "serviceCharge": "Service Charge",
+      "serviceChargeDesc": "Apply automated gratuity or service fees.",
+      "servicePercentage": "Service Percentage (%)",
+      "vatInclusive": "Inclusive (VAT included in prices)",
+      "vatExclusive": "Exclusive (VAT added to prices)",
+      "enterServicePct": "Enter service %"
+    },
+    "receipt": {
+      "headerText": "Header Text",
+      "footerText": "Footer Text",
+      "showTaxBreakdown": "Show Tax Breakdown",
+      "showTaxDesc": "Print detailed VAT/Tax amounts on the receipt.",
+      "showServiceCharge": "Show Service Charge",
+      "showServiceDesc": "Print the service charge line item.",
+      "preview": "Receipt Preview",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "headerSample": "Thank you for dining with us! Follow us @DineConnect",
+      "footerSample": "Thank you for dining with us! Follow us @EMSA7",
+      "lineItem": "{count}x Classic Burger",
+      "vatLine": "VAT (10%)",
+      "serviceLine": "Service (10%)",
+      "wifi": "Wifi: 12345678",
+      "comeAgain": "Please Come Again"
+    },
+    "notification": {
+      "orderUpdates": "Order Updates",
+      "orderUpdatesDesc": "Get notified for new orders and status changes.",
+      "staffAlerts": "Staff Alerts",
+      "staffAlertsDesc": "Receive alerts for staff clock-in/out and schedule changes.",
+      "promotions": "Promotions & Offers",
+      "promotionsDesc": "Receive notifications about promotions and special offers.",
+      "preferencesTitle": "Notification Preferences",
+      "recentTitle": "Recent Notifications",
+      "collab": "wants to collaborate",
+      "lookingFor": "is looking for people like you.",
+      "newOpportunity": "Hey, we've got a new opportunity for you. {name} from {from} {action}",
+      "newOpportunityNoFrom": "Hey, we've got a new opportunity for you. {name} {action}",
+      "fiveDaysAgo": "5 days ago",
+      "oneMonthAgo": "1 month ago",
+      "twoMonthsAgo": "2 months ago"
+    },
+    "saveChanges": "Save Changes",
+    "tabsSettings": "{tab} Settings",
+    "backToTop": "Back to top",
+    "quickScroll": "Quick scroll to bottom",
+    "editBranch": {
+      "title": "Edit Branch",
+      "back": "Back",
+      "branchName": "Branch Name",
+      "branchNamePlaceholder": "e.g. Downtown (Main)",
+      "address": "Address",
+      "addressPlaceholder": "Full branch address...",
+      "email": "Email",
+      "emailPlaceholder": "Enter your Email",
+      "phone": "Contact Phone",
+      "phonePlaceholder": "(555) 000000",
+      "cancel": "Cancel",
+      "saveBranch": "Save Branch"
+    }
+  },
+  "billing": {
+    "title": "Subscription & Billing",
+    "subtitle": "Manage your plan, billing details, and feature access",
+    "currentPlan": "Current Plan",
+    "nextRenewal": "Next Renewal",
+    "renewAllBranches": "Renew All Branches",
+    "renewPlan": "Renew Plan",
+    "cancelSub": "Cancel Sub",
+    "perMonth": "/Month",
+    "usageOverview": "Usage Overview",
+    "ordersThisMonth": "Orders this month",
+    "branches": "Branches",
+    "staffAccounts": "Staff Accounts",
+    "choosePlan": "Choose Your Plan",
+    "choosePlanDesc": "Upgrade to unlock more tables, orders, and premium features.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save20": "SAVE 20%",
+    "selectPlan": "Select Plan",
+    "currentPlanBadge": "Current",
+    "mostPopular": "Most Popular",
+    "mo": "/mo",
+    "billingHistory": "Billing History",
+    "date": "DATE",
+    "amount": "AMOUNT",
+    "status": "STATUS",
+    "invoice": "INVOICE",
+    "active": "ACTIVE",
+    "paid": "PAID",
+    "contactUs": "Contact Us",
+    "currentPlanName": "Pro Plan",
+    "currentPlanDesc": "Perfect for growing restaurants managing high volumes.",
+    "renewalDate": "Aug 25, 2026",
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "tagline": "Essential tools for small cafes and pop-ups.",
+        "features": [
+          "Up to 200 orders/mo",
+          "10 Tables",
+          "Basic Menu Management",
+          "Multi-branch Support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "tagline": "Advanced features for busy, growing restaurants.",
+        "features": [
+          "Up to 500 orders/mo",
+          "25 Tables",
+          "Advanced Reports",
+          "Staff Roles & Permissions",
+          "Multi-branch Support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "tagline": "Unlimited scale and multi-location management.",
+        "features": [
+          "Unlimited orders",
+          "Unlimited Tables",
+          "White-label QR Codes",
+          "Multi-branch Support",
+          "Dedicated Account Manager"
+        ]
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Access your account with correct information",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email...",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "********",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign In"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to receive a reset code",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email...",
+      "getCode": "Get Code",
+      "backToSignIn": "Back to Sign In"
+    },
+    "createPassword": {
+      "title": "Create New Password",
+      "subtitle": "Create a new password for your account",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "retypePasswordLabel": "Retype Password",
+      "retypePasswordPlaceholder": "Re-enter new password",
+      "update": "Update"
+    },
+    "verifyEmail": {
+      "title": "Verify Email",
+      "subtitle": "We've sent a 6-digit code to your email",
+      "verify": "Verify",
+      "sendAgain": "Send again",
+      "back": "Back"
+    },
+    "chooseBranch": {
+      "title": "Choose Branch",
+      "subtitle": "Select the branch you are working at today",
+      "confirm": "Confirm"
+    }
+  }
+}

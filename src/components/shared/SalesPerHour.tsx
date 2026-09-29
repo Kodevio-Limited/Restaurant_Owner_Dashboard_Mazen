@@ -11,22 +11,26 @@ import {
   YAxis,
 } from 'recharts';
 
+import { useLocale } from 'next-intl';
+
 const data = [
-  { hour: '11 AM', sales: 28 },
-  { hour: '12 PM', sales: 50 },
-  { hour: '1 AM', sales: 18 },
-  { hour: '2 AM', sales: 22 },
-  { hour: '3 AM', sales: 9 },
-  { hour: '4 AM', sales: 14 },
-  { hour: '5 AM', sales: 32 },
-  { hour: '6 AM', sales: 61 },
-  { hour: '7 AM', sales: 42 },
-  { hour: '8 AM', sales: 70 },
-  { hour: '9 AM', sales: 86 },
-  { hour: '10 AM', sales: 47 },
+  { hour: '11 AM', hour_ar: '11 ص', sales: 28 },
+  { hour: '12 PM', hour_ar: '12 م', sales: 50 },
+  { hour: '1 AM',  hour_ar: '1 ص',  sales: 18 },
+  { hour: '2 AM',  hour_ar: '2 ص',  sales: 22 },
+  { hour: '3 AM',  hour_ar: '3 ص',  sales: 9 },
+  { hour: '4 AM',  hour_ar: '4 ص',  sales: 14 },
+  { hour: '5 AM',  hour_ar: '5 ص',  sales: 32 },
+  { hour: '6 AM',  hour_ar: '6 ص',  sales: 61 },
+  { hour: '7 AM',  hour_ar: '7 ص',  sales: 42 },
+  { hour: '8 AM',  hour_ar: '8 ص',  sales: 70 },
+  { hour: '9 AM',  hour_ar: '9 ص',  sales: 86 },
+  { hour: '10 AM', hour_ar: '10 ص', sales: 47 },
 ];
 
 export function SalesPerHour() {
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
 
   const handleClick = useCallback((state: any) => {
@@ -39,7 +43,9 @@ export function SalesPerHour() {
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
-      <h3 className="text-lg font-semibold text-[#2D2F33]">Sales per Hour (Today)</h3>
+      <h3 className="text-lg font-semibold text-[#2D2F33]">
+        {isArabic ? 'المبيعات لكل ساعة (اليوم)' : 'Sales per Hour (Today)'}
+      </h3>
       <div className="mt-2 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -50,7 +56,7 @@ export function SalesPerHour() {
           >
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             <XAxis
-              dataKey="hour"
+              dataKey={isArabic ? 'hour_ar' : 'hour'}
               axisLine={false}
               tickLine={false}
               angle={-45}
@@ -70,13 +76,13 @@ export function SalesPerHour() {
               width={44}
             />
             <Tooltip
-              formatter={(v: number) => [`$${v}`, 'Sales']}
+              formatter={(v: number) => [`$${v}`, isArabic ? 'المبيعات' : 'Sales']}
               cursor={{ fill: 'rgba(137,121,255,0.08)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
               active={displayIndex !== null}
-              payload={displayIndex !== null ? [{ value: data[displayIndex].sales, name: 'Sales' }] : undefined}
-              label={displayIndex !== null ? data[displayIndex].hour : undefined}
+              payload={displayIndex !== null ? [{ value: data[displayIndex].sales, name: isArabic ? 'المبيعات' : 'Sales' }] : undefined}
+              label={displayIndex !== null ? (isArabic ? data[displayIndex].hour_ar : data[displayIndex].hour) : undefined}
             />
             <Bar
               dataKey="sales"

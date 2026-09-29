@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 export function SeatGuestsModal({
@@ -13,6 +14,9 @@ export function SeatGuestsModal({
   onClose: () => void;
   onSave?: () => void;
 }) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -33,8 +37,8 @@ export function SeatGuestsModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -42,12 +46,14 @@ export function SeatGuestsModal({
         <div className="flex shrink-0 items-center justify-between px-4 pt-5 sm:px-5 sm:pt-6">
           <button
             onClick={onClose}
-            aria-label="Back"
+            aria-label={isAr ? 'رجوع' : 'Back'}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC] sm:h-12 sm:w-12"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">Add Table</h2>
+          <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">
+            {isAr ? 'إجلاس الضيوف' : 'Seat Guests'}
+          </h2>
           <div className="h-10 w-10 sm:h-12 sm:w-12" />
         </div>
 
@@ -56,21 +62,31 @@ export function SeatGuestsModal({
           <div className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[19px]">
             <div className="flex w-full flex-col gap-3 sm:gap-3.5">
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Table Name / Number</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'اسم الطاولة / الرقم' : 'Table Name / Number'}
+                </span>
                 <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">e.g. Table 12</span>
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">
+                    {isAr ? 'مثال: طاولة 12' : 'e.g. Table 12'}
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Seating Capacity</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'السعة' : 'Seating Capacity'}
+                </span>
                 <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
                   <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">2</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Category</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'الفئة' : 'Category'}
+                </span>
                 <div className="flex h-11 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">Indoor</span>
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">
+                    {isAr ? 'داخلي' : 'Indoor'}
+                  </span>
                   <ChevronDown size={16} className="text-[#989898]" />
                 </div>
               </div>
@@ -85,13 +101,13 @@ export function SeatGuestsModal({
               onClick={onClose}
               className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC] sm:h-14 sm:text-lg"
             >
-              Cancel
+              {isAr ? 'إلغاء' : 'Cancel'}
             </button>
             <button
               onClick={() => { onSave?.(); onClose(); }}
               className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] sm:h-14 sm:text-lg"
             >
-              Save Table
+              {isAr ? 'حفظ الطاولة' : 'Save Table'}
             </button>
           </div>
         </div>

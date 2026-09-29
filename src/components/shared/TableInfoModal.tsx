@@ -2,31 +2,35 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
 
 export interface TableInfoData {
   id: string;
   name: string;
+  name_ar?: string;
   zone: 'Indoor' | 'Outdoor' | 'Patio';
+  zone_ar?: string;
   status: 'available' | 'occupied' | 'reserved';
   bill?: string;
   time?: string;
+  time_ar?: string;
   capacity: number;
   orderNumbers?: string[];
 }
 
-const STATUS_STYLES: Record<string, { label: string; bg: string }> = {
-  occupied: { label: 'OCCUPIED', bg: '#E8AD0D' },
-  available: { label: 'AVAILABLE', bg: '#1FB711' },
-  reserved: { label: 'RESERVED', bg: '#0DADE8' },
+const STATUS_STYLES: Record<string, { label: string; label_ar: string; bg: string }> = {
+  occupied: { label: 'OCCUPIED', label_ar: 'مشغول', bg: '#E8AD0D' },
+  available: { label: 'AVAILABLE', label_ar: 'متاح', bg: '#1FB711' },
+  reserved: { label: 'RESERVED', label_ar: 'محجوز', bg: '#0DADE8' },
 };
 
 const STEPS = [
-  { key: 'placed', label: 'Placed', active: true, icon: FileText },
-  { key: 'preparing', label: 'Preparing', active: true, icon: CookingPot },
-  { key: 'ready', label: 'Ready', active: false, icon: Check },
-  { key: 'served', label: 'Served', active: false, icon: BadgeCheck },
+  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', active: true, icon: FileText },
+  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', active: true, icon: CookingPot },
+  { key: 'ready', label: 'Ready', label_ar: 'جاهز', active: false, icon: Check },
+  { key: 'served', label: 'Served', label_ar: 'تم التقديم', active: false, icon: BadgeCheck },
 ];
 
 export function TableInfoModal({
@@ -42,6 +46,8 @@ export function TableInfoModal({
   onEdit?: (table: TableInfoData) => void;
   onAddOrder?: (tableId: string, orderNo: string) => void;
 }) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
   const [showAddOrder, setShowAddOrder] = useState(false);
   const [newOrderNo, setNewOrderNo] = useState('');
 
@@ -58,6 +64,9 @@ export function TableInfoModal({
 
   const occupied = table.status === 'occupied';
   const s = STATUS_STYLES[table.status];
+  const displayName = isAr ? (table.name_ar ?? table.name) : table.name;
+  const displayZone = isAr ? (table.zone_ar ?? table.zone) : table.zone;
+  const displayTime = isAr ? (table.time_ar ?? table.time) : table.time;
 
   return (
     <>
@@ -70,8 +79,8 @@ export function TableInfoModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -79,19 +88,19 @@ export function TableInfoModal({
         <div className="flex shrink-0 items-center justify-between px-4 pt-5 sm:px-5 sm:pt-6">
           <button
             onClick={onClose}
-            aria-label="Back"
+            aria-label={isAr ? 'رجوع' : 'Back'}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC] sm:h-12 sm:w-12"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="rtl:scale-x-[-1]" />
           </button>
 
           <div className="flex flex-col items-center gap-2 sm:gap-2.5">
-            <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">{table.name}</h2>
+            <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">{displayName}</h2>
             <span
               className="inline-flex items-center rounded-[37px] px-3 py-[6px] text-xs font-medium leading-5 text-white"
               style={{ backgroundColor: s.bg }}
             >
-              {s.label}
+              {isAr ? s.label_ar : s.label}
             </span>
 
             {/* List of order numbers under occupied */}
@@ -100,6 +109,7 @@ export function TableInfoModal({
                 {table.orderNumbers.map((orderNo, idx) => (
                   <span
                     key={idx}
+                    dir="ltr"
                     className="inline-flex items-center rounded-full bg-[#026F4F]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#026F4F]"
                   >
                     {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
@@ -120,11 +130,11 @@ export function TableInfoModal({
           <div className="flex items-center gap-3">
             <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(242,211,255,0.54)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)] sm:text-base">
               <Download size={20} />
-              Download
+              {isAr ? 'تحميل' : 'Download'}
             </button>
             <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(53,140,114,0.12)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)] sm:text-base">
               <QrCode size={20} />
-              Generate
+              {isAr ? 'إنشاء' : 'Generate'}
             </button>
           </div>
         </div>
@@ -135,12 +145,16 @@ export function TableInfoModal({
           {occupied && (
             <section className="flex items-center justify-between rounded-xl bg-white px-4 py-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[22px] sm:py-[19px]">
               <div className="flex flex-col gap-2 sm:w-[112px] sm:gap-4">
-                <span className="text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">TIME SEATED</span>
-                <span className="text-xl font-semibold leading-7 text-black sm:text-[32px] sm:leading-10">{table.time}</span>
+                <span className="text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'وقت الجلوس' : 'TIME SEATED'}
+                </span>
+                <span className="text-xl font-semibold leading-7 text-black sm:text-[32px] sm:leading-10">{displayTime}</span>
               </div>
               <div className="flex flex-col items-end gap-2 sm:w-[112px] sm:gap-4">
-                <span className="text-right text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">CURRENT BILL</span>
-                <span className="text-right text-xl font-semibold leading-7 text-[#026F4F] sm:text-[32px] sm:leading-10">{table.bill}</span>
+                <span className="text-end text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'الفاتورة الحالية' : 'CURRENT BILL'}
+                </span>
+                <span dir="ltr" className="text-end text-xl font-semibold leading-7 text-[#026F4F] sm:text-[32px] sm:leading-10">{table.bill}</span>
               </div>
             </section>
           )}
@@ -151,7 +165,7 @@ export function TableInfoModal({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">
-                    Active Orders
+                    {isAr ? 'الطلبات النشطة' : 'Active Orders'}
                   </h3>
                   {table.orderNumbers && table.orderNumbers.length > 0 && (
                     <span className="rounded-full bg-[#026F4F]/10 px-2 py-0.5 text-xs font-semibold text-[#026F4F]">
@@ -165,11 +179,11 @@ export function TableInfoModal({
                     className="inline-flex items-center gap-1 rounded-full bg-[#026F4F]/10 px-2.5 py-1 text-xs font-semibold text-[#026F4F] transition-colors hover:bg-[#026F4F]/20"
                   >
                     <Plus size={13} />
-                    Add Order
+                    {isAr ? 'إضافة طلب' : 'Add Order'}
                   </button>
                   <button className="flex items-center gap-1 text-xs font-medium leading-5 text-[#026F4F]">
-                    View Details
-                    <ArrowUpRight size={16} />
+                    {isAr ? 'عرض التفاصيل' : 'View Details'}
+                    <ArrowUpRight size={16} className="rtl:rotate-[-90deg]" />
                   </button>
                 </div>
               </div>
@@ -180,6 +194,7 @@ export function TableInfoModal({
                   {table.orderNumbers.map((orderNo, idx) => (
                     <span
                       key={idx}
+                      dir="ltr"
                       className="inline-flex items-center rounded-lg border border-[#026F4F]/20 bg-[#026F4F]/5 px-2.5 py-1 text-xs font-semibold text-[#026F4F]"
                     >
                       {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
@@ -194,6 +209,7 @@ export function TableInfoModal({
                   <input
                     type="text"
                     value={newOrderNo}
+                    dir="ltr"
                     onChange={(e) => setNewOrderNo(e.target.value)}
                     placeholder="#0049"
                     onKeyDown={(e) => {
@@ -217,13 +233,13 @@ export function TableInfoModal({
                     }}
                     className="h-8 rounded-lg bg-[#026F4F] px-3 text-xs font-medium text-white transition-colors hover:bg-[#015c42]"
                   >
-                    Add
+                    {isAr ? 'إضافة' : 'Add'}
                   </button>
                   <button
                     onClick={() => { setShowAddOrder(false); setNewOrderNo(''); }}
                     className="h-8 rounded-lg bg-[#E9E9E9] px-2.5 text-xs text-[#686868] transition-colors hover:bg-[#dcdcdc]"
                   >
-                    Cancel
+                    {isAr ? 'إلغاء' : 'Cancel'}
                   </button>
                 </div>
               )}
@@ -252,7 +268,7 @@ export function TableInfoModal({
                             isActive ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
                           )}
                         >
-                          {step.label}
+                          {isAr ? step.label_ar : step.label}
                         </span>
                       </div>
                       {!isLast && (
@@ -273,35 +289,43 @@ export function TableInfoModal({
           {/* Table Info */}
           <section className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[21px]">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">Table Info</h3>
+              <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">
+                {isAr ? 'معلومات الطاولة' : 'Table Info'}
+              </h3>
               {!occupied && (
                 <button
                   onClick={() => { onEdit?.(table); onClose(); }}
                   className="flex items-center gap-1 text-base font-normal leading-6 text-[#026F4F] sm:gap-[5px] sm:text-lg sm:leading-7"
                 >
                   <Edit3 size={20} />
-                  Edit
+                  {isAr ? 'تعديل' : 'Edit'}
                 </button>
               )}
             </div>
 
             <div className="mt-5 flex flex-col gap-2 sm:mt-11">
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Table Name / Number</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'اسم الطاولة / الرقم' : 'Table Name / Number'}
+                </span>
                 <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{table.name}</span>
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{displayName}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Seating Capacity</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'السعة' : 'Seating Capacity'}
+                </span>
                 <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
                   <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{table.capacity}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">Category</span>
+                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+                  {isAr ? 'الفئة' : 'Category'}
+                </span>
                 <div className="flex h-11 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{table.zone}</span>
+                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{displayZone}</span>
                   <span className="flex h-5 w-5 items-center justify-center sm:h-6 sm:w-6">
                     <span className="block h-2.5 w-2.5 rotate-45 border-b-2 border-l-2 border-[#989898] sm:h-3 sm:w-3" />
                   </span>
@@ -314,7 +338,7 @@ export function TableInfoModal({
         {/* Footer */}
         <div className="shrink-0 border-t border-[#E2E2E2] px-4 py-3 sm:px-5 sm:py-4">
           <button className="flex h-12 w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] sm:h-14 sm:text-lg">
-            Clear table
+            {isAr ? 'إخلاء الطاولة' : 'Clear table'}
           </button>
         </div>
       </div>

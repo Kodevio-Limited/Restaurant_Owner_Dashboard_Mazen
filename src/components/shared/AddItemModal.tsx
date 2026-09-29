@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, X, Globe, Upload, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 function LangBadge({ lang, className }: { lang: 'EN' | 'AR'; className?: string }) {
@@ -70,39 +71,45 @@ function Select({
   className,
 }: {
   value: string;
-  options: string[];
+  options: { label: string; value: string }[] | string[];
   onChange: (v: string) => void;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const normalizedOptions = options.map((opt) =>
+    typeof opt === 'string' ? { label: opt, value: opt } : opt,
+  );
+  const currentLabel =
+    normalizedOptions.find((opt) => opt.value === value)?.label ?? value;
+
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'flex h-12 w-full items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 text-left transition-colors hover:bg-[#EAEAEA]',
+          'flex h-12 w-full items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 text-start transition-colors hover:bg-[#EAEAEA]',
           className,
         )}
       >
-        <span className="truncate font-satoshi text-base font-medium leading-5 text-[#2D2F33]">{value}</span>
+        <span className="truncate font-satoshi text-base font-medium leading-5 text-[#2D2F33]">{currentLabel}</span>
         <ChevronDown size={18} className={cn('shrink-0 text-[#989898] transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 right-0 top-full z-40 mt-1 max-h-60 overflow-y-auto rounded-2xl bg-white py-1 shadow-lg outline outline-1 outline-[#E9E9E9]">
-            {options.map((option) => (
+          <div className="absolute inset-x-0 top-full z-40 mt-1 max-h-60 overflow-y-auto rounded-2xl bg-white py-1 shadow-lg outline outline-1 outline-[#E9E9E9]">
+            {normalizedOptions.map((option) => (
               <button
-                key={option}
+                key={option.value}
                 type="button"
-                onClick={() => { onChange(option); setOpen(false); }}
+                onClick={() => { onChange(option.value); setOpen(false); }}
                 className={cn(
-                  'block w-full truncate px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-[#F2F2F2] sm:text-base',
-                  value === option ? 'text-[#026F4F]' : 'text-[#2D2F33]',
+                  'block w-full truncate px-4 py-2.5 text-start text-sm font-medium transition-colors hover:bg-[#F2F2F2] sm:text-base',
+                  value === option.value ? 'text-[#026F4F]' : 'text-[#2D2F33]',
                 )}
               >
-                {option}
+                {option.label}
               </button>
             ))}
           </div>
@@ -114,7 +121,7 @@ function Select({
 
 type CustomOption = { en: string; ar: string; price: string };
 
-function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
+function CustomizationGroup({ onRemove, isAr }: { onRemove: () => void; isAr: boolean }) {
   const [nameEn, setNameEn] = useState('');
   const [nameAr, setNameAr] = useState('');
   const [options, setOptions] = useState<CustomOption[]>([
@@ -130,16 +137,27 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
   const updateOption = (i: number, key: keyof CustomOption, val: string) =>
     setOptions((p) => p.map((o, idx) => (idx === i ? { ...o, [key]: val } : o)));
 
+  const limitOptions = [
+    { label: isAr ? 'بدون حد' : 'No Limit', value: 'No Limit' },
+    { label: '1', value: '1' },
+    { label: '2', value: '2' },
+    { label: '3', value: '3' },
+    { label: '4', value: '4' },
+    { label: '5', value: '5' },
+  ];
+
   return (
     <div className="w-full rounded-[10px] outline outline-2 outline-offset-[-1.9px] outline-[#989898]">
       <div className="flex flex-col gap-5 p-[18px]">
         {/* Group name */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium leading-5 text-[#686868]">Group Name</span>
+            <span className="text-sm font-medium leading-5 text-[#686868]">
+              {isAr ? 'اسم المجموعة' : 'Group Name'}
+            </span>
             <button
               onClick={onRemove}
-              aria-label="Remove group"
+              aria-label={isAr ? 'حذف المجموعة' : 'Remove group'}
               className="flex h-9 w-9 items-center justify-center rounded-md bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
             >
               <Trash2 size={18} />
@@ -157,7 +175,9 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
 
         {/* Selection type */}
         <div className="flex w-64 flex-col gap-2">
-          <span className="text-sm font-medium leading-5 text-[#686868]">Selection Type</span>
+          <span className="text-sm font-medium leading-5 text-[#686868]">
+            {isAr ? 'نوع الاختيار' : 'Selection Type'}
+          </span>
           <div className="relative flex h-12 items-center rounded-[35.08px] bg-[#E9E9E9]">
             <button
               onClick={() => setSelectionType('Single')}
@@ -166,7 +186,7 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
                 selectionType === 'Single' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
               )}
             >
-              Single
+              {isAr ? 'فردي' : 'Single'}
             </button>
             <button
               onClick={() => setSelectionType('Multi')}
@@ -175,14 +195,16 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
                 selectionType === 'Multi' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
               )}
             >
-              Multi
+              {isAr ? 'متعدد' : 'Multi'}
             </button>
           </div>
         </div>
 
         {/* Required */}
         <div className="flex items-center gap-8">
-          <span className="text-sm font-medium leading-5 text-[#686868]">Required Selection</span>
+          <span className="text-sm font-medium leading-5 text-[#686868]">
+            {isAr ? 'اختيار إلزامي' : 'Required Selection'}
+          </span>
           <button
             type="button"
             onClick={() => setRequired((v) => !v)}
@@ -194,8 +216,8 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
           >
             <span
               className={cn(
-                'absolute top-[3.32px] h-4 w-4 rounded-full bg-white transition-transform',
-                required ? 'left-[28px]' : 'left-[3.79px]',
+                'absolute top-[3.32px] h-4 w-4 rounded-full bg-white transition-all',
+                required ? 'start-[28px]' : 'start-[3.79px]',
               )}
             />
           </button>
@@ -203,21 +225,27 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
 
         {/* Selection limit */}
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium leading-5 text-[#686868]">Selection Limit</span>
-          <Select value={limit} onChange={setLimit} options={['No Limit', '1', '2', '3', '4', '5']} />
+          <span className="text-sm font-medium leading-5 text-[#686868]">
+            {isAr ? 'حد الاختيار' : 'Selection Limit'}
+          </span>
+          <Select value={limit} onChange={setLimit} options={limitOptions} />
         </div>
 
         {/* Options */}
         <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium leading-5 text-[#686868]">Options</span>
+          <span className="text-sm font-medium leading-5 text-[#686868]">
+            {isAr ? 'الخيارات' : 'Options'}
+          </span>
           <div className="flex flex-col gap-3">
             {options.map((opt, i) => (
               <div key={i} className="flex flex-col gap-2.5 rounded-xl border border-[#E9E9E9] p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium leading-4 text-[#989898]">Option {i + 1}</span>
+                  <span className="text-xs font-medium leading-4 text-[#989898]">
+                    {isAr ? `الخيار ${i + 1}` : `Option ${i + 1}`}
+                  </span>
                   <button
                     onClick={() => removeOption(i)}
-                    aria-label="Remove option"
+                    aria-label={isAr ? 'حذف الخيار' : 'Remove option'}
                     className="flex h-6 w-6 items-center justify-center rounded-full transition-colors hover:bg-[#FDECEC]"
                   >
                     <X size={15} className="text-red-500" />
@@ -232,7 +260,9 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
                   <TextInput value={opt.ar} onChange={(v) => updateOption(i, 'ar', v)} placeholder="اسم الخيار" />
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="w-10 shrink-0 text-xs font-medium leading-4 text-[#686868]">Price</span>
+                  <span className="w-10 shrink-0 text-xs font-medium leading-4 text-[#686868]">
+                    {isAr ? 'السعر' : 'Price'}
+                  </span>
                   <TextInput
                     type="number"
                     value={opt.price}
@@ -248,7 +278,7 @@ function CustomizationGroup({ onRemove }: { onRemove: () => void }) {
             onClick={addOption}
             className="inline-flex items-center gap-1 self-start text-xs font-medium leading-4 text-[#026F4F]"
           >
-            <Plus size={18} className="text-[#026F4F]" /> Add Option
+            <Plus size={18} className="text-[#026F4F]" /> {isAr ? 'إضافة خيار' : 'Add Option'}
           </button>
         </div>
       </div>
@@ -263,6 +293,9 @@ export function AddItemModal({
   open: boolean;
   onClose: () => void;
 }) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
+
   const [customizations, setCustomizations] = useState<number[]>([]);
   const nextId = useRef(0);
   const addCustomization = () => setCustomizations((p) => [...p, nextId.current++]);
@@ -285,6 +318,14 @@ export function AddItemModal({
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
+  const categoryOptions = [
+    { label: isAr ? 'برجر' : 'Burgers', value: 'Burgers' },
+    { label: isAr ? 'رامين' : 'Ramen', value: 'Ramen' },
+    { label: isAr ? 'مشروبات' : 'Drinks', value: 'Drinks' },
+    { label: isAr ? 'أطباق جانبية' : 'Sides', value: 'Sides' },
+    { label: isAr ? 'أرز' : 'Rice', value: 'Rice' },
+  ];
+
   return (
     <>
       <div
@@ -296,21 +337,25 @@ export function AddItemModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-full flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
       >
         <div className="flex shrink-0 items-center justify-between px-5 pt-6">
-          <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DcDcDc]">
-            <ArrowLeft size={22} />
+          <button onClick={onClose} aria-label={isAr ? 'رجوع' : 'Back'} className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DcDcDc]">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="text-[32px] font-medium leading-10 text-black">Add New Item</h2>
+          <h2 className="text-[32px] font-medium leading-10 text-black">
+            {isAr ? 'إضافة صنف جديد' : 'Add New Item'}
+          </h2>
           <div className="h-12 w-12" />
         </div>
 
         <div className="space-y-5 overflow-y-auto px-5 pb-5 pt-8">
           <section className="rounded-xl bg-white p-[19px] outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
-            <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Product Image</h3>
+            <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">
+              {isAr ? 'صورة المنتج' : 'Product Image'}
+            </h3>
             <label className="mt-4 flex min-h-[176px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#989898] p-6 text-center transition-colors hover:border-[#026F4F]">
               <input
                 type="file"
@@ -320,12 +365,16 @@ export function AddItemModal({
               />
               <Upload size={40} className="text-[#989898]" />
               <span className="block max-w-full text-lg font-semibold leading-7 text-[#026F4F]">
-                {imageName ?? 'Upload Photo'}
+                {imageName ?? (isAr ? 'تحميل صورة' : 'Upload Photo')}
                 {!imageName && (
-                  <span className="text-base font-medium leading-6 text-[#989898]"> or drag and drop</span>
+                  <span className="text-base font-medium leading-6 text-[#989898]">
+                    {isAr ? ' أو السحب والإفلات' : ' or drag and drop'}
+                  </span>
                 )}
               </span>
-              <span className="text-xs font-normal leading-5 text-[#989898]">PNG, JPG up to 2MB</span>
+              <span className="text-xs font-normal leading-5 text-[#989898]">
+                {isAr ? 'PNG، JPG حتى 2 ميجابايت' : 'PNG, JPG up to 2MB'}
+              </span>
             </label>
           </section>
 
@@ -333,13 +382,17 @@ export function AddItemModal({
             <div className="flex flex-col gap-3.5 px-[19px] py-[19px]">
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-base font-medium leading-5 text-[#686868]">Item name</span>
+                  <span className="text-base font-medium leading-5 text-[#686868]">
+                    {isAr ? 'اسم الصنف' : 'Item name'}
+                  </span>
                   <LangBadge lang="EN" />
                 </div>
-                <TextInput value={nameEn} onChange={setNameEn} placeholder="Enter your name..." className="h-14" />
+                <TextInput value={nameEn} onChange={setNameEn} placeholder="Enter item name..." className="h-14" />
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-[#686868]">Description</span>
+                <span className="text-base font-medium leading-5 text-[#686868]">
+                  {isAr ? 'الوصف' : 'Description'}
+                </span>
                 <TextArea value={descEn} onChange={setDescEn} placeholder="Briefly describe the item...." />
               </div>
             </div>
@@ -349,13 +402,17 @@ export function AddItemModal({
             <div className="flex flex-col gap-3.5 px-[19px] py-[19px]">
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-base font-medium leading-5 text-[#686868]">Item name</span>
+                  <span className="text-base font-medium leading-5 text-[#686868]">
+                    {isAr ? 'اسم الصنف' : 'Item name'}
+                  </span>
                   <LangBadge lang="AR" />
                 </div>
-                <TextInput value={nameAr} onChange={setNameAr} placeholder="أدخل الاسم..." className="h-14" />
+                <TextInput value={nameAr} onChange={setNameAr} placeholder="أدخل اسم الصنف..." className="h-14" />
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-[#686868]">Description</span>
+                <span className="text-base font-medium leading-5 text-[#686868]">
+                  {isAr ? 'الوصف' : 'Description'}
+                </span>
                 <TextArea value={descAr} onChange={setDescAr} placeholder="صف العنصر باختصار...." />
               </div>
             </div>
@@ -365,23 +422,31 @@ export function AddItemModal({
             <div className="flex flex-col gap-6 px-[19px] py-[23px]">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
                 <div className="flex w-full flex-col gap-2 sm:w-60">
-                  <span className="text-base font-medium leading-5 text-[#686868]">Price (EGP)</span>
+                  <span className="text-base font-medium leading-5 text-[#686868]">
+                    {isAr ? 'السعر (ج.م)' : 'Price (EGP)'}
+                  </span>
                   <TextInput type="number" value={price} onChange={setPrice} placeholder="0.00" className="h-14" />
                 </div>
                 <div className="flex w-full flex-col gap-2 sm:w-60">
-                  <span className="text-base font-medium leading-5 text-[#686868]">Category</span>
+                  <span className="text-base font-medium leading-5 text-[#686868]">
+                    {isAr ? 'الفئة' : 'Category'}
+                  </span>
                   <Select
                     value={category}
                     onChange={setCategory}
-                    options={['Burgers', 'Ramen', 'Drinks', 'Sides', 'Rice']}
+                    options={categoryOptions}
                     className="h-14"
                   />
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex w-44 flex-col gap-3">
-                  <span className="text-lg font-medium leading-7 text-[#2D2F33]">Availability</span>
-                  <span className="text-xs font-normal leading-5 text-[#989898]">Show item on the live menu</span>
+                  <span className="text-lg font-medium leading-7 text-[#2D2F33]">
+                    {isAr ? 'التوفر' : 'Availability'}
+                  </span>
+                  <span className="text-xs font-normal leading-5 text-[#989898]">
+                    {isAr ? 'إظهار الصنف في القائمة المباشرة' : 'Show item on the live menu'}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -394,8 +459,8 @@ export function AddItemModal({
                 >
                   <span
                     className={cn(
-                      'absolute top-[3.5px] h-4 w-4 rounded-full bg-white transition-transform',
-                      available ? 'right-[3.5px]' : 'left-[3.5px]',
+                      'absolute top-[3.5px] h-4 w-4 rounded-full bg-white transition-all',
+                      available ? 'start-[28px]' : 'start-[3.5px]',
                     )}
                   />
                 </button>
@@ -406,14 +471,20 @@ export function AddItemModal({
           <section className="rounded-xl bg-white outline outline-1 outline-offset-[-1px] outline-[#E9E9E9]">
             <div className="flex flex-col gap-4 px-[18px] py-[18px]">
               <div className="flex w-64 flex-col gap-1.5">
-                <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">Customizations</h3>
-                <p className="text-xs font-normal leading-5 text-[#989898]">Define add-ons, modifiers, and preferences.</p>
+                <h3 className="text-lg font-semibold leading-7 text-[#2D2F33]">
+                  {isAr ? 'التخصيصات' : 'Customizations'}
+                </h3>
+                <p className="text-xs font-normal leading-5 text-[#989898]">
+                  {isAr ? 'تحديد الإضافات والتعديلات والتفضيلات.' : 'Define add-ons, modifiers, and preferences.'}
+                </p>
               </div>
               {customizations.length === 0 ? (
                 <div className="flex h-24 items-center justify-center rounded-xl bg-[#F2F2F2]">
                   <div className="flex flex-col items-center gap-3">
                     <Plus size={28} className="text-[#989898]" />
-                    <span className="text-xs font-medium leading-5 text-[#989898]">No customizations added..</span>
+                    <span className="text-xs font-medium leading-5 text-[#989898]">
+                      {isAr ? 'لم تتم إضافة أي تخصيصات..' : 'No customizations added..'}
+                    </span>
                   </div>
                 </div>
               ) : (
@@ -421,6 +492,7 @@ export function AddItemModal({
                   {customizations.map((id) => (
                     <CustomizationGroup
                       key={id}
+                      isAr={isAr}
                       onRemove={() => setCustomizations((p) => p.filter((x) => x !== id))}
                     />
                   ))}
@@ -431,7 +503,7 @@ export function AddItemModal({
                 className="flex h-14 items-center justify-center rounded-[87px] outline outline-2 outline-offset-[-2px] outline-[#989898] transition-colors hover:bg-[#F2F2F2]"
               >
                 <span className="inline-flex items-center gap-1 text-base font-medium leading-6 text-[#989898]">
-                  <Plus size={22} /> Add Customization
+                  <Plus size={22} /> {isAr ? 'إضافة تخصيص' : 'Add Customization'}
                 </span>
               </button>
             </div>
@@ -444,13 +516,13 @@ export function AddItemModal({
               onClick={onClose}
               className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-lg font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
             >
-              Cancel
+              {isAr ? 'إلغاء' : 'Cancel'}
             </button>
             <button
               onClick={onClose}
               className="flex h-14 flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-lg font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
             >
-              Save
+              {isAr ? 'حفظ' : 'Save'}
             </button>
           </div>
         </div>

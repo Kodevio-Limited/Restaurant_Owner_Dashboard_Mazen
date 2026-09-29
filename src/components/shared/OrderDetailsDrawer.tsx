@@ -3,14 +3,15 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { Order, OrderFlowStep } from '@/components/shared/OrderCard';
 import { cn } from '@/lib/utils';
 
 const STEPS = [
-  { key: 'placed', label: 'Placed', icon: FileText },
-  { key: 'preparing', label: 'Preparing', icon: CookingPot },
-  { key: 'ready', label: 'Ready', icon: Check },
-  { key: 'served', label: 'Served', icon: BadgeCheck },
+  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', icon: FileText },
+  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', icon: CookingPot },
+  { key: 'ready', label: 'Ready', label_ar: 'جاهز', icon: Check },
+  { key: 'served', label: 'Served', label_ar: 'تم التقديم', icon: BadgeCheck },
 ];
 
 const STEP_PROGRESS: Record<OrderFlowStep, number> = {
@@ -37,6 +38,9 @@ export function OrderDetailsModal({
   onStepChange?: (step: OrderFlowStep) => void;
   onClose: () => void;
 }) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -56,6 +60,11 @@ export function OrderDetailsModal({
 
   const progress = STEP_PROGRESS[step];
 
+  const customerName = isAr ? (order.customer_ar ?? order.customer) : order.customer;
+  const tableDisplay = isAr
+    ? `طاولة: ${(order.table_ar ?? order.table).replace('طاولة ', '').replace('Table ', '')}`
+    : `Table: ${order.table.replace('Table ', '')}`;
+
   return (
     <>
       <div
@@ -67,22 +76,24 @@ export function OrderDetailsModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-full flex-col rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
       >
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between px-5 pt-6">
           <button
             onClick={onClose}
-            aria-label="Back"
+            aria-label={isAr ? 'رجوع' : 'Back'}
             className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC]"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
           <div className="flex flex-col items-center gap-1">
-            <h2 className="text-[33px] font-medium leading-[46px] text-black">Order {order.orderNo}</h2>
-            <p className="text-[19px] leading-[26.6px] text-[#686868]">Table: {order.table.replace('Table ', '')}</p>
+            <h2 className="text-[33px] font-medium leading-[46px] text-black">
+              {isAr ? `الطلب ${order.orderNo}` : `Order ${order.orderNo}`}
+            </h2>
+            <p className="text-[19px] leading-[26.6px] text-[#686868]">{tableDisplay}</p>
           </div>
           <div className="h-12 w-12" />
         </div>
@@ -90,7 +101,7 @@ export function OrderDetailsModal({
         {/* Body */}
         <div className="space-y-[15px] overflow-y-auto px-5 pb-5 pt-8">
           <section className="rounded-[10px] bg-white p-5">
-            <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{order.customer}</h3>
+            <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{customerName}</h3>
             <div className="mt-3.5 flex flex-col gap-2.5">
               <div className="flex items-center gap-2">
                 <Phone size={22} className="text-[#989898]" />
@@ -104,7 +115,7 @@ export function OrderDetailsModal({
           </section>
 
           <section className="rounded-[10px] bg-white px-5 pb-4 pt-2.5">
-            <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">Status</h3>
+            <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{isAr ? 'الحالة' : 'Status'}</h3>
             <div className="relative mt-7 flex justify-between px-2">
               {STEPS.map((stage, i) => {
                 const Icon = stage.icon;
@@ -121,7 +132,7 @@ export function OrderDetailsModal({
                       <Icon size={20} className={active ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
                     </span>
                     <span className={cn('mt-1.5 text-[12px] leading-[16.8px]', active ? 'text-[#026F4F]' : 'text-[#B9B9B9]')}>
-                      {stage.label}
+                      {isAr ? stage.label_ar : stage.label}
                     </span>
                   </div>
                 );
@@ -130,61 +141,72 @@ export function OrderDetailsModal({
           </section>
 
           <section className="rounded-[13px] bg-white px-5 py-[17px]">
-            <h3 className="text-[19px] font-semibold leading-[26px] text-[#2D2F33]">Order Summary</h3>
+            <h3 className="text-[19px] font-semibold leading-[26px] text-[#2D2F33]">{isAr ? 'ملخص الطلب' : 'Order Summary'}</h3>
             <div className="mt-6 space-y-6">
-              {order.items.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-5">
-                      <div className="relative h-[70px] w-[70px] shrink-0 overflow-hidden rounded-[7px] bg-[#F2F2F2]">
-                        <Image src="/images/food-41e5d7.png" alt={item.name} fill sizes="70px" className="object-cover" />
+              {order.items.map((item) => {
+                const itemName = isAr ? (item.name_ar ?? item.name) : item.name;
+                const itemModifiers = isAr && item.modifiers_ar ? item.modifiers_ar : item.modifiers;
+                const itemNote = isAr ? (item.note_ar ?? item.note) : item.note;
+                return (
+                  <div key={item.id}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-5">
+                        <div className="relative h-[70px] w-[70px] shrink-0 overflow-hidden rounded-[7px] bg-[#F2F2F2]">
+                          <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="70px" className="object-cover" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[16px] font-medium leading-[22px] text-[#2D2F33]">{itemName}</span>
+                          {itemModifiers?.map((m, idx) => (
+                            <span key={idx} className="text-[13px] leading-[18px]">
+                              <span className="text-[16px] text-[#2DC35F]">+</span>{' '}
+                              <span className="text-[#989898]">{m}</span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[16px] font-medium leading-[22px] text-[#2D2F33]">{item.name}</span>
-                        {item.modifiers?.map((m, idx) => (
-                          <span key={idx} className="text-[13px] leading-[18px]">
-                            <span className="text-[16px] text-[#2DC35F]">+</span>{' '}
-                            <span className="text-[#989898]">{m}</span>
-                          </span>
-                        ))}
+                      <div className="flex shrink-0 flex-col items-end gap-3">
+                        <span className="text-[18px] font-semibold leading-[25px] text-[#026F4F]">{item.price}</span>
+                        <span className="text-[15px] font-medium leading-[21px] text-[#686868]">
+                          {isAr ? `الكمية: ${item.qty}` : `Qty: ${item.qty}`}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex shrink-0 flex-col items-end gap-3">
-                      <span className="text-[18px] font-semibold leading-[25px] text-[#026F4F]">{item.price}</span>
-                      <span className="text-[15px] font-medium leading-[21px] text-[#686868]">Qty: {item.qty}</span>
-                    </div>
+                    {itemNote && (
+                      <div className="mt-3 flex items-center gap-2 rounded-[5px] bg-[#F2F2F2] px-3 py-2.5 outline outline-1 outline-[#B9B9B9]">
+                        <span className="h-[15px] w-[15px] shrink-0 bg-[#E5BA42]" />
+                        <span className="text-[13px] font-medium leading-[18px] text-[#989898]">{isAr ? 'ملاحظة:' : 'NOTE:'}</span>
+                        <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">{itemNote}</span>
+                      </div>
+                    )}
                   </div>
-                  {item.note && (
-                    <div className="mt-3 flex items-center gap-2 rounded-[5px] bg-[#F2F2F2] px-3 py-2.5 outline outline-1 outline-[#B9B9B9]">
-                      <span className="h-[15px] w-[15px] shrink-0 bg-[#E5BA42]" />
-                      <span className="text-[13px] font-medium leading-[18px] text-[#989898]">NOTE:</span>
-                      <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">{item.note}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
           <section className="rounded-[13px] bg-white px-5 py-[17px] outline outline-1 outline-[#E9E9E9]">
-            <h3 className="text-[19px] font-semibold leading-[26px] text-[#2D2F33]">Payments Details</h3>
+            <h3 className="text-[19px] font-semibold leading-[26px] text-[#2D2F33]">{isAr ? 'تفاصيل الدفع' : 'Payments Details'}</h3>
             <div className="mt-5 space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[16px] leading-[22px] text-[#989898]">Subtotal ({itemCount} items)</span>
+                <span className="text-[16px] leading-[22px] text-[#989898]">
+                  {isAr ? `المجموع الفرعي (${itemCount} أصناف)` : `Subtotal (${itemCount} items)`}
+                </span>
                 <span className="text-[16px] font-semibold leading-[22px] text-[#686868]">{money(subtotal)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[16px] leading-[22px] text-[#989898]">Service Charge (10%)</span>
+                <span className="text-[16px] leading-[22px] text-[#989898]">
+                  {isAr ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}
+                </span>
                 <span className="text-[16px] font-semibold leading-[22px] text-[#686868]">{money(service)}</span>
               </div>
               <div className="flex items-center justify-between pt-4">
-                <span className="text-[19px] font-medium leading-[26px] text-black">Total</span>
+                <span className="text-[19px] font-medium leading-[26px] text-black">{isAr ? 'الإجمالي' : 'Total'}</span>
                 <span className="text-[19px] font-semibold leading-[26px] text-[#026F4F]">{money(total)}</span>
               </div>
               <div className="flex items-center justify-between pt-2">
-                <span className="text-[16px] leading-[22px] text-[#989898]">Status</span>
+                <span className="text-[16px] leading-[22px] text-[#989898]">{isAr ? 'الحالة' : 'Status'}</span>
                 <span className={cn('inline-flex items-center rounded-full px-2 py-1 text-[13px] leading-[18px] text-white', order.status === 'paid' ? 'bg-[#16C722]' : 'bg-[#D75F3B]')}>
-                  {order.status === 'paid' ? 'Paid' : 'Unpaid'}
+                  {order.status === 'paid' ? (isAr ? 'مدفوع' : 'Paid') : (isAr ? 'غير مدفوع' : 'Unpaid')}
                 </span>
               </div>
             </div>
@@ -198,7 +220,7 @@ export function OrderDetailsModal({
                 onClick={() => onStepChange?.('accepted')}
                 className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#64C864] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#4fb84f]"
               >
-                Accept Order
+                {isAr ? 'قبول الطلب' : 'Accept Order'}
               </button>
             )}
             {step === 'accepted' && (
@@ -206,7 +228,7 @@ export function OrderDetailsModal({
                 onClick={() => onStepChange?.('ready')}
                 className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
               >
-                Mark Ready
+                {isAr ? 'تحديد كجاهز' : 'Mark Ready'}
               </button>
             )}
             {step === 'ready' && (
@@ -214,7 +236,7 @@ export function OrderDetailsModal({
                 onClick={() => onStepChange?.('served')}
                 className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#16A34A] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#128a3e]"
               >
-                Serve
+                {isAr ? 'تقديم' : 'Serve'}
               </button>
             )}
             {step === 'served' && (
@@ -223,7 +245,7 @@ export function OrderDetailsModal({
                 aria-disabled="true"
                 className="flex h-[59px] flex-1 cursor-not-allowed items-center justify-center rounded-[30px] bg-[#9CA3AF] text-[19px] font-medium text-white"
               >
-                Served
+                {isAr ? 'تم التقديم' : 'Served'}
               </button>
             )}
           </div>

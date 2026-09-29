@@ -1,0 +1,524 @@
+{
+  "meta": {
+    "root": {
+      "title": "لوحة تحكم المطعم — بوابة التاجر",
+      "description": "لوحة تحكم صاحب المطعم للتقارير والتحليلات والطلبات والقائمة والطاولات والموظفين والفواتير والإعدادات."
+    },
+    "analytics": {
+      "title": "التقارير والتحليلات",
+      "description": "تتبع المبيعات والأداء والرؤى"
+    },
+    "orders": {
+      "title": "الطلبات",
+      "description": "تتبع وإدارة جميع الطلبات"
+    },
+    "menu": {
+      "title": "إدارة القائمة",
+      "description": "إدارة عناصر القائمة والتصنيفات"
+    },
+    "tables": {
+      "title": "إدارة الطاولات",
+      "description": "مراقبة حالة الطاولات وتحديثها"
+    },
+    "staff": {
+      "title": "إدارة الموظفين",
+      "description": "إدارة فريق العمل والأدوار"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "description": "ضبط إعدادات المطعم"
+    },
+    "billing": {
+      "title": "الاشتراك والفواتير",
+      "description": "إدارة الخطة والفواتير"
+    },
+    "inventory": {
+      "title": "المخزون",
+      "description": "تتبع المخزون والمواد"
+    },
+    "login": {
+      "title": "تسجيل الدخول",
+      "description": "الوصول إلى حسابك"
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور",
+      "description": "استعادة الوصول إلى حسابك"
+    },
+    "createPassword": {
+      "title": "إنشاء كلمة مرور",
+      "description": "تعيين كلمة مرور جديدة"
+    },
+    "verifyEmail": {
+      "title": "التحقق من البريد الإلكتروني",
+      "description": "تأكيد هويتك"
+    },
+    "chooseBranch": {
+      "title": "اختيار الفرع",
+      "description": "حدد فرع العمل اليوم"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "حفظ",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "close": "إغلاق",
+      "delete": "حذف",
+      "confirm": "تأكيد",
+      "edit": "تعديل",
+      "add": "إضافة",
+      "remove": "إزالة",
+      "view": "عرض",
+      "search": "بحث",
+      "logout": "تسجيل الخروج",
+      "signIn": "تسجيل الدخول",
+      "back": "رجوع",
+      "next": "التالي",
+      "done": "تم",
+      "upload": "رفع",
+      "download": "تنزيل",
+      "select": "اختيار",
+      "update": "تحديث",
+      "required": "إلزامي",
+      "optional": "اختياري"
+    },
+    "errors": {
+      "required": "هذا الحقل مطلوب",
+      "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+      "networkError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "unsavedChanges": "لديك تغييرات غير محفوظة"
+    },
+    "status": {
+      "open": "مفتوح",
+      "closed": "مغلق",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "pending": "قيد الانتظار",
+      "preparing": "قيد التحضير",
+      "ready": "جاهز",
+      "completed": "مكتمل",
+      "canceled": "ملغى",
+      "refunded": "مسترد",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "available": "متاح",
+      "occupied": "مشغول",
+      "reserved": "محجوز"
+    }
+  },
+  "nav": {
+    "orders": "الطلبات",
+    "menu": "القائمة",
+    "tables": "الطاولات",
+    "staff": "الموظفون",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "billing": "الفواتير",
+    "logout": "تسجيل الخروج",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "collapseSidebar": "طي الشريط الجانبي",
+    "expandSidebar": "توسيع الشريط الجانبي"
+  },
+  "topHeader": {
+    "searchPlaceholder": "بحث...",
+    "restaurantOpen": "المطعم مفتوح",
+    "shiftStarted": "بدء الوردية:",
+    "shiftTime": "9PM",
+    "currentCashier": "أمين الصندوق الحالي:",
+    "cashierName": "Mazen Alqassif",
+    "notifications": "الإشعارات",
+    "profileAlt": "صورة الملف الشخصي",
+    "branchSelector": "الضهراء"
+  },
+  "languageToggle": {
+    "english": "English",
+    "arabic": "العربية",
+    "switchToAr": "التبديل إلى العربية",
+    "switchToEn": "Switch to English"
+  },
+  "analytics": {
+    "title": "التقارير والتحليلات",
+    "subtitle": "تتبع المبيعات والأداء والرؤى عبر مشروعك التجاري",
+    "branch": "الضهراء (هذا الفرع)",
+    "perMonth": "شهرياً",
+    "cards": {
+      "totalRevenue": "إجمالي الإيرادات",
+      "totalOrders": "إجمالي الطلبات",
+      "activeOrders": "الطلبات النشطة",
+      "activeTables": "الطاولات النشطة",
+      "pendingPay": "في انتظار الدفع",
+      "tableTurnoverRate": "معدل دوران الطاولة",
+      "orderFulfillmentRate": "معدل تنفيذ الطلبات",
+      "avgSpendPerTable": "متوسط الإنفاق لكل طاولة",
+      "cancelledOrder": "الطلبات الملغاة",
+      "tableUtilization": "استخدام الطاولات",
+      "kitchenIsBusy": "المطبخ مشغول",
+      "outOfTables": "من أصل {total} طاولة",
+      "actionRequired": "يستلزم إجراء",
+      "today": "اليوم",
+      "fromYesterday": "{value} مقارنةً بالأمس",
+      "fromYesterdayNeg": "{value} مقارنةً بالأمس"
+    },
+    "topPerformingItems": "الأصناف الأعلى أداءً",
+    "leastPerformingItems": "الأصناف الأقل أداءً",
+    "shiftReports": "تقارير الورديات",
+    "item": "الصنف",
+    "qty": "الكمية",
+    "revenue": "الإيرادات"
+  },
+  "orders": {
+    "title": "الطلبات",
+    "subtitle": "تتبع وإدارة جميع طلبات الجلوس والوجبات الجاهزة والتوصيل",
+    "filters": {
+      "all": "الكل",
+      "pending": "قيد الانتظار",
+      "preparing": "قيد التحضير",
+      "ready": "جاهز",
+      "completed": "مكتمل",
+      "canceled": "ملغى",
+      "refunded": "مسترد"
+    },
+    "noOrdersForStatus": "لا توجد طلبات لهذه الحالة.",
+    "orderNo": "رقم الطلب",
+    "table": "الطاولة",
+    "total": "الإجمالي",
+    "moreItems": "+{count} المزيد",
+    "viewDetails": "عرض التفاصيل",
+    "updateStatus": "تحديث الحالة",
+    "markPreparing": "تحديد قيد التحضير",
+    "markReady": "تحديد جاهز",
+    "markCompleted": "تحديد مكتمل"
+  },
+  "menu": {
+    "title": "إدارة القائمة",
+    "subtitle": "إدارة عناصر القائمة والتصنيفات والتخصيصات",
+    "addCategory": "إضافة تصنيف",
+    "addItem": "إضافة صنف",
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "editItem": "تعديل الصنف",
+    "deleteItem": "حذف الصنف",
+    "categoryName": "اسم التصنيف",
+    "itemName": "اسم الصنف",
+    "description": "الوصف",
+    "price": "السعر",
+    "category": "التصنيف",
+    "all": "الكل"
+  },
+  "tables": {
+    "title": "إدارة الطاولات",
+    "subtitle": "مراقبة حالة الطاولات وتحديثها بسهولة",
+    "addCategory": "إضافة تصنيف",
+    "addTable": "إضافة طاولة",
+    "zones": {
+      "all": "الكل",
+      "indoor": "داخلي",
+      "outdoor": "خارجي",
+      "patio": "الباحة"
+    },
+    "tableName": "اسم الطاولة",
+    "capacity": "السعة",
+    "zone": "المنطقة",
+    "viewTable": "عرض {name}",
+    "editTable": "تعديل {name}",
+    "deleteTable": "حذف {name}",
+    "confirmDelete": "حذف {name}؟",
+    "deleteWarning": "سيؤدي هذا إلى حذف {name} نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+    "seatGuests": "إجلاس الضيوف",
+    "markReserved": "تحديد محجوز",
+    "guestName": "اسم الضيف",
+    "guestCount": "عدد الضيوف",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "note": "ملاحظة",
+    "orderNumbers": "أرقام الطلبات"
+  },
+  "staff": {
+    "title": "إدارة الموظفين",
+    "subtitle": "إدارة فريق العمل والأدوار والصلاحيات في مكان واحد",
+    "addStaff": "إضافة موظف",
+    "filters": {
+      "all": "الكل",
+      "manager": "مدير",
+      "waiter": "نادل",
+      "kitchenStaff": "موظف المطبخ",
+      "cashier": "أمين الصندوق"
+    },
+    "roles": {
+      "MANAGER": "مدير",
+      "WAITER": "نادل",
+      "KITCHEN STAFF": "موظف المطبخ",
+      "CASHIER": "أمين الصندوق"
+    },
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "role": "الدور الوظيفي",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "removeStaff": "إزالة موظف",
+    "confirmRemove": "هل أنت متأكد من إزالة {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "editMember": "تعديل العضو",
+    "addMember": "إضافة عضو جديد"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "ضبط إعدادات المطعم",
+    "tabs": {
+      "general": "العلامة التجارية العامة",
+      "branches": "إدارة الفروع",
+      "paymentTaxes": "الدفع والضرائب",
+      "receipt": "تنسيق الإيصال",
+      "notification": "الإشعارات"
+    },
+    "general": {
+      "businessDetails": "تفاصيل النشاط التجاري",
+      "businessName": "اسم النشاط التجاري",
+      "email": "البريد الإلكتروني",
+      "currency": "العملة",
+      "timezone": "المنطقة الزمنية",
+      "branding": "العلامة التجارية والمظهر",
+      "uploadLogo": "رفع الشعار",
+      "logoHint": "PNG أو JPG بحجم أقصاه 2 ميجابايت",
+      "brandColor": "اللون الأساسي للعلامة التجارية",
+      "brandColorDesc": "سيُطبَّق هذا اللون على الأزرار والروابط والقوائم المرئية للعملاء.",
+      "language": "اللغة",
+      "expandMenuBar": "توسيع شريط القائمة",
+      "expandMenuBarDesc": "تبديل الشريط الجانبي لعرض التسميات الكاملة أو الأيقونات فقط.",
+      "requireCustomer": "طلب معلومات العميل من أمين الصندوق",
+      "requireCustomerDesc": "عند التفعيل، يجب على أمين الصندوق إدخال بيانات العميل قبل إتمام الطلب.",
+      "customerInfoFields": "حقول معلومات العميل",
+      "customerInfoDesc": "اختر ما إذا كان يجب على أمين الصندوق جمع كل حقل قبل إتمام الطلب.",
+      "fields": {
+        "phone": "رقم الهاتف",
+        "phoneDesc": "رقم هاتف العميل عند الدفع",
+        "name": "الاسم الكامل",
+        "nameDesc": "الاسم الكامل للعميل عند الدفع",
+        "email": "البريد الإلكتروني",
+        "emailDesc": "البريد الإلكتروني للإيصال عند الدفع"
+      },
+      "location": "الموقع الجغرافي وقيود QR",
+      "locationDesc": "منع العملاء من مسح رمز QR أو تقديم الطلبات إذا لم يكونوا في الفرع.",
+      "searchAddress": "ابحث عن عنوان فرعك...",
+      "useCurrentLocation": "استخدام الموقع الحالي",
+      "latitude": "خط العرض",
+      "longitude": "خط الطول",
+      "allowedRadius": "نطاق المسافة المسموح به",
+      "clickToInteract": "انقر للتفاعل مع الخريطة",
+      "doneInteracting": "اكتمل التفاعل",
+      "brandColorAria": "لون العلامة التجاري الأساسي",
+      "brandColorHexAria": "كود لون العلامة التجاري",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني...",
+      "locationDescLong": "منع العملاء من مسح رمز QR أو تقديم الطلبات إذا لم يكونوا موجودين فعليًا في الفرع.",
+      "mapTitle": "خريطة موقع الفرع",
+      "required": "مطلوب",
+      "optional": "اختياري"
+    },
+    "branches": {
+      "title": "إدارة الفروع",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "addBranch": "إضافة فرع",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان"
+    },
+    "editBranch": {
+      "back": "رجوع",
+      "title": "تعديل الفرع",
+      "branchName": "اسم الفرع",
+      "branchNamePlaceholder": "مثال: وسط المدينة (الرئيسي)",
+      "address": "العنوان",
+      "addressPlaceholder": "عنوان الفرع الكامل...",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "phone": "هاتف التواصل",
+      "phonePlaceholder": "(555) 000000",
+      "cancel": "إلغاء",
+      "saveBranch": "حفظ الفرع"
+    },
+    "payment": {
+      "customerPaymentOptions": "خيارات دفع العملاء",
+      "payOnline": "الدفع الإلكتروني",
+      "payOnlineDesc": "السماح للعملاء بالدفع رقمياً قبل الطلب أو خلاله عبر رابط.",
+      "getCheck": "طلب الحساب",
+      "getCheckDesc": "السماح للعملاء بطلب الفاتورة والدفع في المطعم.",
+      "behaviorSettings": "إعدادات السلوك",
+      "defaultPaymentMethod": "طريقة الدفع الافتراضية",
+      "whenIsPaymentRequired": "متى يُطلب الدفع",
+      "vat": "ضريبة القيمة المضافة (VAT)",
+      "vatDesc": "ضبط حساب الضريبة التلقائي على الطلبات.",
+      "vatPercentage": "نسبة ضريبة القيمة المضافة (%)",
+      "taxMethod": "طريقة احتساب الضريبة",
+      "serviceCharge": "رسوم الخدمة",
+      "serviceChargeDesc": "تطبيق رسوم خدمة أو إكرامية تلقائية.",
+      "servicePercentage": "نسبة رسوم الخدمة (%)",
+      "vatInclusive": "شامل (ضريبة القيمة المضافة ضمن الأسعار)",
+      "vatExclusive": "غير شامل (تُضاف ضريبة القيمة المضافة إلى الأسعار)",
+      "enterServicePct": "أدخل نسبة الخدمة"
+    },
+    "receipt": {
+      "headerText": "نص الرأس",
+      "footerText": "نص التذييل",
+      "showTaxBreakdown": "عرض تفاصيل الضريبة",
+      "showTaxDesc": "طباعة مبالغ ضريبة القيمة المضافة بالتفصيل على الإيصال.",
+      "showServiceCharge": "عرض رسوم الخدمة",
+      "showServiceDesc": "طباعة بند رسوم الخدمة.",
+      "preview": "معاينة الإيصال",
+      "subtotal": "المجموع الفرعي",
+      "total": "الإجمالي",
+      "headerSample": "شكرًا لتناول الطعام معنا! تابعونا على @DineConnect",
+      "footerSample": "شكرًا لتناول الطعام معنا! تابعونا على @EMSA7",
+      "lineItem": "{count}x برجر كلاسيك",
+      "vatLine": "ضريبة القيمة المضافة (10%)",
+      "serviceLine": "رسوم الخدمة (10%)",
+      "wifi": "واي فاي: 12345678",
+      "comeAgain": "تفضلوا بزيارتنا مرة أخرى"
+    },
+    "notification": {
+      "orderUpdates": "تحديثات الطلبات",
+      "orderUpdatesDesc": "تلقّي إشعارات بالطلبات الجديدة وتغييرات الحالة.",
+      "staffAlerts": "تنبيهات الموظفين",
+      "staffAlertsDesc": "تلقّي تنبيهات بتسجيل حضور وانصراف الموظفين.",
+      "promotions": "العروض والتخفيضات",
+      "promotionsDesc": "تلقّي إشعارات حول العروض الترويجية.",
+      "preferencesTitle": "تفضيلات الإشعارات",
+      "recentTitle": "الإشعارات الأخيرة",
+      "collab": "يريد التعاون",
+      "lookingFor": "يبحث عن أشخاص مثلك.",
+      "newOpportunity": "مرحبًا، لدينا فرصة جديدة لك. {name} من {from} {action}",
+      "newOpportunityNoFrom": "مرحبًا، لدينا فرصة جديدة لك. {name} {action}",
+      "fiveDaysAgo": "قبل 5 أيام",
+      "oneMonthAgo": "قبل شهر",
+      "twoMonthsAgo": "قبل شهرين"
+    },
+    "saveChanges": "حفظ التغييرات",
+    "tabsSettings": "إعدادات {tab}",
+    "backToTop": "العودة إلى الأعلى",
+    "quickScroll": "تمرير سريع للأسفل",
+    "editBranch": {
+      "title": "تعديل الفرع",
+      "back": "رجوع",
+      "branchName": "اسم الفرع",
+      "branchNamePlaceholder": "مثال: الفرع الرئيسي",
+      "address": "العنوان",
+      "addressPlaceholder": "عنوان الفرع الكامل...",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "phone": "هاتف التواصل",
+      "phonePlaceholder": "(555) 000000",
+      "cancel": "إلغاء",
+      "saveBranch": "حفظ الفرع"
+    }
+  },
+  "billing": {
+    "title": "الاشتراك والفواتير",
+    "subtitle": "إدارة خطتك وتفاصيل الفواتير والميزات",
+    "currentPlan": "الخطة الحالية",
+    "nextRenewal": "التجديد القادم",
+    "renewAllBranches": "تجديد جميع الفروع",
+    "renewPlan": "تجديد الخطة",
+    "cancelSub": "إلغاء الاشتراك",
+    "perMonth": "/شهر",
+    "usageOverview": "نظرة عامة على الاستخدام",
+    "ordersThisMonth": "الطلبات هذا الشهر",
+    "branches": "الفروع",
+    "staffAccounts": "حسابات الموظفين",
+    "choosePlan": "اختر خطتك",
+    "choosePlanDesc": "قم بالترقية لفتح المزيد من الطاولات والطلبات والميزات المتميزة.",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "save20": "وفر 20%",
+    "selectPlan": "اختر الخطة",
+    "currentPlanBadge": "الحالية",
+    "mostPopular": "الأكثر شعبية",
+    "mo": "/شهر",
+    "billingHistory": "سجل الفواتير",
+    "date": "التاريخ",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "invoice": "الفاتورة",
+    "active": "نشط",
+    "paid": "مدفوع",
+    "contactUs": "تواصل معنا",
+    "currentPlanName": "الخطة الاحترافية",
+    "currentPlanDesc": "مثالي للمطاعم المتنامية التي تدير أحجامًا مرتفعة.",
+    "renewalDate": "25 أغسطس 2026",
+    "plans": {
+      "basic": {
+        "name": "الأساسية",
+        "tagline": "أدوات أساسية للمقاهي الصغيرة.",
+        "features": [
+          "حتى 200 طلب/شهر",
+          "10 طاولات",
+          "إدارة القائمة الأساسية",
+          "دعم متعدد الفروع"
+        ]
+      },
+      "pro": {
+        "name": "الاحترافية",
+        "tagline": "ميزات متقدمة للمطاعم المتنامية.",
+        "features": [
+          "حتى 500 طلب/شهر",
+          "25 طاولة",
+          "تقارير متقدمة",
+          "أدوار الموظفين والأذونات",
+          "دعم متعدد الفروع"
+        ]
+      },
+      "enterprise": {
+        "name": "المؤسسية",
+        "tagline": "توسع غير محدود وإدارة متعددة الفروع.",
+        "features": [
+          "طلبات غير محدودة",
+          "طاولات غير محدودة",
+          "رموز QR بعلامتك التجارية",
+          "دعم متعدد الفروع",
+          "مدير حساب مخصص"
+        ]
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "ادخل إلى حسابك بالمعلومات الصحيحة",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني...",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "********",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "signIn": "تسجيل الدخول"
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور",
+      "subtitle": "أدخل بريدك الإلكتروني لتلقي رمز الاستعادة",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني...",
+      "getCode": "الحصول على الرمز",
+      "backToSignIn": "العودة إلى تسجيل الدخول"
+    },
+    "createPassword": {
+      "title": "إنشاء كلمة مرور جديدة",
+      "subtitle": "أنشئ كلمة مرور جديدة لحسابك",
+      "newPasswordLabel": "كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "retypePasswordLabel": "إعادة كتابة كلمة المرور",
+      "retypePasswordPlaceholder": "أعد إدخال كلمة المرور الجديدة",
+      "update": "تحديث"
+    },
+    "verifyEmail": {
+      "title": "التحقق من البريد الإلكتروني",
+      "subtitle": "لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى بريدك الإلكتروني",
+      "verify": "تحقق",
+      "sendAgain": "إرسال مرة أخرى",
+      "back": "رجوع"
+    },
+    "chooseBranch": {
+      "title": "اختيار الفرع",
+      "subtitle": "حدد الفرع الذي ستعمل فيه اليوم",
+      "confirm": "تأكيد"
+    }
+  }
+}

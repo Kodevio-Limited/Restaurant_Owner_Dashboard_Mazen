@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { ArrowUpRight, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +20,7 @@ interface StatCardProps {
 export function StatCard({ label, value, unit, sub, icon, action }: StatCardProps) {
   return (
     <div className="relative flex min-h-[104px] w-full flex-1 flex-col justify-center gap-2 rounded-xl bg-white px-4 py-3 xl:min-h-[118px]">
-      <span className="pr-9 text-[13px] font-medium leading-snug text-[#686868]">{label}</span>
+      <span className="pe-9 text-[13px] font-medium leading-snug text-[#686868]">{label}</span>
 
       <div className="flex items-end gap-1">
         <span className="text-[24px] font-semibold leading-none text-[#000000] xl:text-[28px]">{value}</span>
@@ -28,7 +28,7 @@ export function StatCard({ label, value, unit, sub, icon, action }: StatCardProp
       </div>
 
       {sub && (
-        <div className={cn('flex items-center gap-1.5', action && 'pr-20')}>
+        <div className={cn('flex items-center gap-1.5', action && 'pe-20')}>
           {typeof sub === 'string' ? (
             <span className="text-[12px] leading-snug text-[#989898]">{sub}</span>
           ) : (
@@ -42,17 +42,17 @@ export function StatCard({ label, value, unit, sub, icon, action }: StatCardProp
         </div>
       )}
 
-      <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-[#E9E9E9] text-[#2D2F33] [&>svg]:h-4 [&>svg]:w-4">
+      <div className="absolute end-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-[#E9E9E9] text-[#2D2F33] [&>svg]:h-4 [&>svg]:w-4">
         {icon}
       </div>
 
       {action && (
         <Link
           href={action.href}
-          className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-[rgba(53,140,114,0.12)] px-3 py-1.5 text-[12px] font-medium text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)]"
+          className="absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-[rgba(53,140,114,0.12)] px-3 py-1.5 text-[12px] font-medium text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)]"
         >
           <span>{action.label}</span>
-          <ArrowUpRight size={13} />
+          <ArrowUpRight size={13} className="rtl:scale-x-[-1]" />
         </Link>
       )}
     </div>

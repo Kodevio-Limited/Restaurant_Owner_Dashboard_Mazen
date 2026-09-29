@@ -13,27 +13,31 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
+import { useLocale } from 'next-intl';
+
 type MetricId = 'revenue' | 'orders' | 'turnover' | 'aov' | 'refund' | 'waiting';
 
 interface Metric {
   id: MetricId;
   label: string;
+  label_ar: string;
   chip: string;
   bar: string;
   tint: string;
 }
 
 const METRICS: Metric[] = [
-  { id: 'revenue', label: 'Revenue', chip: '#9E92FE', bar: '#8979FF', tint: 'rgba(158,146,254,0.17)' },
-  { id: 'orders', label: 'Total Orders', chip: '#FCA6A0', bar: '#FF928A', tint: 'rgba(252,166,160,0.17)' },
-  { id: 'turnover', label: 'Table Turnover', chip: '#E637B2', bar: '#E637B2', tint: 'rgba(230,55,178,0.17)' },
-  { id: 'aov', label: 'Avg Order Value', chip: '#54D267', bar: '#54D267', tint: 'rgba(84,210,103,0.17)' },
-  { id: 'refund', label: 'Refund Rate', chip: '#E56767', bar: '#E56767', tint: 'rgba(229,103,103,0.17)' },
-  { id: 'waiting', label: 'Avg Waittime', chip: '#CCD54B', bar: '#C2CB4A', tint: 'rgba(247,254,146,0.47)' },
+  { id: 'revenue',  label: 'Revenue',         label_ar: 'الإيرادات',          chip: '#9E92FE', bar: '#8979FF', tint: 'rgba(158,146,254,0.17)' },
+  { id: 'orders',   label: 'Total Orders',    label_ar: 'إجمالي الطلبات',    chip: '#FCA6A0', bar: '#FF928A', tint: 'rgba(252,166,160,0.17)' },
+  { id: 'turnover', label: 'Table Turnover',  label_ar: 'دوران الطاولات',    chip: '#E637B2', bar: '#E637B2', tint: 'rgba(230,55,178,0.17)' },
+  { id: 'aov',      label: 'Avg Order Value', label_ar: 'متوسط قيمة الطلب', chip: '#54D267', bar: '#54D267', tint: 'rgba(84,210,103,0.17)' },
+  { id: 'refund',   label: 'Refund Rate',     label_ar: 'معدل الاسترداد',    chip: '#E56767', bar: '#E56767', tint: 'rgba(229,103,103,0.17)' },
+  { id: 'waiting',  label: 'Avg Waittime',    label_ar: 'متوسط وقت الانتظار',chip: '#CCD54B', bar: '#C2CB4A', tint: 'rgba(247,254,146,0.47)' },
 ];
 
 interface BranchMetric {
   branch: string;
+  branch_ar: string;
   revenue: number;
   orders: number;
   turnover: number;
@@ -43,38 +47,41 @@ interface BranchMetric {
 }
 
 const DATA: BranchMetric[] = [
-  { branch: 'Dhanmondi', revenue: 62, orders: 48, turnover: 51, aov: 70, refund: 36, waiting: 44 },
-  { branch: 'Dhaka', revenue: 70, orders: 56, turnover: 62, aov: 64, refund: 28, waiting: 52 },
-  { branch: 'Mohammadpur', revenue: 45, orders: 68, turnover: 40, aov: 74, refund: 12, waiting: 66 },
-  { branch: 'Keraniganj', revenue: 90, orders: 62, turnover: 48, aov: 58, refund: 40, waiting: 38 },
-  { branch: 'Savar', revenue: 48, orders: 72, turnover: 55, aov: 66, refund: 24, waiting: 60 },
-  { branch: 'Narayanganj', revenue: 88, orders: 40, turnover: 70, aov: 52, refund: 32, waiting: 72 },
-  { branch: 'Uttara', revenue: 92, orders: 74, turnover: 60, aov: 80, refund: 18, waiting: 34 },
-  { branch: 'Gulshan', revenue: 58, orders: 44, turnover: 38, aov: 60, refund: 44, waiting: 48 },
-  { branch: 'Mirpur', revenue: 66, orders: 84, turnover: 74, aov: 46, refund: 30, waiting: 58 },
-  { branch: 'Motijheel', revenue: 74, orders: 50, turnover: 44, aov: 68, refund: 26, waiting: 42 },
+  { branch: 'Dhanmondi',   branch_ar: 'دانموندي',   revenue: 62, orders: 48, turnover: 51, aov: 70, refund: 36, waiting: 44 },
+  { branch: 'Dhaka',        branch_ar: 'دكا',        revenue: 70, orders: 56, turnover: 62, aov: 64, refund: 28, waiting: 52 },
+  { branch: 'Mohammadpur', branch_ar: 'محمد بور',  revenue: 45, orders: 68, turnover: 40, aov: 74, refund: 12, waiting: 66 },
+  { branch: 'Keraniganj',  branch_ar: 'كيرانيغانج', revenue: 90, orders: 62, turnover: 48, aov: 58, refund: 40, waiting: 38 },
+  { branch: 'Savar',        branch_ar: 'سافار',      revenue: 48, orders: 72, turnover: 55, aov: 66, refund: 24, waiting: 60 },
+  { branch: 'Narayanganj', branch_ar: 'نارايانغانج',revenue: 88, orders: 40, turnover: 70, aov: 52, refund: 32, waiting: 72 },
+  { branch: 'Uttara',       branch_ar: 'أوتارا',     revenue: 92, orders: 74, turnover: 60, aov: 80, refund: 18, waiting: 34 },
+  { branch: 'Gulshan',      branch_ar: 'جولشان',     revenue: 58, orders: 44, turnover: 38, aov: 60, refund: 44, waiting: 48 },
+  { branch: 'Mirpur',       branch_ar: 'ميربور',     revenue: 66, orders: 84, turnover: 74, aov: 46, refund: 30, waiting: 58 },
+  { branch: 'Motijheel',    branch_ar: 'موتيجيل',    revenue: 74, orders: 50, turnover: 44, aov: 68, refund: 26, waiting: 42 },
 ];
 
 function Chip({
   metric,
   tone,
+  isArabic,
   onToggle,
 }: {
   metric: Metric;
   tone: 'active' | 'add';
+  isArabic: boolean;
   onToggle: () => void;
 }) {
+  const label = isArabic ? metric.label_ar : metric.label;
   return (
     <button
       onClick={onToggle}
-      aria-label={tone === 'active' ? `Remove ${metric.label}` : `Add ${metric.label}`}
+      aria-label={tone === 'active' ? (isArabic ? `إزالة ${label}` : `Remove ${label}`) : (isArabic ? `إضافة ${label}` : `Add ${label}`)}
       className={cn(
         'flex items-center gap-3 rounded-[30px] px-[17px] py-2 text-sm transition-opacity hover:opacity-90',
         tone === 'active' ? 'text-[#000000]' : 'text-[#000000]',
       )}
     >
       <span className="h-3 w-3 rounded-full" style={{ backgroundColor: metric.chip }} />
-      <span className="whitespace-nowrap text-[13px] leading-[18px]">{metric.label}</span>
+      <span className="whitespace-nowrap text-[13px] leading-[18px]">{label}</span>
       {tone === 'active' ? (
         <X size={16} className="text-[#000000]" />
       ) : (
@@ -85,6 +92,8 @@ function Chip({
 }
 
 export function BranchPerformance() {
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [selected, setSelected] = useState<MetricId[]>(['revenue']);
 
   const selectedMetrics = METRICS.filter((m) => selected.includes(m.id));
@@ -124,17 +133,21 @@ export function BranchPerformance() {
 
   return (
     <div className="w-full rounded-xl bg-white px-4 pb-4 pt-4 sm:px-5">
-      <h3 className="text-lg font-semibold text-[#2D2F33]">Branch Performance Overview</h3>
+      <h3 className="text-lg font-semibold text-[#2D2F33]">
+        {isArabic ? 'نظرة عامة على أداء الفروع' : 'Branch Performance Overview'}
+      </h3>
 
       <p className="mt-1.5 text-center text-sm leading-6 text-[#989898]">
-        Click a chip to add or remove its metric from the chart. Add up to 6 metrics at once.
+        {isArabic
+          ? 'انقر على مؤشر لإضافته أو إزالته من الرسم البياني. يمكنك إضافة ما يصل إلى 6 مؤشرات دفعة واحدة.'
+          : 'Click a chip to add or remove its metric from the chart. Add up to 6 metrics at once.'}
       </p>
 
       {/* Active chips (above the line) */}
       <div className="mt-3 flex flex-wrap items-center gap-2.5">
         {selectedMetrics.map((m) => (
           <div key={m.id} className="rounded-[30px]" style={{ backgroundColor: m.tint }}>
-            <Chip metric={m} tone="active" onToggle={() => toggle(m.id)} />
+            <Chip metric={m} tone="active" isArabic={isArabic} onToggle={() => toggle(m.id)} />
           </div>
         ))}
       </div>
@@ -145,10 +158,12 @@ export function BranchPerformance() {
       {/* Add-area (below the line) */}
       {addable.length > 0 ? (
         <div className="mt-2.5 flex flex-wrap items-center gap-2.5">
-          <span className="flex items-center gap-2 text-sm font-medium text-[#000000]">ADD ANALYTIC</span>
+          <span className="flex items-center gap-2 text-sm font-medium text-[#000000]">
+            {isArabic ? 'إضافة تحليل' : 'ADD ANALYTIC'}
+          </span>
           {addable.map((m) => (
             <div key={m.id} className="rounded-[30px]" style={{ backgroundColor: m.tint }}>
-              <Chip metric={m} tone="add" onToggle={() => toggle(m.id)} />
+              <Chip metric={m} tone="add" isArabic={isArabic} onToggle={() => toggle(m.id)} />
             </div>
           ))}
         </div>
@@ -161,7 +176,7 @@ export function BranchPerformance() {
               <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             )}
             <XAxis
-              dataKey="branch"
+              dataKey={isArabic ? 'branch_ar' : 'branch'}
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12.5, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
@@ -189,7 +204,7 @@ export function BranchPerformance() {
               <Bar
                 key={m.id}
                 dataKey={m.id}
-                name={m.label}
+                name={isArabic ? m.label_ar : m.label}
                 fill={m.bar}
                 fillOpacity={0.8}
                 radius={[2, 2, 0, 0]}
@@ -215,7 +230,7 @@ export function BranchPerformance() {
                 className="inline-block h-3 w-3 rounded-full border border-white"
                 style={{ backgroundColor: m.bar }}
               />
-              {m.label}
+              {isArabic ? m.label_ar : m.label}
             </div>
           ))}
         </div>

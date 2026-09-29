@@ -11,17 +11,21 @@ import {
   YAxis,
 } from 'recharts';
 
+import { useLocale } from 'next-intl';
+
 const data = [
-  { day: 'Tue', tips: 62 },
-  { day: 'Fri', tips: 88 },
-  { day: 'Monday', tips: 40 },
-  { day: 'Tuesday', tips: 76 },
-  { day: 'Wednesday', tips: 58 },
-  { day: 'Saturday', tips: 42 },
-  { day: 'Sunday', tips: 70 },
+  { day: 'Tue',       day_ar: 'الثلاثاء', tips: 62 },
+  { day: 'Fri',       day_ar: 'الجمعة',   tips: 88 },
+  { day: 'Monday',    day_ar: 'الإثنين',  tips: 40 },
+  { day: 'Tuesday',   day_ar: 'الثلاثاء', tips: 76 },
+  { day: 'Wednesday', day_ar: 'الأربعاء', tips: 58 },
+  { day: 'Saturday',  day_ar: 'السبت',    tips: 42 },
+  { day: 'Sunday',    day_ar: 'الأحد',    tips: 70 },
 ];
 
 export function TipsCollection() {
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [pinnedIndex, setPinnedIndex] = useState<number | null>(null);
 
   const handleClick = useCallback((state: any) => {
@@ -34,7 +38,9 @@ export function TipsCollection() {
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
-      <h3 className="text-lg font-semibold text-[#2D2F33]">Tips Collection</h3>
+      <h3 className="text-lg font-semibold text-[#2D2F33]">
+        {isArabic ? 'تحصيل الإكراميات' : 'Tips Collection'}
+      </h3>
       <div className="mt-2 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -51,7 +57,7 @@ export function TipsCollection() {
             </defs>
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             <XAxis
-              dataKey="day"
+              dataKey={isArabic ? 'day_ar' : 'day'}
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
@@ -67,13 +73,13 @@ export function TipsCollection() {
               width={40}
             />
             <Tooltip
-              formatter={(v: number) => [`$${v}`, 'Tips']}
+              formatter={(v: number) => [`$${v}`, isArabic ? 'إكراميات' : 'Tips']}
               cursor={{ fill: 'rgba(249,115,22,0.08)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
               active={displayIndex !== null}
-              payload={displayIndex !== null ? [{ value: data[displayIndex].tips, name: 'Tips' }] : undefined}
-              label={displayIndex !== null ? data[displayIndex].day : undefined}
+              payload={displayIndex !== null ? [{ value: data[displayIndex].tips, name: isArabic ? 'إكراميات' : 'Tips' }] : undefined}
+              label={displayIndex !== null ? (isArabic ? data[displayIndex].day_ar : data[displayIndex].day) : undefined}
             />
             <Bar dataKey="tips" fill="url(#tipGrad)" radius={[6, 6, 0, 0]} maxBarSize={56} isAnimationActive={false} />
           </BarChart>

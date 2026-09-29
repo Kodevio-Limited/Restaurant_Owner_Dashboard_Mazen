@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Phone, Mail, ChevronRight, Trash2 } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 export type StaffRole = 'MANAGER' | 'WAITER' | 'KITCHEN STAFF' | 'CASHIER';
 
@@ -13,15 +14,24 @@ const ROLE_STYLES: Record<StaffRole, string> = {
   CASHIER:       '#D60DE8',
 };
 
+const ROLE_TRANSLATIONS: Record<StaffRole, string> = {
+  MANAGER: 'مدير',
+  WAITER: 'نادل',
+  'KITCHEN STAFF': 'طاقم المطبخ',
+  CASHIER: 'كاشير',
+};
+
 export interface StaffMember {
   id: string;
   name: string;
+  name_ar?: string;
   role: StaffRole;
+  role_ar?: string;
   phone: string;
   email: string;
   avatar?: string;
   active: boolean;
-  notes: { text: string; date: string }[];
+  notes: { text: string; text_ar?: string; date: string }[];
 }
 
 interface StaffCardProps {
@@ -32,17 +42,23 @@ interface StaffCardProps {
 }
 
 export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCardProps) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
   const roleColor = ROLE_STYLES[member.role];
   const lastNote = member.notes[member.notes.length - 1];
+
+  const displayName = isAr ? (member.name_ar ?? member.name) : member.name;
+  const displayRole = isAr ? (member.role_ar ?? ROLE_TRANSLATIONS[member.role]) : member.role;
+  const displayNoteText = lastNote ? (isAr ? (lastNote.text_ar ?? lastNote.text) : lastNote.text) : null;
 
   return (
     <div className="relative flex w-full max-w-[418px] flex-col items-center rounded-2xl bg-white pb-4">
 
-      {/* ── Delete btn — top-right red square ── */}
+      {/* ── Delete btn — top-right/top-left red square ── */}
       <button
         onClick={onRemove}
-        aria-label="Remove staff member"
-        className="absolute right-3.5 top-3.5 flex h-8 w-8 items-center justify-center rounded-md bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
+        aria-label={isAr ? 'حذف عضو الفريق' : 'Remove staff member'}
+        className="absolute end-3.5 top-3.5 flex h-8 w-8 items-center justify-center rounded-md bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
       >
         <Trash2 size={15} />
       </button>
@@ -51,19 +67,19 @@ export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCar
       <div className="relative mt-6 h-[84px] w-[84px]">
         <Image
           src={member.avatar ?? '/images/avatar.png'}
-          alt={member.name}
+          alt={displayName}
           fill
           className="rounded-full object-cover"
         />
         {/* Online/offline dot */}
         <span
-          className={`absolute bottom-0 right-0 h-5 w-5 rounded-full border-2 border-white ${member.active ? 'bg-[#4ADE80]' : 'bg-[#D1D5DB]'}`}
+          className={`absolute bottom-0 end-0 h-5 w-5 rounded-full border-2 border-white ${member.active ? 'bg-[#4ADE80]' : 'bg-[#D1D5DB]'}`}
         />
       </div>
 
       {/* ── Name ── */}
       <h3 className="mt-3 font-satoshi text-[17px] font-medium leading-[1.4] text-black">
-        {member.name}
+        {displayName}
       </h3>
 
       {/* ── Role pill ── */}
@@ -71,7 +87,7 @@ export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCar
         className="mt-1.5 inline-flex items-center rounded-[37px] px-2.5 py-1 text-[10.5px] font-medium leading-[1.4] text-white"
         style={{ backgroundColor: roleColor }}
       >
-        {member.role}
+        {displayRole}
       </span>
 
       {/* ── Divider ── */}
@@ -93,9 +109,9 @@ export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCar
       {lastNote && (
         <div className="mt-3 flex w-[calc(100%-24px)] items-center justify-between rounded-2xl bg-[#F2F2F2] px-3 py-2">
           <span className="line-clamp-2 flex-1 font-satoshi text-[11.5px] font-medium leading-[1.4] text-[#989898]">
-            {lastNote.text}
+            {displayNoteText}
           </span>
-          <ChevronRight size={13} className="ml-1.5 shrink-0 text-[#989898]" />
+          <ChevronRight size={13} className="ms-1.5 shrink-0 text-[#989898] rtl:scale-x-[-1]" />
         </div>
       )}
 
@@ -105,7 +121,7 @@ export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCar
           onClick={onEdit}
           className="flex h-9 flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] font-satoshi text-[12.5px] font-medium text-[#2D2F33] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-colors hover:bg-[#DCDCDC]"
         >
-          Edit
+          {isAr ? 'تعديل' : 'Edit'}
         </button>
         <button
           onClick={onToggleActive}
@@ -115,7 +131,7 @@ export function StaffCard({ member, onEdit, onRemove, onToggleActive }: StaffCar
               : 'bg-[#026F4F] text-white hover:bg-[#015c42]'
           }`}
         >
-          {member.active ? 'Deactivate' : 'Activate'}
+          {member.active ? (isAr ? 'تعطيل' : 'Deactivate') : (isAr ? 'تفعيل' : 'Activate')}
         </button>
       </div>
     </div>

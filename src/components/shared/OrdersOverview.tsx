@@ -11,17 +11,21 @@ import {
   YAxis,
 } from 'recharts';
 
+import { useLocale } from 'next-intl';
+
 const data = [
-  { day: 'Sat', orders: 62 },
-  { day: 'Sun', orders: 78 },
-  { day: 'Mon', orders: 52 },
-  { day: 'Tue', orders: 92 },
-  { day: 'Wed', orders: 58 },
-  { day: 'Thu', orders: 70 },
-  { day: 'Fri', orders: 85 },
+  { day: 'Sat', day_ar: 'السبت', orders: 62 },
+  { day: 'Sun', day_ar: 'الأحد', orders: 78 },
+  { day: 'Mon', day_ar: 'الإثنين', orders: 52 },
+  { day: 'Tue', day_ar: 'الثلاثاء', orders: 92 },
+  { day: 'Wed', day_ar: 'الأربعاء', orders: 58 },
+  { day: 'Thu', day_ar: 'الخميس', orders: 70 },
+  { day: 'Fri', day_ar: 'الجمعة', orders: 85 },
 ];
 
 export function OrdersOverview() {
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [lastClickTime, setLastClickTime] = useState<number>(0);
 
@@ -41,7 +45,9 @@ export function OrdersOverview() {
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
-      <h3 className="text-lg font-semibold leading-none text-[#2D2F33]">Orders Overview</h3>
+      <h3 className="text-lg font-semibold leading-none text-[#2D2F33]">
+        {isArabic ? 'نظرة عامة على الطلبات' : 'Orders Overview'}
+      </h3>
       <div className="mt-4 min-h-0 flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -58,7 +64,7 @@ export function OrdersOverview() {
             </defs>
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             <XAxis
-              dataKey="day"
+              dataKey={isArabic ? 'day_ar' : 'day'}
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: '#989898', fontWeight: 500 }}
@@ -73,13 +79,13 @@ export function OrdersOverview() {
               width={34}
             />
             <Tooltip
-              formatter={(v: number) => [v, 'Orders']}
+              formatter={(v: number) => [v, isArabic ? 'طلبات' : 'Orders']}
               cursor={{ fill: 'rgba(2,111,79,0.06)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}
               active={activeIndex !== null}
-              payload={activeIndex !== null ? [{ value: data[activeIndex].orders, name: 'Orders' }] : undefined}
-              label={activeIndex !== null ? data[activeIndex].day : undefined}
+              payload={activeIndex !== null ? [{ value: data[activeIndex].orders, name: isArabic ? 'طلبات' : 'Orders' }] : undefined}
+              label={activeIndex !== null ? (isArabic ? data[activeIndex].day_ar : data[activeIndex].day) : undefined}
             />
             <Bar dataKey="orders" fill="url(#orderGrad)" radius={[7, 7, 0, 0]} maxBarSize={46} isAnimationActive={false} />
           </BarChart>

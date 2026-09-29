@@ -11,22 +11,26 @@ import {
   YAxis,
 } from 'recharts';
 
+import { useLocale } from 'next-intl';
+
 const data = [
-  { month: 'Jan', revenue: 9500 },
-  { month: 'Feb', revenue: 12500 },
-  { month: 'Mar', revenue: 11200 },
-  { month: 'Apr', revenue: 17500 },
-  { month: 'May', revenue: 15900 },
-  { month: 'Jun', revenue: 20200 },
-  { month: 'Jul', revenue: 18000 },
-  { month: 'Aug', revenue: 24500 },
-  { month: 'Sep', revenue: 21500 },
-  { month: 'Oct', revenue: 24800 },
-  { month: 'Nov', revenue: 23000 },
-  { month: 'Dec', revenue: 27000 },
+  { month: 'Jan', month_ar: 'يناير', revenue: 9500 },
+  { month: 'Feb', month_ar: 'فبراير', revenue: 12500 },
+  { month: 'Mar', month_ar: 'مارس', revenue: 11200 },
+  { month: 'Apr', month_ar: 'أبريل', revenue: 17500 },
+  { month: 'May', month_ar: 'مايو', revenue: 15900 },
+  { month: 'Jun', month_ar: 'يونيو', revenue: 20200 },
+  { month: 'Jul', month_ar: 'يوليو', revenue: 18000 },
+  { month: 'Aug', month_ar: 'أغسطس', revenue: 24500 },
+  { month: 'Sep', month_ar: 'سبتمبر', revenue: 21500 },
+  { month: 'Oct', month_ar: 'أكتوبر', revenue: 24800 },
+  { month: 'Nov', month_ar: 'نوفمبر', revenue: 23000 },
+  { month: 'Dec', month_ar: 'ديسمبر', revenue: 27000 },
 ];
 
 export function RevenueOverTime() {
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [dotPos, setDotPos] = useState<{ x: number; y: number } | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -59,7 +63,9 @@ export function RevenueOverTime() {
 
   return (
     <div className="flex h-full flex-col rounded-xl bg-white p-4">
-      <h3 className="text-lg font-semibold text-[#2D2F33]">Revenue Over Time</h3>
+      <h3 className="text-lg font-semibold text-[#2D2F33]">
+        {isArabic ? 'الإيرادات مع مرور الوقت' : 'Revenue Over Time'}
+      </h3>
       <div ref={chartRef} className="relative mt-3 min-h-0 flex-1 cursor-pointer">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -75,7 +81,7 @@ export function RevenueOverTime() {
             </defs>
             <CartesianGrid stroke="rgba(0,0,26,0.15)" strokeDasharray="2 3" vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey={isArabic ? 'month_ar' : 'month'}
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: 'rgba(0,0,0,0.4)', fontWeight: 500 }}
@@ -93,8 +99,8 @@ export function RevenueOverTime() {
             {selectedIndex !== null && selected && (
               <ReferenceLine
                 segment={[
-                  { x: selected.month, y: 0 },
-                  { x: selected.month, y: selected.revenue },
+                  { x: isArabic ? selected.month_ar : selected.month, y: 0 },
+                  { x: isArabic ? selected.month_ar : selected.month, y: selected.revenue },
                 ]}
                 stroke="#026F4F"
                 strokeWidth={1.5}
@@ -138,7 +144,9 @@ export function RevenueOverTime() {
             style={{ left: dotPos.x, top: dotPos.y, transform: 'translate(-50%, calc(-100% - 12px))' }}
           >
             <div className="rounded-[10px] border border-[#E9E9E9] bg-white p-3 shadow-md">
-              <p className="text-sm font-semibold text-[#2D2F33]">{selected.month}</p>
+              <p className="text-sm font-semibold text-[#2D2F33]">
+                {isArabic ? selected.month_ar : selected.month}
+              </p>
               <p className="text-sm text-[#026F4F]">${selected.revenue.toLocaleString()}</p>
             </div>
           </div>

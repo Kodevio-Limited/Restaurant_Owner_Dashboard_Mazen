@@ -7,6 +7,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel = 'Delete',
+  cancelLabel = 'Cancel',
   destructive = true,
   onCancel,
   onConfirm,
@@ -15,6 +16,7 @@ export function ConfirmDialog({
   title: string;
   description: string;
   confirmLabel?: string;
+  cancelLabel?: string;
   destructive?: boolean;
   onCancel: () => void;
   onConfirm: () => void;
@@ -30,8 +32,8 @@ export function ConfirmDialog({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] p-8 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] p-8 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -43,7 +45,7 @@ export function ConfirmDialog({
             onClick={onCancel}
             className="flex h-12 items-center justify-center rounded-[10px] bg-[#757575] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#5a5a5a]"
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button
             onClick={onConfirm}

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { TriangleAlert } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 export function RemoveStaffModal({
   open,
@@ -15,6 +16,9 @@ export function RemoveStaffModal({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const locale = useLocale();
+  const isAr = locale === 'ar';
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -45,9 +49,13 @@ export function RemoveStaffModal({
         </div>
 
         <div className="mt-6 flex w-full flex-col items-center gap-3">
-          <h3 className="text-center text-[26px] font-semibold leading-8 text-black">Remove Staff Member</h3>
+          <h3 className="text-center text-[26px] font-semibold leading-8 text-black">
+            {isAr ? 'حذف عضو الفريق' : 'Remove Staff Member'}
+          </h3>
           <p className="text-center text-base leading-6 text-[#686868]">
-            Are you sure you want to remove {memberName}? This action cannot be undone.
+            {isAr
+              ? <>هل أنت متأكد من رغبتك في حذف <bdi>{memberName}</bdi>؟ لا يمكن التراجع عن هذا الإجراء.</>
+              : <>Are you sure you want to remove <bdi>{memberName}</bdi>? This action cannot be undone.</>}
           </p>
         </div>
 
@@ -56,13 +64,13 @@ export function RemoveStaffModal({
             onClick={onCancel}
             className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DCDCDC]"
           >
-            Cancel
+            {isAr ? 'إلغاء' : 'Cancel'}
           </button>
           <button
             onClick={onConfirm}
             className="flex h-12 flex-1 items-center justify-center rounded-[30px] bg-[#DC2626] text-base font-medium text-white transition-colors hover:bg-[#b91c1c]"
           >
-            Remove Member
+            {isAr ? 'حذف العضو' : 'Remove Member'}
           </button>
         </div>
       </div>

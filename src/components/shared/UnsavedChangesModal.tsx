@@ -33,8 +33,8 @@ export function UnsavedChangesModal({
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col items-center overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] p-10 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col items-center overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] p-10 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
