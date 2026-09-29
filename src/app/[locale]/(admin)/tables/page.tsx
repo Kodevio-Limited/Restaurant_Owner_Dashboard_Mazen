@@ -128,7 +128,7 @@ export default function TablesPage() {
       {/* ── Table grid ── */}
       <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filtered.map((tab) => (
-          <div key={tab.id} className="group relative mx-auto w-full max-w-[301px]">
+          <div key={tab.id} className="relative mx-auto w-full max-w-[301px]">
             <button
               onClick={() => setSelected(tab)}
               aria-label={isAr ? `عرض ${tab.name_ar ?? tab.name}` : `View ${tab.name}`}
@@ -146,10 +146,8 @@ export default function TablesPage() {
                 orderNumbers={tab.orderNumbers}
               />
             </button>
-            {/* Hover-reveal only on devices with a fine pointer + hover (desktop mouse).
-                Touch screens (iPad, tablets, phones) have no hover, so the
-                actions stay always visible there. */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-opacity duration-200 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:opacity-0 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:group-focus-within:opacity-100 [@media(min-width:768px)_and_(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100">
+            {/* Edit/delete actions are always visible — no hover needed (touch screens have no hover). */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
               <div className="flex items-center gap-1 rounded-full bg-white/90 p-1 shadow-sm ring-1 ring-black/5 backdrop-blur-sm">
                 <button
                   type="button"
