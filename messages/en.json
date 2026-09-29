@@ -268,9 +268,27 @@
     "tabs": {
       "general": "General & Brand",
       "branches": "Branch Management",
+      "inventory": "Inventory",
+      "session": "Session",
       "paymentTaxes": "Payment and Taxes",
       "receipt": "Receipt Format",
       "notification": "Notification"
+    },
+    "inventory": {
+      "title": "Inventory Settings",
+      "enableTracking": "Enable Inventory Tracking",
+      "enableTrackingDesc": "Track ingredient stock levels and availability.",
+      "autoHide": "Auto hide unavailable items",
+      "autoHideDesc": "When off, unavailable items stay on the customer menu with an Out of Stock label and cannot be ordered.",
+      "lowStockAlerts": "Low Stock Alerts",
+      "lowStockAlertsDesc": "Get notified when ingredient stock runs low."
+    },
+    "session": {
+      "title": "Session Settings",
+      "requireFloat": "Require Opening Cash Float",
+      "requireFloatDesc": "Cashiers must enter an opening float to start a shift session.",
+      "requireCounted": "Require Counted Cash on Close",
+      "requireCountedDesc": "Cashiers must count cash when closing a shift session."
     },
     "general": {
       "businessDetails": "Business Details",

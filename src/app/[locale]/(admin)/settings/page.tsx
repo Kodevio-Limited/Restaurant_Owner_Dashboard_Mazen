@@ -5,14 +5,14 @@ import { useTranslations, useLocale } from 'next-intl';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
-  FileText, Plus, User, ArrowDown, ArrowUp,
+  FileText, Plus, User, ArrowDown, ArrowUp, Package, Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditBranchModal } from '@/components/shared/EditBranchModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type TabId = 'general' | 'branches' | 'payment-taxes' | 'receipt' | 'notification';
+type TabId = 'general' | 'branches' | 'payment-taxes' | 'receipt' | 'notification' | 'inventory' | 'session';
 
 // ─── Shared primitives ────────────────────────────────────────────────────────
 
@@ -776,6 +776,126 @@ function NotificationTab() {
   );
 }
 
+// ─── Inventory settings (owner/manager only — moved here from Cashier POS) ───
+
+const ROD_INVENTORY_KEY = 'rod-inventory-settings';
+
+interface RodInventorySettings {
+  enableTracking: boolean;
+  /** When ON, unavailable items are hidden from the customer menu. When OFF,
+      they stay visible with an "Out of Stock" label and cannot be ordered. */
+  autoHideUnavailable: boolean;
+  lowStockAlerts: boolean;
+}
+
+const ROD_INVENTORY_DEFAULTS: RodInventorySettings = {
+  enableTracking: true,
+  autoHideUnavailable: true,
+  lowStockAlerts: true,
+};
+
+function loadRodInventory(): RodInventorySettings {
+  if (typeof window === 'undefined') return ROD_INVENTORY_DEFAULTS;
+  try {
+    const raw = window.localStorage.getItem(ROD_INVENTORY_KEY);
+    if (!raw) return ROD_INVENTORY_DEFAULTS;
+    const parsed = JSON.parse(raw);
+    const pick = (v: unknown, fallback: boolean) => (typeof v === 'boolean' ? v : fallback);
+    return {
+      enableTracking: pick(parsed?.enableTracking, ROD_INVENTORY_DEFAULTS.enableTracking),
+      autoHideUnavailable: pick(parsed?.autoHideUnavailable, ROD_INVENTORY_DEFAULTS.autoHideUnavailable),
+      lowStockAlerts: pick(parsed?.lowStockAlerts, ROD_INVENTORY_DEFAULTS.lowStockAlerts),
+    };
+  } catch {
+    return ROD_INVENTORY_DEFAULTS;
+  }
+}
+
+function InventorySettingsTab() {
+  const t = useTranslations('settings.inventory');
+  const [values, setValues] = useState<RodInventorySettings>(loadRodInventory);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(ROD_INVENTORY_KEY, JSON.stringify(values));
+    } catch {
+      // storage unavailable — selection simply won't persist
+    }
+  }, [values]);
+
+  const set = (key: keyof RodInventorySettings) => (v: boolean) =>
+    setValues((prev) => ({ ...prev, [key]: v }));
+
+  return (
+    <div className="flex flex-col gap-6">
+      <SectionCard title={t('title')}>
+        <div className="flex flex-col gap-6">
+          <ToggleRow title={t('enableTracking')} desc={t('enableTrackingDesc')} on={values.enableTracking} onChange={set('enableTracking')} />
+          <ToggleRow title={t('autoHide')} desc={t('autoHideDesc')} on={values.autoHideUnavailable} onChange={set('autoHideUnavailable')} />
+          <ToggleRow title={t('lowStockAlerts')} desc={t('lowStockAlertsDesc')} on={values.lowStockAlerts} onChange={set('lowStockAlerts')} />
+        </div>
+      </SectionCard>
+    </div>
+  );
+}
+
+// ─── Session settings (owner/manager only — moved here from Cashier POS) ─────
+
+const ROD_SESSION_KEY = 'rod-session-settings';
+
+interface RodSessionSettings {
+  requireFloat: boolean;
+  requireCounted: boolean;
+}
+
+const ROD_SESSION_DEFAULTS: RodSessionSettings = {
+  requireFloat: true,
+  requireCounted: true,
+};
+
+function loadRodSession(): RodSessionSettings {
+  if (typeof window === 'undefined') return ROD_SESSION_DEFAULTS;
+  try {
+    const raw = window.localStorage.getItem(ROD_SESSION_KEY);
+    if (!raw) return ROD_SESSION_DEFAULTS;
+    const parsed = JSON.parse(raw);
+    const pick = (v: unknown, fallback: boolean) => (typeof v === 'boolean' ? v : fallback);
+    return {
+      requireFloat: pick(parsed?.requireFloat, ROD_SESSION_DEFAULTS.requireFloat),
+      requireCounted: pick(parsed?.requireCounted, ROD_SESSION_DEFAULTS.requireCounted),
+    };
+  } catch {
+    return ROD_SESSION_DEFAULTS;
+  }
+}
+
+function SessionSettingsTab() {
+  const t = useTranslations('settings.session');
+  const [values, setValues] = useState<RodSessionSettings>(loadRodSession);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(ROD_SESSION_KEY, JSON.stringify(values));
+    } catch {
+      // storage unavailable — selection simply won't persist
+    }
+  }, [values]);
+
+  const set = (key: keyof RodSessionSettings) => (v: boolean) =>
+    setValues((prev) => ({ ...prev, [key]: v }));
+
+  return (
+    <div className="flex flex-col gap-6">
+      <SectionCard title={t('title')}>
+        <div className="flex flex-col gap-6">
+          <ToggleRow title={t('requireFloat')} desc={t('requireFloatDesc')} on={values.requireFloat} onChange={set('requireFloat')} />
+          <ToggleRow title={t('requireCounted')} desc={t('requireCountedDesc')} on={values.requireCounted} onChange={set('requireCounted')} />
+        </div>
+      </SectionCard>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const BRANCHES = [
@@ -795,13 +915,15 @@ export default function SettingsPage() {
   const TABS: { id: TabId; labelKey: string; icon: React.ElementType }[] = [
     { id: 'general',       labelKey: 'tabs.general',       icon: Globe      },
     { id: 'branches',      labelKey: 'tabs.branches',      icon: Building2  },
+    { id: 'inventory',     labelKey: 'tabs.inventory',     icon: Package    },
+    { id: 'session',       labelKey: 'tabs.session',       icon: Clock      },
     { id: 'payment-taxes', labelKey: 'tabs.paymentTaxes',  icon: CreditCard },
     { id: 'receipt',       labelKey: 'tabs.receipt',       icon: FileText   },
     { id: 'notification',  labelKey: 'tabs.notification',  icon: Bell       },
   ];
 
   // Tabs with a form get the sticky Save Changes footer.
-  const showSave = active === 'general' || active === 'payment-taxes' || active === 'receipt';
+  const showSave = active === 'general' || active === 'payment-taxes' || active === 'receipt' || active === 'inventory' || active === 'session';
   // Single dynamic quick-scroll pill lives on long (scrollable) tabs.
   const showScroller = active === 'general' || active === 'notification';
 
@@ -955,6 +1077,8 @@ export default function SettingsPage() {
         {active === 'payment-taxes' && <PaymentTaxesTab />}
         {active === 'receipt'      && <ReceiptFormatTab />}
         {active === 'notification' && <NotificationTab />}
+        {active === 'inventory'    && <InventorySettingsTab />}
+        {active === 'session'      && <SessionSettingsTab />}
 
         {/* Save Changes — one sticky footer for every form tab */}
         {showSave && <SaveButton />}
