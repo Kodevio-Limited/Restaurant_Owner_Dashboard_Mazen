@@ -1,2 +1,8 @@
 allowBuilds:
+  '@parcel/watcher': set this to true or false
+  '@swc/core': set this to true or false
   sharp: set this to true or false
+minimumReleaseAgeExclude:
+  - '@swc/core-linux-arm-gnueabihf@1.16.13'
+  - '@swc/core-linux-s390x-gnu@1.16.13'
+  - '@swc/core-win32-x64-msvc@1.16.13'
