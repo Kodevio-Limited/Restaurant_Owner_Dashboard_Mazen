@@ -538,5 +538,134 @@
       "subtitle": "حدد الفرع الذي ستعمل فيه اليوم",
       "confirm": "تأكيد"
     }
+  },
+  "inventory": {
+    "title": "المخزون والوصفات",
+    "subtitle": "أدر المخزون والوصفات والمشتريات والتحويلات والمزيد",
+    "tabs": {
+      "stock": "المخزون",
+      "recipe": "الوصفات",
+      "purchases": "المشتريات",
+      "transfers": "التحويلات",
+      "physicalCount": "الجرد الفعلي",
+      "wasteLog": "سجل الهالك"
+    },
+    "status": {
+      "inStock": "متوفر",
+      "lowStock": "المخزون منخفض",
+      "outOfStock": "نفد المخزون",
+      "available": "متاح",
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار",
+      "cancelled": "ملغى"
+    },
+    "labels": {
+      "ingredientName": "اسم المكوّن",
+      "quantity": "الكمية"
+    },
+    "stock": {
+      "addIngredient": "إضافة مكوّن",
+      "searchIngredients": "ابحث عن المكوّنات...",
+      "colIngredientName": "اسم المكوّن",
+      "colCurrentStockStatus": "حالة المخزون الحالية",
+      "colLastUpdate": "آخر تحديث",
+      "colAction": "إجراء",
+      "noIngredients": "لا توجد مكوّنات"
+    },
+    "recipe": {
+      "addRecipe": "إضافة وصفة",
+      "searchRecipes": "ابحث عن الوصفات...",
+      "noIngredientsMapped": "لم يتم ربط أي مكوّنات",
+      "editRecipe": "تعديل الوصفة",
+      "ingredients": "المكوّنات",
+      "addRow": "إضافة صف"
+    },
+    "purchases": {
+      "searchPurchases": "ابحث عن المشتريات...",
+      "allTime": "كل الأوقات",
+      "logPurchase": "تسجيل المشتريات",
+      "colOrderIdDate": "رقم الطلب/ التاريخ",
+      "colIngredient": "المكوّن",
+      "colQuantityBought": "الكمية المشتراة",
+      "colTotal": "الإجمالي",
+      "colSupplier": "المورّد",
+      "avgCost": "متوسط التكلفة: {cost}/{unit}"
+    },
+    "transfers": {
+      "searchTransfers": "ابحث عن التحويلات...",
+      "newTransfer": "تحويل جديد",
+      "colTransferId": "رقم التحويل",
+      "colDate": "التاريخ",
+      "colIngredient": "المكوّن",
+      "colQuantity": "الكمية",
+      "colFrom": "من",
+      "colTo": "إلى",
+      "colStatus": "الحالة"
+    },
+    "physicalCount": {
+      "weeklyVarianceTrend": "اتجاه الانحراف الأسبوعي (التلف/الزيادة في الحصص)",
+      "week": "أسبوع",
+      "recentCounts": "أحدث عمليات الجرد",
+      "colDate": "التاريخ",
+      "colIngredient": "المكوّن",
+      "colTheo": "النظري",
+      "colPhys": "الفعلي",
+      "colVariance": "الانحراف",
+      "logPhysicalCount": "تسجيل الجرد الفعلي"
+    },
+    "wasteForm": {
+      "ingredient": "المكوّن",
+      "quantityWasted": "الكمية المهلكة",
+      "reasonForWaste": "سبب الهالك",
+      "responsible": "المسؤول",
+      "notesOptional": "ملاحظات (اختياري)",
+      "chooseReason": "اختر السبب",
+      "chooseResponsible": "اختر المسؤول",
+      "addContext": "أضف تفاصيل...",
+      "exampleQty": "مثال: 2",
+      "submit": "تسجيل الجرد"
+    },
+    "wasteLog": {
+      "logWastedItem": "تسجيل عنصر هالك",
+      "wasteLogHistory": "سجل الهالك",
+      "perMonth": "شهريًا",
+      "colDate": "التاريخ",
+      "colItem": "العنصر",
+      "colQtyWasted": "الكمية المهلكة",
+      "colReason": "السبب",
+      "colLoggedBy": "سجّله"
+    },
+    "modals": {
+      "addIngredient": {
+        "title": "إضافة مكوّن",
+        "basicInfo": "المعلومات الأساسية",
+        "stockTracking": "تتبع المخزون",
+        "initialQuantity": "الكمية الأولية",
+        "unitType": "نوع الوحدة",
+        "lowStockThreshold": "حد انخفاض المخزون"
+      },
+      "recipeMapping": {
+        "title": "ربط الوصفة"
+      },
+      "logPurchase": {
+        "title": "تسجيل أمر شراء",
+        "totalCost": "التكلفة الإجمالية ($)",
+        "supplierOptional": "المورّد (اختياري)",
+        "supplierPlaceholder": "مثال: شركة ميترو ميتس",
+        "hint": "سيؤدي تسجيل هذه المشتريات إلى تحديث مخزونك الحالي تلقائيًا وإعادة حساب متوسط التكلفة للوحدة الواحدة لتتبع هامش الربح.",
+        "submit": "تسجيل الشراء"
+      },
+      "transferStock": {
+        "title": "تحويل مخزون",
+        "fromLocation": "من الموقع",
+        "toLocation": "إلى الموقع",
+        "submit": "تنفيذ التحويل"
+      },
+      "physicalCount": {
+        "title": "تسجيل الجرد الفعلي",
+        "choose": "اختر",
+        "actualPhysicalCount": "العدد الفعلي"
+      }
+    }
   }
 }

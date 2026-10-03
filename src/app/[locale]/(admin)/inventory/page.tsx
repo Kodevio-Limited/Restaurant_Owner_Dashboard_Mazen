@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Pencil, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 // ──────────────────────────────────────────────
 // Types
@@ -169,19 +170,23 @@ const WASTE_RECORDS: WasteRecord[] = [
 ];
 
 const TABS = [
-  { id: 'Stock', icon: Warehouse },
-  { id: 'Recipe', icon: ScrollText },
-  { id: 'Purchases', icon: PackageOpen },
-  { id: 'Transfers', icon: TrendingUp },
-  { id: 'Physical Count', icon: ClipboardList },
-  { id: 'Waste log', icon: FileWarning },
-];
+  { id: 'stock', icon: Warehouse },
+  { id: 'recipe', icon: ScrollText },
+  { id: 'purchases', icon: PackageOpen },
+  { id: 'transfers', icon: TrendingUp },
+  { id: 'physicalCount', icon: ClipboardList },
+  { id: 'wasteLog', icon: FileWarning },
+] as const;
+
+type TabId = (typeof TABS)[number]['id'];
 
 // ──────────────────────────────────────────────
 // Modals
 // ──────────────────────────────────────────────
 
 function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations('inventory');
+  const tc = useTranslations('common');
   return (
     <>
       <div
@@ -193,26 +198,26 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
-          <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
-            <ArrowLeft size={22} />
+          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="absolute left-[192px] top-[52px] text-center text-3xl font-medium text-black leading-10">Add Ingredient</h2>
+          <h2 className="absolute start-[192px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.addIngredient.title')}</h2>
         </div>
 
         <div className="space-y-5 px-[30px] pb-5 pt-[147px]">
           <section className="relative h-44 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] pt-[21px]">
-              <h3 className="text-lg font-medium text-zinc-800 leading-7">Basic Info</h3>
+              <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('modals.addIngredient.basicInfo')}</h3>
             </div>
             <div className="px-[19px] pt-[47px] flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Ingredient Name</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
                 </div>
@@ -222,18 +227,18 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
 
           <section className="relative h-72 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] pt-[19px]">
-              <h3 className="text-lg font-medium text-zinc-800 leading-7">Stock Tracking</h3>
+              <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('modals.addIngredient.stockTracking')}</h3>
             </div>
             <div className="px-[19px] pt-[44px] flex flex-col gap-3.5">
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">Initial Quantity</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.initialQuantity')}</span>
                   <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">Unit Type</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.unitType')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Pcs</span>
                     <ChevronDown size={18} className="text-neutral-400" />
@@ -241,7 +246,7 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Low Stock Threshold</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.lowStockThreshold')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">50</span>
                 </div>
@@ -253,10 +258,10 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
         <div className="shrink-0 px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
-              Cancel
+              {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-              Save
+              {tc('actions.save')}
             </button>
           </div>
         </div>
@@ -266,6 +271,8 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
 }
 
 function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose: () => void; recipe: Recipe | null }) {
+  const t = useTranslations('inventory');
+  const tc = useTranslations('common');
   return (
     <>
       <div
@@ -277,16 +284,16 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
-          <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
-            <ArrowLeft size={22} />
+          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="absolute left-[182px] top-[52px] text-center text-3xl font-medium text-black leading-10">Recipe Mapping</h2>
+          <h2 className="absolute start-[182px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.recipeMapping.title')}</h2>
         </div>
 
         <div className="px-[30px] pt-[65px]">
@@ -297,12 +304,12 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
           <section className="relative h-56 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[18px] pt-[18px]">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-zinc-800 leading-7">Ingredients</h3>
+                <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('recipe.ingredients')}</h3>
                 <button className="flex items-center gap-[4.75px] rounded-[5px]">
                   <span className="flex h-5 w-5 items-center justify-center">
                     <Plus size={16} className="text-emerald-700" />
                   </span>
-                  <span className="text-base font-medium leading-6 text-emerald-700">Add Row</span>
+                  <span className="text-base font-medium leading-6 text-emerald-700">{t('recipe.addRow')}</span>
                 </button>
               </div>
             </div>
@@ -356,10 +363,10 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
         <div className="shrink-0 px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
-              Cancel
+              {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-              Save
+              {tc('actions.save')}
             </button>
           </div>
         </div>
@@ -369,6 +376,8 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
 }
 
 function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations('inventory');
+  const tc = useTranslations('common');
   return (
     <>
       <div
@@ -380,23 +389,23 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
-          <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
-            <ArrowLeft size={22} />
+          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="absolute left-[152px] top-[52px] text-center text-3xl font-medium text-black leading-10">Log Purchase Order</h2>
+          <h2 className="absolute start-[152px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.logPurchase.title')}</h2>
         </div>
 
         <div className="px-[30px] pb-5 pt-[97px]">
           <section className="relative h-96 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] py-[25px] flex flex-col gap-3.5">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Ingredient Name</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
                   <ChevronDown size={18} className="text-neutral-400" />
@@ -405,13 +414,13 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
 
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">Quantity</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
                   <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">Total Cost ($)</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.logPurchase.totalCost')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">$120.00</span>
                   </div>
@@ -419,14 +428,14 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Supplier (Optional)</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('modals.logPurchase.supplierOptional')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">e.g. Metro Meats Co.</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('modals.logPurchase.supplierPlaceholder')}</span>
                 </div>
               </div>
             </div>
             <div className="px-[19px] pb-[19px]">
-              <p className="text-xs font-normal leading-5 text-green-400">Logging this purchase will automatically update your current stock and recalculate the Average Cost per unit for profit margin tracking.</p>
+              <p className="text-xs font-normal leading-5 text-green-400">{t('modals.logPurchase.hint')}</p>
             </div>
           </section>
         </div>
@@ -434,10 +443,10 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
         <div className="shrink-0 px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
-              Cancel
+              {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-              Log Purchase
+              {t('modals.logPurchase.submit')}
             </button>
           </div>
         </div>
@@ -447,6 +456,8 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
 }
 
 function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations('inventory');
+  const tc = useTranslations('common');
   return (
     <>
       <div
@@ -458,23 +469,23 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
-          <button onClick={onClose} aria-label="Back" className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
-            <ArrowLeft size={22} />
+          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="absolute left-[194px] top-[52px] text-center text-3xl font-medium text-black leading-10">Transfer Stock</h2>
+          <h2 className="absolute start-[194px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.transferStock.title')}</h2>
         </div>
 
         <div className="px-[30px] pb-5 pt-[97px]">
           <section className="relative h-80 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] py-[28px] flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Ingredient Name</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
                   <ChevronDown size={18} className="text-neutral-400" />
@@ -483,21 +494,21 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
             </div>
             <div className="px-[19px] flex flex-col gap-3.5">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">Quantity</span>
+                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
                 </div>
               </div>
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">From Location</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.transferStock.fromLocation')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Downtown</span>
                     <ChevronDown size={18} className="text-neutral-400" />
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">To Location</span>
+                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.transferStock.toLocation')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                     <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Downtown</span>
                     <ChevronDown size={18} className="text-neutral-400" />
@@ -511,10 +522,10 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
         <div className="shrink-0 px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
-              Cancel
+              {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-              Execute Transfer
+              {t('modals.transferStock.submit')}
             </button>
           </div>
         </div>
@@ -524,6 +535,7 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
 }
 
 function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations('inventory');
   return (
     <>
       <div
@@ -535,25 +547,25 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-[22.69px] pt-[21.17px]">
-          <h2 className="text-center text-2xl font-medium text-black leading-8">Log Physical Count</h2>
+          <h2 className="text-center text-2xl font-medium text-black leading-8">{t('modals.physicalCount.title')}</h2>
         </div>
 
         <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-9">
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Quantity</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Choose</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('modals.physicalCount.choose')}</span>
               <ChevronDown size={18} className="text-neutral-400" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Actual Physical Count</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('modals.physicalCount.actualPhysicalCount')}</span>
             <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
               <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">$120.00</span>
             </div>
@@ -562,7 +574,7 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
 
         <div className="px-[22.69px] py-[30px]">
           <button className="flex h-14 w-96 items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-            <span className="font-satoshi">Submit Count</span>
+            <span className="font-satoshi">{t('wasteForm.submit')}</span>
           </button>
         </div>
       </div>
@@ -571,6 +583,7 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
 }
 
 function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations('inventory');
   return (
     <>
       <div
@@ -582,54 +595,54 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
       />
       <div
         className={cn(
-          'fixed right-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-tl-3xl rounded-bl-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-[22.69px] pt-[21.17px]">
-          <h2 className="text-center text-2xl font-medium text-black leading-8">Log Wasted Item</h2>
+          <h2 className="text-center text-2xl font-medium text-black leading-8">{t('wasteLog.logWastedItem')}</h2>
         </div>
 
         <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-5">
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Ingredient</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.ingredient')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
               <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Lettuce</span>
               <ChevronDown size={18} className="text-neutral-400" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Quantity Wasted</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.quantityWasted')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">e.g. 2</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.exampleQty')}</span>
               <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">KG</span>
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Reason for Waste</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.reasonForWaste')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Choose reason</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseReason')}</span>
               <ChevronDown size={18} className="text-neutral-400" />
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Responsible</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.responsible')}</span>
             <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Choose who is responsible for</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseResponsible')}</span>
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">Notes (Optional)</span>
+            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.notesOptional')}</span>
             <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Add Context...</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.addContext')}</span>
             </div>
           </div>
         </div>
 
         <div className="px-[22.69px] py-[30px]">
           <button className="flex h-14 w-96 items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-            <span className="font-satoshi">Submit Count</span>
+            <span className="font-satoshi">{t('wasteForm.submit')}</span>
           </button>
         </div>
       </div>
@@ -642,6 +655,7 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
 // ──────────────────────────────────────────────
 
 function StockTab() {
+  const t = useTranslations('inventory');
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState('');
 
@@ -652,11 +666,11 @@ function StockTab() {
   const statusBadge = (status: Ingredient['status']) => {
     switch (status) {
       case 'in-stock':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700"><span className="h-2 w-2 rounded-full bg-green-500" /> In Stock</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700"><span className="h-2 w-2 rounded-full bg-green-500" /> {t('status.inStock')}</span>;
       case 'low-stock':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700"><span className="h-2 w-2 rounded-full bg-yellow-500" /> Low Stock</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700"><span className="h-2 w-2 rounded-full bg-yellow-500" /> {t('status.lowStock')}</span>;
       case 'out-of-stock':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> Out of Stock</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> {t('status.outOfStock')}</span>;
     }
   };
 
@@ -667,7 +681,7 @@ function StockTab() {
           <Search size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder="Search ingredients..."
+            placeholder={t('stock.searchIngredients')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 text-base outline-none transition-colors focus:border-emerald-500"
@@ -678,7 +692,7 @@ function StockTab() {
           className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
         >
           <Plus size={20} />
-          <span className="text-lg font-medium leading-7">Add Ingredient</span>
+          <span className="text-lg font-medium leading-7">{t('stock.addIngredient')}</span>
         </button>
       </div>
 
@@ -686,10 +700,10 @@ function StockTab() {
         <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-neutral-100 bg-gray-200">
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Ingredient Name</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Current Stock Status</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Last Update</th>
-              <th className="px-6 py-4 text-right text-base font-medium leading-6 text-stone-500">Action</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colIngredientName')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colCurrentStockStatus')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colLastUpdate')}</th>
+              <th className="px-6 py-4 text-end text-base font-medium leading-6 text-stone-500">{t('stock.colAction')}</th>
             </tr>
           </thead>
           <tbody>
@@ -722,7 +736,7 @@ function StockTab() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-neutral-400">No ingredients found</td>
+                <td colSpan={4} className="px-6 py-12 text-center text-neutral-400">{t('stock.noIngredients')}</td>
               </tr>
             )}
           </tbody>
@@ -735,6 +749,7 @@ function StockTab() {
 }
 
 function RecipeTab() {
+  const t = useTranslations('inventory');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   return (
@@ -744,13 +759,13 @@ function RecipeTab() {
           <Search size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder="Search recipes..."
+            placeholder={t('recipe.searchRecipes')}
             className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 text-base outline-none transition-colors focus:border-emerald-500"
           />
         </div>
         <button className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800">
           <Plus size={20} />
-          <span className="text-lg font-medium leading-7">Add Recipe</span>
+          <span className="text-lg font-medium leading-7">{t('recipe.addRecipe')}</span>
         </button>
       </div>
 
@@ -770,12 +785,12 @@ function RecipeTab() {
                 </div>
                 <div
                   className={cn(
-                    'absolute left-[9.01px] top-[10.13px] inline-flex items-center gap-3 rounded-lg px-3 py-2.5',
+                    'absolute start-[9.01px] top-[10.13px] inline-flex items-center gap-3 rounded-lg px-3 py-2.5',
                     recipe.status === 'available' ? 'bg-green-500' : 'bg-red-600',
                   )}
                 >
                   <span className="text-sm font-medium leading-5 text-white">
-                    {recipe.status === 'available' ? 'AVAILABLE' : 'OUT OF STOCK'}
+                    {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
                   </span>
                 </div>
               </div>
@@ -784,7 +799,7 @@ function RecipeTab() {
                 <h3 className="text-xl font-medium leading-7 text-zinc-800 font-satoshi">{recipe.name}</h3>
                 <div className="relative h-20 w-full overflow-hidden rounded-[5px] bg-zinc-100">
                   {recipe.ingredients.length > 0 ? (
-                    <div className="absolute left-[10px] top-[11px] flex flex-col gap-3">
+                    <div className="absolute start-[10px] top-[11px] flex flex-col gap-3">
                       {recipe.ingredients.slice(0, 2).map((ing, idx) => (
                         <div key={idx} className="flex items-center gap-36">
                           <span className={cn(
@@ -799,7 +814,7 @@ function RecipeTab() {
                       ))}
                     </div>
                   ) : (
-                    <div className="absolute left-[13.84px] top-[10.92px] text-base font-normal leading-6 text-neutral-400">No Ingredients mapped</div>
+                    <div className="absolute start-[13.84px] top-[10.92px] text-base font-normal leading-6 text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
                   )}
                 </div>
               </div>
@@ -810,7 +825,7 @@ function RecipeTab() {
                 onClick={() => setSelectedRecipe(recipe)}
                 className="flex h-14 w-full items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
               >
-                Edit Recipe
+                {t('recipe.editRecipe')}
               </button>
             </div>
           </div>
@@ -823,6 +838,7 @@ function RecipeTab() {
 }
 
 function PurchasesTab() {
+  const t = useTranslations('inventory');
   const [showLog, setShowLog] = useState(false);
 
   return (
@@ -833,12 +849,12 @@ function PurchasesTab() {
             <Search size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
-              placeholder="Search purchases..."
+              placeholder={t('purchases.searchPurchases')}
               className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 text-base outline-none transition-colors focus:border-emerald-500"
             />
           </div>
           <div className="flex h-12 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 text-neutral-400">
-            <span className="text-base">All Time</span>
+            <span className="text-base">{t('purchases.allTime')}</span>
             <ChevronDown size={16} />
           </div>
         </div>
@@ -847,7 +863,7 @@ function PurchasesTab() {
           className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
         >
           <Plus size={20} />
-          <span className="text-lg font-medium leading-7">Log Purchase</span>
+          <span className="text-lg font-medium leading-7">{t('purchases.logPurchase')}</span>
         </button>
       </div>
 
@@ -855,11 +871,11 @@ function PurchasesTab() {
         <table className="w-full min-w-[1200px]">
           <thead>
             <tr className="bg-gray-200">
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">ORDER ID/ DATE</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">INGREDIENT</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">QUANTITY BOUGHT</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">TOTAL</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">SUPPLIER</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colOrderIdDate')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colIngredient')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colQuantityBought')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colTotal')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colSupplier')}</th>
             </tr>
           </thead>
           <tbody>
@@ -874,14 +890,14 @@ function PurchasesTab() {
                 <td className="px-6 py-5">
                   <div className="flex flex-col items-start gap-1.5">
                     <span className="text-lg font-medium leading-7 text-zinc-800">{p.ingredient}</span>
-                    <span className="inline-flex rounded-3xl bg-green-200 px-2.5 py-1.5 text-sm font-normal leading-5 text-green-700">Avg Cost: ${p.avgCost.toFixed(2)}/{p.unit}</span>
+                    <span className="inline-flex rounded-3xl bg-green-200 px-2.5 py-1.5 text-sm font-normal leading-5 text-green-700">{t('purchases.avgCost', { cost: `$${p.avgCost.toFixed(2)}`, unit: p.unit })}</span>
                   </div>
                 </td>
                 <td className="px-6 py-5">
                   <span className="text-base font-normal leading-6 text-neutral-400">{p.quantity} {p.unit}</span>
                 </td>
                 <td className="px-6 py-5">
-                  <span className="text-lg font-semibold leading-6 text-emerald-700">${p.total.toFixed(2)}</span>
+                  <span className="text-lg font-semibold leading-6 text-emerald-700"><bdi dir="ltr">${p.total.toFixed(2)}</bdi></span>
                 </td>
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-2">
@@ -910,16 +926,17 @@ function PurchasesTab() {
 }
 
 function TransfersTab() {
+  const t = useTranslations('inventory');
   const [showTransfer, setShowTransfer] = useState(false);
 
   const statusBadge = (status: Transfer['status']) => {
     switch (status) {
       case 'completed':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700"><span className="h-2 w-2 rounded-full bg-green-500" /> Completed</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700"><span className="h-2 w-2 rounded-full bg-green-500" /> {t('status.completed')}</span>;
       case 'pending':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700"><span className="h-2 w-2 rounded-full bg-yellow-500" /> Pending</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700"><span className="h-2 w-2 rounded-full bg-yellow-500" /> {t('status.pending')}</span>;
       case 'cancelled':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> Cancelled</span>;
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> {t('status.cancelled')}</span>;
     }
   };
 
@@ -930,7 +947,7 @@ function TransfersTab() {
           <Search size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder="Search transfers..."
+            placeholder={t('transfers.searchTransfers')}
             className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 text-base outline-none transition-colors focus:border-emerald-500"
           />
         </div>
@@ -939,7 +956,7 @@ function TransfersTab() {
           className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
         >
           <Plus size={20} />
-          <span className="text-lg font-medium leading-7">New Transfer</span>
+          <span className="text-lg font-medium leading-7">{t('transfers.newTransfer')}</span>
         </button>
       </div>
 
@@ -947,13 +964,13 @@ function TransfersTab() {
         <table className="w-full min-w-[1000px]">
           <thead>
             <tr className="bg-gray-200">
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Transfer ID</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Date</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Ingredient</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Quantity</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">From</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">To</th>
-              <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">Status</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colTransferId')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colDate')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colIngredient')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colQuantity')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colFrom')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colTo')}</th>
+              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colStatus')}</th>
             </tr>
           </thead>
           <tbody>
@@ -978,14 +995,15 @@ function TransfersTab() {
 }
 
 function PhysicalCountTab() {
+  const t = useTranslations('inventory');
   const [showLog, setShowLog] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-2xl font-medium leading-8 text-black">Weekly Variance Trend (Spoilage/Overportioning)</h2>
+        <h2 className="text-2xl font-medium leading-8 text-black">{t('physicalCount.weeklyVarianceTrend')}</h2>
         <div className="flex items-center gap-2 rounded-lg bg-gray-200/40 px-7 py-2.5">
-          <span className="text-2xl font-normal leading-8 text-stone-500">Week</span>
+          <span className="text-2xl font-normal leading-8 text-stone-500">{t('physicalCount.week')}</span>
           <ChevronDown size={16} className="text-stone-500" />
         </div>
       </div>
@@ -1017,7 +1035,7 @@ function PhysicalCountTab() {
               </div>
 
               {/* Bars */}
-              <div className="absolute bottom-0 left-0 right-0 top-[9.07px] border-b border-slate-950/30">
+              <div className="absolute bottom-0 inset-x-0 top-[9.07px] border-b border-slate-950/30">
                 <div className="flex h-full items-end">
                   {/* Week groups - 5 weeks, 3 bars each */}
                   {[
@@ -1093,17 +1111,17 @@ function PhysicalCountTab() {
       <div className="flex items-start gap-6">
         <div className="flex-1 overflow-x-auto rounded-2xl bg-white p-[22.69px]">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-medium leading-8 text-black">Recent Counts</h2>
+            <h2 className="text-2xl font-medium leading-8 text-black">{t('physicalCount.recentCounts')}</h2>
           </div>
 
           <table className="w-full min-w-[800px]">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">DATE</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">INGREDIENT</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">THEO</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">PHYS</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">VARIANCE</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colDate')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colIngredient')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colTheo')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colPhys')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colVariance')}</th>
               </tr>
             </thead>
             <tbody>
@@ -1130,7 +1148,7 @@ function PhysicalCountTab() {
             onClick={() => setShowLog(true)}
             className="flex h-14 w-full items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
           >
-            <span className="font-satoshi">Log Physical Count</span>
+            <span className="font-satoshi">{t('physicalCount.logPhysicalCount')}</span>
           </button>
         </div>
       </div>
@@ -1141,6 +1159,7 @@ function PhysicalCountTab() {
 }
 
 function WasteLogTab() {
+  const t = useTranslations('inventory');
   const [showWaste, setShowWaste] = useState(false);
 
   return (
@@ -1148,40 +1167,40 @@ function WasteLogTab() {
       <div className="flex items-start gap-6">
         {/* Waste form */}
         <div className="w-[400px] shrink-0 rounded-2xl bg-white p-[22.69px]">
-          <h2 className="text-center text-2xl font-medium leading-8 text-black">Log Wasted Item</h2>
+          <h2 className="text-center text-2xl font-medium leading-8 text-black">{t('wasteLog.logWastedItem')}</h2>
 
           <div className="mt-[66.55px] flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">Ingredient</span>
+              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.ingredient')}</span>
               <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
                 <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Lettuce</span>
                 <ChevronDown size={18} className="text-neutral-400" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">Quantity Wasted</span>
+              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.quantityWasted')}</span>
               <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">e.g. 2</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.exampleQty')}</span>
                 <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">KG</span>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">Reason for Waste</span>
+              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.reasonForWaste')}</span>
               <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Choose reason</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseReason')}</span>
                 <ChevronDown size={18} className="text-neutral-400" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">Responsible</span>
+              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.responsible')}</span>
               <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Choose who is responsible for</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseResponsible')}</span>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">Notes (Optional)</span>
+              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.notesOptional')}</span>
               <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Add Context...</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.addContext')}</span>
               </div>
             </div>
           </div>
@@ -1190,16 +1209,16 @@ function WasteLogTab() {
             onClick={() => setShowWaste(true)}
             className="mt-[30px] flex h-14 w-full items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
           >
-            <span className="font-satoshi">Submit Count</span>
+            <span className="font-satoshi">{t('wasteForm.submit')}</span>
           </button>
         </div>
 
         {/* Waste history */}
         <div className="flex-1 overflow-x-auto rounded-2xl bg-white p-[22.69px]">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-medium leading-8 text-black">Waste Log History</h2>
+            <h2 className="text-2xl font-medium leading-8 text-black">{t('wasteLog.wasteLogHistory')}</h2>
             <div className="flex items-center gap-[4.86px] rounded-[47.75px] bg-white px-4 py-2.5 outline outline-[0.81px] outline-offset-[-0.81px] outline-zinc-400">
-              <span className="text-base font-normal leading-5 text-stone-500">Per Month</span>
+              <span className="text-base font-normal leading-5 text-stone-500">{t('wasteLog.perMonth')}</span>
               <ChevronDown size={12} className="text-stone-500" />
             </div>
           </div>
@@ -1207,11 +1226,11 @@ function WasteLogTab() {
           <table className="w-full min-w-[800px]">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">DATE</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">ITEM</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">QTY WASTED</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">REASON</th>
-                <th className="px-6 py-4 text-left text-base font-medium leading-6 text-stone-500">LOGGED BY</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colDate')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colItem')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colQtyWasted')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colReason')}</th>
+                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colLoggedBy')}</th>
               </tr>
             </thead>
             <tbody>
@@ -1244,17 +1263,18 @@ function WasteLogTab() {
 // ──────────────────────────────────────────────
 
 export default function InventoryPage() {
-  const [activeTab, setActiveTab] = useState('Stock');
+  const t = useTranslations('inventory');
+  const [activeTab, setActiveTab] = useState<TabId>('stock');
 
   return (
     <main className="flex flex-col gap-5">
       {/* Header */}
       <div className="flex flex-col gap-0.5">
         <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
-          Inventory & Recipes
+          {t('title')}
         </h1>
         <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">
-          Manage your inventory, recipes, purchases, transfers and more
+          {t('subtitle')}
         </p>
       </div>
 
@@ -1274,7 +1294,7 @@ export default function InventoryPage() {
               )}
             >
               <Icon size={15} />
-              <span className="text-center text-sm font-normal leading-5">{tab.id}</span>
+              <span className="text-center text-sm font-normal leading-5">{t(`tabs.${tab.id}`)}</span>
             </button>
           );
         })}
@@ -1282,12 +1302,12 @@ export default function InventoryPage() {
 
       {/* Tab content */}
       <div>
-        {activeTab === 'Stock' && <StockTab />}
-        {activeTab === 'Recipe' && <RecipeTab />}
-        {activeTab === 'Purchases' && <PurchasesTab />}
-        {activeTab === 'Transfers' && <TransfersTab />}
-        {activeTab === 'Physical Count' && <PhysicalCountTab />}
-        {activeTab === 'Waste log' && <WasteLogTab />}
+        {activeTab === 'stock' && <StockTab />}
+        {activeTab === 'recipe' && <RecipeTab />}
+        {activeTab === 'purchases' && <PurchasesTab />}
+        {activeTab === 'transfers' && <TransfersTab />}
+        {activeTab === 'physicalCount' && <PhysicalCountTab />}
+        {activeTab === 'wasteLog' && <WasteLogTab />}
       </div>
     </main>
   );

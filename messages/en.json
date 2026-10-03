@@ -538,5 +538,134 @@
       "subtitle": "Select the branch you are working at today",
       "confirm": "Confirm"
     }
+  },
+  "inventory": {
+    "title": "Inventory & Recipes",
+    "subtitle": "Manage your inventory, recipes, purchases, transfers and more",
+    "tabs": {
+      "stock": "Stock",
+      "recipe": "Recipe",
+      "purchases": "Purchases",
+      "transfers": "Transfers",
+      "physicalCount": "Physical Count",
+      "wasteLog": "Waste log"
+    },
+    "status": {
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "outOfStock": "Out of Stock",
+      "available": "AVAILABLE",
+      "completed": "Completed",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "labels": {
+      "ingredientName": "Ingredient Name",
+      "quantity": "Quantity"
+    },
+    "stock": {
+      "addIngredient": "Add Ingredient",
+      "searchIngredients": "Search ingredients...",
+      "colIngredientName": "Ingredient Name",
+      "colCurrentStockStatus": "Current Stock Status",
+      "colLastUpdate": "Last Update",
+      "colAction": "Action",
+      "noIngredients": "No ingredients found"
+    },
+    "recipe": {
+      "addRecipe": "Add Recipe",
+      "searchRecipes": "Search recipes...",
+      "noIngredientsMapped": "No Ingredients mapped",
+      "editRecipe": "Edit Recipe",
+      "ingredients": "Ingredients",
+      "addRow": "Add Row"
+    },
+    "purchases": {
+      "searchPurchases": "Search purchases...",
+      "allTime": "All Time",
+      "logPurchase": "Log Purchase",
+      "colOrderIdDate": "ORDER ID/ DATE",
+      "colIngredient": "INGREDIENT",
+      "colQuantityBought": "QUANTITY BOUGHT",
+      "colTotal": "TOTAL",
+      "colSupplier": "SUPPLIER",
+      "avgCost": "Avg Cost: {cost}/{unit}"
+    },
+    "transfers": {
+      "searchTransfers": "Search transfers...",
+      "newTransfer": "New Transfer",
+      "colTransferId": "Transfer ID",
+      "colDate": "Date",
+      "colIngredient": "Ingredient",
+      "colQuantity": "Quantity",
+      "colFrom": "From",
+      "colTo": "To",
+      "colStatus": "Status"
+    },
+    "physicalCount": {
+      "weeklyVarianceTrend": "Weekly Variance Trend (Spoilage/Overportioning)",
+      "week": "Week",
+      "recentCounts": "Recent Counts",
+      "colDate": "DATE",
+      "colIngredient": "INGREDIENT",
+      "colTheo": "THEO",
+      "colPhys": "PHYS",
+      "colVariance": "VARIANCE",
+      "logPhysicalCount": "Log Physical Count"
+    },
+    "wasteForm": {
+      "ingredient": "Ingredient",
+      "quantityWasted": "Quantity Wasted",
+      "reasonForWaste": "Reason for Waste",
+      "responsible": "Responsible",
+      "notesOptional": "Notes (Optional)",
+      "chooseReason": "Choose reason",
+      "chooseResponsible": "Choose who is responsible for",
+      "addContext": "Add Context...",
+      "exampleQty": "e.g. 2",
+      "submit": "Submit Count"
+    },
+    "wasteLog": {
+      "logWastedItem": "Log Wasted Item",
+      "wasteLogHistory": "Waste Log History",
+      "perMonth": "Per Month",
+      "colDate": "DATE",
+      "colItem": "ITEM",
+      "colQtyWasted": "QTY WASTED",
+      "colReason": "REASON",
+      "colLoggedBy": "LOGGED BY"
+    },
+    "modals": {
+      "addIngredient": {
+        "title": "Add Ingredient",
+        "basicInfo": "Basic Info",
+        "stockTracking": "Stock Tracking",
+        "initialQuantity": "Initial Quantity",
+        "unitType": "Unit Type",
+        "lowStockThreshold": "Low Stock Threshold"
+      },
+      "recipeMapping": {
+        "title": "Recipe Mapping"
+      },
+      "logPurchase": {
+        "title": "Log Purchase Order",
+        "totalCost": "Total Cost ($)",
+        "supplierOptional": "Supplier (Optional)",
+        "supplierPlaceholder": "e.g. Metro Meats Co.",
+        "hint": "Logging this purchase will automatically update your current stock and recalculate the Average Cost per unit for profit margin tracking.",
+        "submit": "Log Purchase"
+      },
+      "transferStock": {
+        "title": "Transfer Stock",
+        "fromLocation": "From Location",
+        "toLocation": "To Location",
+        "submit": "Execute Transfer"
+      },
+      "physicalCount": {
+        "title": "Log Physical Count",
+        "choose": "Choose",
+        "actualPhysicalCount": "Actual Physical Count"
+      }
+    }
   }
 }
