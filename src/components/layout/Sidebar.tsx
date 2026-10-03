@@ -17,12 +17,14 @@ import {
   LogOut,
   Menu,
   X,
+  Package,
 } from 'lucide-react';
 import { LanguageToggle } from './LanguageToggle';
 
 const NAV_KEYS = [
   { id: 'orders',   icon: Receipt,   href: '/orders' },
   { id: 'menu',     icon: Utensils,  href: '/menu' },
+  { id: 'inventory',icon: Package,   href: '/inventory' },
   { id: 'tables',   icon: LayoutGrid,href: '/tables' },
   { id: 'staff',    icon: Users,     href: '/staff' },
   { id: 'reports',  icon: BarChart3, href: '/reports/analytics' },

@@ -109,6 +109,7 @@
   "nav": {
     "orders": "Orders",
     "menu": "Menu",
+    "inventory": "Inventory",
     "tables": "Tables",
     "staff": "Staff",
     "reports": "Reports",
