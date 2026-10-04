@@ -33,15 +33,18 @@ export function ItemsTable({ title, className, items }: ItemsTableProps) {
         </button>
       </div>
 
-      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_80px_90px] items-center bg-[#E9E9E9] px-2 py-2">
+      <div className="relative mt-3 grid grid-cols-2 items-center bg-[#E9E9E9] px-2 py-2">
         <span className="text-[11px] font-medium text-[#686868]">{t('item').toUpperCase()}</span>
-        <span className="text-center text-[11px] font-medium text-[#686868]">{t('qty').toUpperCase()}</span>
-        <span className="text-end text-[11px] font-medium text-[#686868]">{t('revenue').toUpperCase()}</span>
+        <span className="justify-self-end text-[11px] font-medium text-[#686868]">{t('revenue').toUpperCase()}</span>
+        {/* QTY header centered exactly between ITEM and REVENUE (mirrors row layout) */}
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] font-medium text-[#686868]">
+          {t('qty').toUpperCase()}
+        </span>
       </div>
 
       <div className="mt-4 flex flex-col gap-4">
         {items.map((item) => (
-          <div key={item.id} className="grid grid-cols-[minmax(0,1fr)_80px_90px] items-center">
+          <div key={item.id} className="relative grid grid-cols-2 items-center">
             <div className="flex min-w-0 items-center gap-2.5">
               <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-[#F2F2F2]">
                 <Image src="/images/food-41e5d7.png" alt={item.name} fill sizes="36px" className="object-cover" />
@@ -50,9 +53,12 @@ export function ItemsTable({ title, className, items }: ItemsTableProps) {
                 {isArabic ? item.name_ar || item.name : item.name}
               </span>
             </div>
-            <span className="whitespace-nowrap text-center text-[13px] font-medium text-[#000000]">{item.qty}</span>
-            <span className="whitespace-nowrap text-end text-[15px] font-semibold text-[#026F4F]">
+            <span className="justify-self-end whitespace-nowrap text-[15px] font-semibold text-[#026F4F]">
               {item.revenue}
+            </span>
+            {/* QTY centered exactly between the ITEM and REVENUE columns */}
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[13px] font-medium text-[#000000]">
+              {item.qty}
             </span>
           </div>
         ))}

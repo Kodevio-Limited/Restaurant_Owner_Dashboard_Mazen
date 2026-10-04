@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, X, Globe, Upload, Plus, Trash2, ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 
 function LangBadge({ lang, className }: { lang: 'EN' | 'AR'; className?: string }) {
   return (
@@ -76,17 +76,33 @@ function Select({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [direction, setDirection] = useState<'down' | 'up'>('down');
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const normalizedOptions = options.map((opt) =>
     typeof opt === 'string' ? { label: opt, value: opt } : opt,
   );
   const currentLabel =
     normalizedOptions.find((opt) => opt.value === value)?.label ?? value;
 
+  const toggleOpen = () => {
+    if (!open && buttonRef.current) {
+      // Flip upward when there is not enough room below (drawer bottom, small screens).
+      // All 11 options (No Limit + 1-10) should fit without scrolling: ~41px each.
+      const rect = buttonRef.current.getBoundingClientRect();
+      const needed = Math.min(normalizedOptions.length * 41 + 8, 480);
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      setDirection(spaceBelow < needed && spaceAbove > spaceBelow ? 'up' : 'down');
+    }
+    setOpen((v) => !v);
+  };
+
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggleOpen}
         className={cn(
           'flex h-12 w-full items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 text-start transition-colors hover:bg-[#EAEAEA]',
           className,
@@ -98,7 +114,13 @@ function Select({
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute inset-x-0 top-full z-40 mt-1 max-h-60 overflow-y-auto rounded-2xl bg-white py-1 shadow-lg outline outline-1 outline-[#E9E9E9]">
+          <div className={cn(
+            'absolute inset-x-0 z-40 overflow-y-auto rounded-2xl bg-white py-1 shadow-lg outline outline-1 outline-[#E9E9E9]',
+            // Tall enough for all 11 options (No Limit + 1-10) with no scroll;
+            // 65vh guard keeps it inside short viewports (then it scrolls).
+            'max-h-[min(30rem,65vh)]',
+            direction === 'down' ? 'top-full mt-1' : 'bottom-full mb-1',
+          )}>
             {normalizedOptions.map((option) => (
               <button
                 key={option.value}
@@ -315,12 +337,8 @@ export function AddItemModal({
   const [available, setAvailable] = useState(true);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   const categoryOptions = [

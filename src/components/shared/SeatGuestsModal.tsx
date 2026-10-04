@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 
 export function SeatGuestsModal({
   open,
@@ -18,12 +18,8 @@ export function SeatGuestsModal({
   const isAr = locale === 'ar';
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   return (

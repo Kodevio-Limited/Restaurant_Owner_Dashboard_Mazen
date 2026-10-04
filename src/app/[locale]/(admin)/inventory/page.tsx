@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Pencil, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
 import { useQueryModal } from '@/lib/use-query-modal';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -459,6 +459,11 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
 function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
+  // Lock background scroll while the drawer is open (incl. admin scroll container).
+  useEffect(() => {
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
+  }, [open]);
   return (
     <>
       <div
@@ -470,7 +475,7 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
@@ -482,47 +487,45 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
           <h2 className="absolute start-[194px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.transferStock.title')}</h2>
         </div>
 
-        <div className="px-[30px] pb-5 pt-[97px]">
-          <section className="relative h-80 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
-            <div className="px-[19px] py-[28px] flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
+        {/* Form — scrolls, auto height so From/To never clip */}
+        <div className="flex-1 overflow-y-auto px-[30px] pb-6 pt-8">
+          <section className="relative flex w-full flex-col justify-center gap-4 rounded-xl bg-white px-[19px] py-6 outline outline-1 outline-offset-[-1px] overflow-hidden">
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
+              <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                <ChevronDown size={18} className="text-[#686868]" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
+              <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.fromLocation')}</span>
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
                   <ChevronDown size={18} className="text-[#686868]" />
                 </div>
               </div>
-            </div>
-            <div className="px-[19px] flex flex-col gap-3.5">
-              <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
-                <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
-                </div>
-              </div>
-              <div className="flex items-start gap-6">
-                <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.fromLocation')}</span>
-                  <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
-                    <ChevronDown size={18} className="text-[#686868]" />
-                  </div>
-                </div>
-                <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.toLocation')}</span>
-                  <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
-                    <ChevronDown size={18} className="text-[#686868]" />
-                  </div>
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.toLocation')}</span>
+                <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
+                  <ChevronDown size={18} className="text-[#686868]" />
                 </div>
               </div>
             </div>
           </section>
         </div>
 
-        <div className="shrink-0 px-[30px] py-4">
+        {/* Footer pinned to bottom */}
+        <div className="shrink-0 border-t border-zinc-200 bg-[#F2F2F2] px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
-            <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
+            <button onClick={onClose} className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
               {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
@@ -537,6 +540,12 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
 
 function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('inventory');
+  const tc = useTranslations('common');
+  // Lock background scroll while the drawer is open (incl. admin scroll container).
+  useEffect(() => {
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
+  }, [open]);
   return (
     <>
       <div
@@ -548,33 +557,46 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-[22.69px] pt-[21.17px]">
+        {/* Header with back arrow */}
+        <div className="flex shrink-0 items-center justify-between px-[22.69px] pt-[21.17px]">
+          <button
+            onClick={onClose}
+            aria-label={tc('actions.back')}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300"
+          >
+            <ArrowLeft size={20} className="rtl:scale-x-[-1]" />
+          </button>
           <h2 className="text-center text-2xl font-medium text-black leading-8">{t('modals.physicalCount.title')}</h2>
+          <span className="w-11" />
         </div>
 
-        <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-9">
-          <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
-            <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.physicalCount.choose')}</span>
-              <ChevronDown size={18} className="text-[#686868]" />
+        {/* Form — scrolls, takes remaining space so submit stays pinned bottom */}
+        <div className="flex-1 overflow-y-auto px-[22.69px] pb-6 pt-8">
+          <div className="flex flex-col gap-6">
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('modals.physicalCount.choose')}</span>
+                <ChevronDown size={18} className="text-[#686868]" />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.physicalCount.actualPhysicalCount')}</span>
-            <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.physicalCount.actualPhysicalCount')}</span>
+              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">$120.00</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="px-[22.69px] py-[30px]">
-          <button className="flex h-14 w-96 items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
+        {/* Submit pinned to bottom */}
+        <div className="shrink-0 border-t border-zinc-200 bg-[#F2F2F2] px-[22.69px] py-6">
+          <button className="flex h-14 w-full max-w-[400px] items-center justify-center rounded-[30.29px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
             <span className="font-satoshi">{t('wasteForm.submit')}</span>
           </button>
         </div>
@@ -585,6 +607,12 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
 
 function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('inventory');
+  const tc = useTranslations('common');
+  // Lock background scroll while the drawer is open (incl. admin scroll container).
+  useEffect(() => {
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
+  }, [open]);
   return (
     <>
       <div
@@ -596,53 +624,66 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-[22.69px] pt-[21.17px]">
+        {/* Header with back arrow (Bug-2) */}
+        <div className="flex shrink-0 items-center justify-between px-[22.69px] pt-[21.17px]">
+          <button
+            onClick={onClose}
+            aria-label={tc('actions.back')}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300"
+          >
+            <ArrowLeft size={20} className="rtl:scale-x-[-1]" />
+          </button>
           <h2 className="text-center text-2xl font-medium text-black leading-8">{t('wasteLog.logWastedItem')}</h2>
+          <span className="w-11" />
         </div>
 
-        <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-5">
-          <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.ingredient')}</span>
-            <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Lettuce</span>
-              <ChevronDown size={18} className="text-[#686868]" />
+        {/* Form — scrolls, takes remaining space so submit stays pinned bottom (Bug-2) */}
+        <div className="flex-1 overflow-y-auto px-[22.69px] pb-6 pt-8">
+          <div className="flex flex-col gap-5">
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.ingredient')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">Lettuce</span>
+                <ChevronDown size={18} className="text-[#686868]" />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.quantityWasted')}</span>
-            <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.exampleQty')}</span>
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">KG</span>
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.quantityWasted')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.exampleQty')}</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">KG</span>
+              </div>
             </div>
-          </div>
-          <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.reasonForWaste')}</span>
-            <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseReason')}</span>
-              <ChevronDown size={18} className="text-[#686868]" />
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.reasonForWaste')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.chooseReason')}</span>
+                <ChevronDown size={18} className="text-[#686868]" />
+              </div>
             </div>
-          </div>
-          <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.responsible')}</span>
-            <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseResponsible')}</span>
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.responsible')}</span>
+              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.chooseResponsible')}</span>
+              </div>
             </div>
-          </div>
-          <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.notesOptional')}</span>
-            <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.addContext')}</span>
+            <div className="flex w-full max-w-[400px] flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.notesOptional')}</span>
+              <div className="flex h-28 w-full items-start rounded-xl bg-white px-4 py-4 outline outline-1 outline-zinc-200">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.addContext')}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="px-[22.69px] py-[30px]">
-          <button className="flex h-14 w-96 items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
+        {/* Submit pinned to bottom (Bug-2) */}
+        <div className="shrink-0 border-t border-zinc-200 bg-[#F2F2F2] px-[22.69px] py-6">
+          <button className="flex h-14 w-full max-w-[400px] items-center justify-center rounded-[30.29px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
             <span className="font-satoshi">{t('wasteForm.submit')}</span>
           </button>
         </div>
@@ -698,38 +739,38 @@ function StockTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full min-w-[800px]">
+        <table className="w-full">
           <thead>
             <tr className="border-b border-neutral-100 bg-gray-200">
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colIngredientName')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colCurrentStockStatus')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('stock.colLastUpdate')}</th>
-              <th className="px-6 py-4 text-end text-base font-medium leading-6 text-stone-500">{t('stock.colAction')}</th>
+              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colIngredientName')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colCurrentStockStatus')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colLastUpdate')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colAction')}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((ing) => (
               <tr key={ing.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="px-6 py-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100">
-                      <PackageOpen size={18} className="text-neutral-400" />
+                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 sm:h-10 sm:w-10">
+                      <PackageOpen size={16} className="text-neutral-400 sm:size-18" />
                     </div>
-                    <div>
-                      <div className="text-base font-medium text-zinc-800">{ing.name}</div>
-                      <div className="text-sm text-neutral-400">{ing.currentStock} {ing.unit}</div>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-zinc-800 sm:text-base">{ing.name}</div>
+                      <div className="whitespace-nowrap text-xs text-neutral-400 sm:text-sm">{ing.currentStock} {ing.unit}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-5">{statusBadge(ing.status)}</td>
-                <td className="px-6 py-5 text-sm text-neutral-500">{ing.lastUpdate}</td>
-                <td className="px-6 py-5">
-                  <div className="flex items-center justify-end gap-2">
-                    <button className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600">
-                      <Pencil size={18} />
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
+                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex items-center justify-end gap-1 sm:gap-2">
+                    <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600 sm:h-9 sm:w-9">
+                      <Pencil size={16} className="sm:size-18" />
                     </button>
-                    <button className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500">
-                      <Trash2 size={18} />
+                    <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 sm:h-9 sm:w-9">
+                      <Trash2 size={16} className="sm:size-18" />
                     </button>
                   </div>
                 </td>
@@ -869,40 +910,38 @@ function PurchasesTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full min-w-[1200px]">
+        <table className="w-full">
           <thead>
             <tr className="bg-gray-200">
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colOrderIdDate')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colIngredient')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colQuantityBought')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colTotal')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colSupplier')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colOrderIdDate')}</th>
+              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colQuantityBought')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colTotal')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colSupplier')}</th>
             </tr>
           </thead>
           <tbody>
             {PURCHASES.map((p) => (
               <tr key={p.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="px-6 py-5">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-lg font-medium leading-7 text-zinc-800">{p.orderId}</span>
-                    <span className="text-sm leading-5 text-neutral-400">{p.date}</span>
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium leading-6 text-zinc-800 sm:text-base">{p.orderId}</span>
+                    <span className="text-xs leading-5 text-neutral-400 sm:text-sm">{p.date}</span>
                   </div>
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <div className="flex flex-col items-start gap-1.5">
-                    <span className="text-lg font-medium leading-7 text-zinc-800">{p.ingredient}</span>
-                    <span className="inline-flex rounded-3xl bg-green-200 px-2.5 py-1.5 text-sm font-normal leading-5 text-green-700">{t('purchases.avgCost', { cost: `$${p.avgCost.toFixed(2)}`, unit: p.unit })}</span>
+                    <span className="max-w-[150px] truncate text-sm font-medium leading-6 text-zinc-800 sm:max-w-[200px] sm:text-base lg:max-w-none">{p.ingredient}</span>
+                    <span className="inline-flex whitespace-nowrap rounded-3xl bg-green-200 px-2.5 py-1 text-xs font-normal leading-5 text-green-700 sm:text-sm">{t('purchases.avgCost', { cost: `$${p.avgCost.toFixed(2)}`, unit: p.unit })}</span>
                   </div>
                 </td>
-                <td className="px-6 py-5">
-                  <span className="text-base font-normal leading-6 text-neutral-400">{p.quantity} {p.unit}</span>
+                <td className="whitespace-nowrap px-3 py-3 text-sm text-neutral-400 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{p.quantity} {p.unit}</td>
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <span className="text-sm font-semibold leading-6 text-emerald-700 sm:text-base"><bdi dir="ltr">${p.total.toFixed(2)}</bdi></span>
                 </td>
-                <td className="px-6 py-5">
-                  <span className="text-lg font-semibold leading-6 text-emerald-700"><bdi dir="ltr">${p.total.toFixed(2)}</bdi></span>
-                </td>
-                <td className="px-6 py-5">
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <div className="flex items-center gap-2">
-                    <div className="relative flex h-6 w-6 items-center justify-center">
+                    <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
                       <div className="absolute left-[3px] top-[3px] h-4 w-3.5 outline outline-1 outline-offset-[-0.5px] outline-black" />
                       <div className="absolute left-[3px] top-[3px] h-0 w-4 outline outline-1 outline-offset-[-0.5px] outline-black" />
                       <div className="absolute left-[9px] top-[8px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
@@ -912,7 +951,7 @@ function PurchasesTab() {
                       <div className="absolute left-[14px] top-[12px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
                       <div className="absolute left-[14px] top-[16px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
                     </div>
-                    <span className="text-lg font-normal leading-7 text-zinc-800">{p.supplier}</span>
+                    <span className="max-w-[110px] truncate text-sm font-normal leading-7 text-zinc-800 sm:max-w-[160px] sm:text-base lg:max-w-none">{p.supplier}</span>
                   </div>
                 </td>
               </tr>
@@ -933,11 +972,11 @@ function TransfersTab() {
   const statusBadge = (status: Transfer['status']) => {
     switch (status) {
       case 'completed':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700"><span className="h-2 w-2 rounded-full bg-green-500" /> {t('status.completed')}</span>;
+        return <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 sm:px-3 sm:text-sm"><span className="h-2 w-2 shrink-0 rounded-full bg-green-500" /> {t('status.completed')}</span>;
       case 'pending':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700"><span className="h-2 w-2 rounded-full bg-yellow-500" /> {t('status.pending')}</span>;
+        return <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 sm:px-3 sm:text-sm"><span className="h-2 w-2 shrink-0 rounded-full bg-yellow-500" /> {t('status.pending')}</span>;
       case 'cancelled':
-        return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> {t('status.cancelled')}</span>;
+        return <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 sm:px-3 sm:text-sm"><span className="h-2 w-2 shrink-0 rounded-full bg-red-500" /> {t('status.cancelled')}</span>;
     }
   };
 
@@ -962,28 +1001,28 @@ function TransfersTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full min-w-[1000px]">
+        <table className="w-full">
           <thead>
             <tr className="bg-gray-200">
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colTransferId')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colDate')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colIngredient')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colQuantity')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colFrom')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colTo')}</th>
-              <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('transfers.colStatus')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTransferId')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colDate')}</th>
+              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colIngredient')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colQuantity')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colFrom')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTo')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colStatus')}</th>
             </tr>
           </thead>
           <tbody>
             {TRANSFERS.map((t) => (
               <tr key={t.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="px-6 py-5 text-base font-medium text-zinc-800">{t.transferId}</td>
-                <td className="px-6 py-5 text-sm text-neutral-500">{t.date}</td>
-                <td className="px-6 py-5 text-base font-medium text-zinc-800">{t.ingredient}</td>
-                <td className="px-6 py-5 text-base text-neutral-500">{t.quantity} {t.unit}</td>
-                <td className="px-6 py-5 text-base text-neutral-500">{t.from}</td>
-                <td className="px-6 py-5 text-base text-neutral-500">{t.to}</td>
-                <td className="px-6 py-5">{statusBadge(t.status)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.transferId}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{t.date}</td>
+                <td className="max-w-[110px] truncate px-3 py-3 text-sm font-medium text-zinc-800 sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.ingredient}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-sm text-neutral-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.quantity} {t.unit}</td>
+                <td className="max-w-[90px] truncate px-3 py-3 text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.from}</td>
+                <td className="max-w-[90px] truncate px-3 py-3 text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.to}</td>
+                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(t.status)}</td>
               </tr>
             ))}
           </tbody>
@@ -1108,32 +1147,32 @@ function PhysicalCountTab() {
         </div>
       </div>
 
-      {/* Recent Counts section */}
-      <div className="flex items-start gap-6">
-        <div className="flex-1 overflow-x-auto rounded-2xl bg-white p-[22.69px]">
+      {/* Recent Counts section — table full width, Log Physical Count after it */}
+      <div className="flex flex-col gap-4">
+        <div className="overflow-x-auto rounded-2xl bg-white p-[22.69px]">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-medium leading-8 text-black">{t('physicalCount.recentCounts')}</h2>
           </div>
 
-          <table className="w-full min-w-[800px]">
+          <table className="w-full">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colDate')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('purchases.colIngredient')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colTheo')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colPhys')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colVariance')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
+                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colTheo')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colPhys')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colVariance')}</th>
               </tr>
             </thead>
             <tbody>
               {COUNTS.map((c) => (
                 <tr key={c.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{c.date}</td>
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{c.ingredient}</td>
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{c.theo}</td>
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{c.phys}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.date}</td>
+                  <td className="max-w-[140px] truncate px-3 py-3 text-sm font-medium leading-6 text-black sm:max-w-[200px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{c.ingredient}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.theo}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.phys}</td>
                   <td className={cn(
-                    'px-6 py-5 text-base font-medium leading-6',
+                    'whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5',
                     c.variance < 0 ? 'text-red-500' : c.variance > 0 ? 'text-green-500' : 'text-black',
                   )}>
                     {c.variance > 0 ? `+${c.variance}` : c.variance}
@@ -1144,10 +1183,10 @@ function PhysicalCountTab() {
           </table>
         </div>
 
-        <div className="w-[400px] shrink-0">
+        <div className="flex justify-start">
           <button
             onClick={() => setShowLog(true)}
-            className="flex h-14 w-full items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+            className="flex h-14 w-full max-w-[400px] items-center justify-center rounded-[30.29px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
           >
             <span className="font-satoshi">{t('physicalCount.logPhysicalCount')}</span>
           </button>
@@ -1184,29 +1223,29 @@ function WasteLogTab() {
           </div>
         </div>
 
-          <table className="w-full min-w-[800px]">
+          <table className="w-full">
             <thead>
               <tr className="bg-gray-200">
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('physicalCount.colDate')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colItem')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colQtyWasted')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colReason')}</th>
-                <th className="px-6 py-4 text-start text-base font-medium leading-6 text-stone-500">{t('wasteLog.colLoggedBy')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
+                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colItem')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colQtyWasted')}</th>
+                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colReason')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colLoggedBy')}</th>
               </tr>
             </thead>
             <tbody>
               {WASTE_RECORDS.map((w) => (
                 <tr key={w.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{w.date}</td>
-                  <td className="px-6 py-5">
-                    <div className="flex flex-col items-start gap-3.5">
-                      <span className="text-lg font-medium leading-6 text-black">{w.item}</span>
-                      <span className="text-base font-normal leading-6 text-neutral-400">{w.notes}</span>
+                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.date}</td>
+                  <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                    <div className="flex flex-col items-start gap-1">
+                      <span className="max-w-[150px] truncate text-sm font-medium leading-6 text-black sm:max-w-[200px] sm:text-base lg:max-w-none">{w.item}</span>
+                      <span className="max-w-[150px] truncate text-xs font-normal leading-6 text-neutral-400 sm:max-w-[200px] sm:text-sm lg:max-w-none">{w.notes}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5 text-lg font-medium leading-6 text-red-500">{w.qtyWasted}</td>
-                  <td className="px-6 py-5 text-base font-medium leading-6 text-black">{w.reason}</td>
-                  <td className="px-6 py-5 text-lg font-medium leading-6 text-zinc-800">{w.loggedBy}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-red-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.qtyWasted}</td>
+                  <td className="max-w-[120px] truncate px-3 py-3 text-sm font-medium leading-6 text-black sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{w.reason}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.loggedBy}</td>
                 </tr>
               ))}
             </tbody>

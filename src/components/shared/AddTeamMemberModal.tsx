@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { ArrowLeft, Shield, User, Phone, Mail, ChevronRight, Check, Trash2, Lock } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 import { StaffMember } from '@/components/shared/StaffCard';
 import Image from 'next/image';
 
@@ -67,12 +67,8 @@ export function AddTeamMemberModal({
   const isEdit = !!member;
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   const headerTitle = isEdit

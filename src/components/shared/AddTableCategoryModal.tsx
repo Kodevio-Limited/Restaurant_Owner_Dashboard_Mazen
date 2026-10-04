@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { lockPageScroll } from '@/lib/utils';
 
 export function AddTableCategoryModal({
   open,
@@ -16,12 +17,8 @@ export function AddTableCategoryModal({
   const isAr = locale === 'ar';
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   return (

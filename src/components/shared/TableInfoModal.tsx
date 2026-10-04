@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 import { useQueryModal } from '@/lib/use-query-modal';
 
 export interface TableInfoData {
@@ -54,12 +54,8 @@ export function TableInfoModal({
   const [newOrderNo, setNewOrderNo] = useState('');
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   if (!table) return null;

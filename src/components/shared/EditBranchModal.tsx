@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 
 export function EditBranchModal({
@@ -22,12 +22,8 @@ export function EditBranchModal({
   const displayAddress = branch?.address ? (isAr ? (branch.address_ar ?? branch.address) : branch.address) : null;
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   return (

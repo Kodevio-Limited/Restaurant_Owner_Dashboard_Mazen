@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Download, ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 
 interface AddEditTableData {
   name: string;
@@ -44,13 +44,9 @@ export function AddEditTableModal({
   }, [editMode, table]);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      setOpenDropdown(false);
-    }
-    return () => { document.body.style.overflow = ''; };
+    if (!open) setOpenDropdown(false);
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
   }, [open]);
 
   const handleDownload = () => {
