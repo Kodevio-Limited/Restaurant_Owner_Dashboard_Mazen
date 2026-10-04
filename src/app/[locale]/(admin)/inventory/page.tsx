@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Pencil, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
+import { useQueryModal } from '@/lib/use-query-modal';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -211,15 +212,15 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
         </div>
 
         <div className="space-y-5 px-[30px] pb-5 pt-[147px]">
-          <section className="relative h-44 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
-            <div className="px-[19px] pt-[21px]">
+          <section className="relative flex w-full flex-col justify-center rounded-xl bg-white px-[19px] py-[21px] outline outline-1 outline-offset-[-1px] overflow-hidden">
+            <div>
               <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('modals.addIngredient.basicInfo')}</h3>
             </div>
-            <div className="px-[19px] pt-[47px] flex flex-col gap-4">
+            <div className="pt-4 flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
                 </div>
               </div>
             </div>
@@ -232,23 +233,23 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
             <div className="px-[19px] pt-[44px] flex flex-col gap-3.5">
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.initialQuantity')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.addIngredient.initialQuantity')}</span>
                   <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.unitType')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.addIngredient.unitType')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Pcs</span>
-                    <ChevronDown size={18} className="text-neutral-400" />
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Pcs</span>
+                    <ChevronDown size={18} className="text-[#686868]" />
                   </div>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('modals.addIngredient.lowStockThreshold')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.addIngredient.lowStockThreshold')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">50</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">50</span>
                 </div>
               </div>
             </div>
@@ -319,12 +320,12 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
                 <div className="flex items-center gap-1">
                   <div className="flex items-center gap-3">
                     <div className="flex h-14 w-96 items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                      <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
-                      <ChevronDown size={18} className="text-neutral-400" />
+                      <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                      <ChevronDown size={18} className="text-[#686868]" />
                     </div>
                     <div className="flex items-center gap-3.5">
                       <div className="relative flex h-14 w-14 items-center justify-center rounded-[87px] bg-zinc-100">
-                        <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">1</span>
+                        <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">1</span>
                       </div>
                       <span className="text-xs font-medium leading-5 text-neutral-400">pcs</span>
                     </div>
@@ -340,12 +341,12 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
                 <div className="flex items-center gap-1">
                   <div className="flex items-center gap-3">
                     <div className="flex h-14 w-96 items-center justify-between rounded-[87px] bg-rose-100 px-4">
-                      <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
-                      <ChevronDown size={18} className="text-neutral-400" />
+                      <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                      <ChevronDown size={18} className="text-[#686868]" />
                     </div>
                     <div className="flex items-center gap-3.5">
                       <div className="relative flex h-14 w-14 items-center justify-center rounded-[87px] bg-rose-100">
-                        <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">1</span>
+                        <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">1</span>
                       </div>
                       <span className="text-xs font-medium leading-5 text-neutral-400">liter</span>
                     </div>
@@ -405,32 +406,32 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
           <section className="relative h-96 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] py-[25px] flex flex-col gap-3.5">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
-                  <ChevronDown size={18} className="text-neutral-400" />
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                  <ChevronDown size={18} className="text-[#686868]" />
                 </div>
               </div>
 
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
                   <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.logPurchase.totalCost')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.totalCost')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">$120.00</span>
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('modals.logPurchase.supplierOptional')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.supplierOptional')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('modals.logPurchase.supplierPlaceholder')}</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.logPurchase.supplierPlaceholder')}</span>
                 </div>
               </div>
             </div>
@@ -485,33 +486,33 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
           <section className="relative h-80 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div className="px-[19px] py-[28px] flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.ingredientName')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Beef Patties</span>
-                  <ChevronDown size={18} className="text-neutral-400" />
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                  <ChevronDown size={18} className="text-[#686868]" />
                 </div>
               </div>
             </div>
             <div className="px-[19px] flex flex-col gap-3.5">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">120</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
                 </div>
               </div>
               <div className="flex items-start gap-6">
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.transferStock.fromLocation')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.fromLocation')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Downtown</span>
-                    <ChevronDown size={18} className="text-neutral-400" />
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
+                    <ChevronDown size={18} className="text-[#686868]" />
                   </div>
                 </div>
                 <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-stone-500">{t('modals.transferStock.toLocation')}</span>
+                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.toLocation')}</span>
                   <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Downtown</span>
-                    <ChevronDown size={18} className="text-neutral-400" />
+                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
+                    <ChevronDown size={18} className="text-[#686868]" />
                   </div>
                 </div>
               </div>
@@ -558,16 +559,16 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
 
         <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-9">
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('labels.quantity')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('modals.physicalCount.choose')}</span>
-              <ChevronDown size={18} className="text-neutral-400" />
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.physicalCount.choose')}</span>
+              <ChevronDown size={18} className="text-[#686868]" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('modals.physicalCount.actualPhysicalCount')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.physicalCount.actualPhysicalCount')}</span>
             <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">$120.00</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
             </div>
           </div>
         </div>
@@ -606,36 +607,36 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
 
         <div className="px-[22.69px] pt-[66.55px] flex flex-col gap-5">
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.ingredient')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.ingredient')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Lettuce</span>
-              <ChevronDown size={18} className="text-neutral-400" />
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Lettuce</span>
+              <ChevronDown size={18} className="text-[#686868]" />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.quantityWasted')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.quantityWasted')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.exampleQty')}</span>
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">KG</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.exampleQty')}</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">KG</span>
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.reasonForWaste')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.reasonForWaste')}</span>
             <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseReason')}</span>
-              <ChevronDown size={18} className="text-neutral-400" />
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseReason')}</span>
+              <ChevronDown size={18} className="text-[#686868]" />
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.responsible')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.responsible')}</span>
             <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseResponsible')}</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseResponsible')}</span>
             </div>
           </div>
           <div className="flex w-96 flex-col gap-2">
-            <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.notesOptional')}</span>
+            <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.notesOptional')}</span>
             <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
-              <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.addContext')}</span>
+              <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.addContext')}</span>
             </div>
           </div>
         </div>
@@ -656,7 +657,7 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
 
 function StockTab() {
   const t = useTranslations('inventory');
-  const [showAdd, setShowAdd] = useState(false);
+  const [showAdd, setShowAdd] = useQueryModal('add-ingredient');
   const [search, setSearch] = useState('');
 
   const filtered = INGREDIENTS.filter((i) =>
@@ -839,7 +840,7 @@ function RecipeTab() {
 
 function PurchasesTab() {
   const t = useTranslations('inventory');
-  const [showLog, setShowLog] = useState(false);
+  const [showLog, setShowLog] = useQueryModal('log-purchase');
 
   return (
     <div className="flex flex-col gap-6">
@@ -927,7 +928,7 @@ function PurchasesTab() {
 
 function TransfersTab() {
   const t = useTranslations('inventory');
-  const [showTransfer, setShowTransfer] = useState(false);
+  const [showTransfer, setShowTransfer] = useQueryModal('transfer-stock');
 
   const statusBadge = (status: Transfer['status']) => {
     switch (status) {
@@ -996,7 +997,7 @@ function TransfersTab() {
 
 function PhysicalCountTab() {
   const t = useTranslations('inventory');
-  const [showLog, setShowLog] = useState(false);
+  const [showLog, setShowLog] = useQueryModal('log-count');
 
   return (
     <div className="flex flex-col gap-6">
@@ -1012,14 +1013,14 @@ function PhysicalCountTab() {
       <div className="h-[496px] w-full rounded-2xl bg-white p-[22.69px] overflow-hidden">
         <div className="flex h-full flex-col">
           <div className="flex flex-1">
-            {/* Y-axis labels */}
-            <div className="flex flex-col justify-between py-2.5 pe-1.5">
-              <span className="text-lg font-normal leading-6 text-black/70">100</span>
-              <span className="text-lg font-normal leading-6 text-black/70">80</span>
-              <span className="text-lg font-normal leading-6 text-black/70">60</span>
-              <span className="text-lg font-normal leading-6 text-black/70">40</span>
-              <span className="text-lg font-normal leading-6 text-black/70">20</span>
-              <span className="text-lg font-normal leading-6 text-black/70">0</span>
+            {/* Y-axis labels — each label centered on its grid line (Bug-1) */}
+            <div className="flex w-12 shrink-0 flex-col justify-between py-2.5 pe-1.5 text-right">
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">100</span>
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">80</span>
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">60</span>
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">40</span>
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">20</span>
+              <span className="flex h-0 items-center justify-end text-lg font-normal leading-none text-black/70">0</span>
             </div>
 
             {/* Chart area */}
@@ -1034,8 +1035,8 @@ function PhysicalCountTab() {
                 <div className="h-0 border-t border-slate-950/30" />
               </div>
 
-              {/* Bars */}
-              <div className="absolute bottom-0 inset-x-0 top-[9.07px] border-b border-slate-950/30">
+              {/* Bars — top aligned to first grid line so baseline starts at zero (Bug-1) */}
+              <div className="absolute bottom-0 inset-x-0 top-2.5 border-b-2 border-slate-950/30">
                 <div className="flex h-full items-end">
                   {/* Week groups - 5 weeks, 3 bars each */}
                   {[
@@ -1160,68 +1161,28 @@ function PhysicalCountTab() {
 
 function WasteLogTab() {
   const t = useTranslations('inventory');
-  const [showWaste, setShowWaste] = useState(false);
+  const [showWaste, setShowWaste] = useQueryModal('log-waste');
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start gap-6">
-        {/* Waste form */}
-        <div className="w-[400px] shrink-0 rounded-2xl bg-white p-[22.69px]">
-          <h2 className="text-center text-2xl font-medium leading-8 text-black">{t('wasteLog.logWastedItem')}</h2>
-
-          <div className="mt-[66.55px] flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.ingredient')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">Lettuce</span>
-                <ChevronDown size={18} className="text-neutral-400" />
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.quantityWasted')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.exampleQty')}</span>
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">KG</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.reasonForWaste')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseReason')}</span>
-                <ChevronDown size={18} className="text-neutral-400" />
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.responsible')}</span>
-              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.chooseResponsible')}</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium leading-5 text-stone-500">{t('wasteForm.notesOptional')}</span>
-              <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
-                <span className="font-satoshi text-base font-medium leading-6 text-neutral-400">{t('wasteForm.addContext')}</span>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setShowWaste(true)}
-            className="mt-[30px] flex h-14 w-full items-center justify-center rounded-[30.29px] bg-emerald-700 text-xl font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
-          >
-            <span className="font-satoshi">{t('wasteForm.submit')}</span>
-          </button>
-        </div>
-
-        {/* Waste history */}
-        <div className="flex-1 overflow-x-auto rounded-2xl bg-white p-[22.69px]">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-medium leading-8 text-black">{t('wasteLog.wasteLogHistory')}</h2>
+      {/* Waste history — full width (Bug-10). Logging moved to header button + drawer. */}
+      <div className="overflow-x-auto rounded-2xl bg-white p-[22.69px]">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-medium leading-8 text-black">{t('wasteLog.wasteLogHistory')}</h2>
+          <div className="flex items-center gap-2.5">
             <div className="flex items-center gap-[4.86px] rounded-[47.75px] bg-white px-4 py-2.5 outline outline-[0.81px] outline-offset-[-0.81px] outline-zinc-400">
               <span className="text-base font-normal leading-5 text-stone-500">{t('wasteLog.perMonth')}</span>
               <ChevronDown size={12} className="text-stone-500" />
             </div>
+            <button
+              onClick={() => setShowWaste(true)}
+              className="flex h-11 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-base font-medium text-white transition-colors hover:bg-emerald-800"
+            >
+              <Plus size={18} />
+              <span className="font-satoshi">{t('wasteLog.logWastedItem')}</span>
+            </button>
           </div>
+        </div>
 
           <table className="w-full min-w-[800px]">
             <thead>
@@ -1250,7 +1211,6 @@ function WasteLogTab() {
               ))}
             </tbody>
           </table>
-        </div>
       </div>
 
       <LogWastedItem open={showWaste} onClose={() => setShowWaste(false)} />

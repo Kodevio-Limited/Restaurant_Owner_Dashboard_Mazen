@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { TableCard, TableStatus } from '@/components/shared/TableCard';
@@ -12,6 +12,7 @@ import { TableInfoModal } from '@/components/shared/TableInfoModal';
 import { AddTableCategoryModal } from '@/components/shared/AddTableCategoryModal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
+import { useQueryModal, readQueryParam, writeQueryParam } from '@/lib/use-query-modal';
 
 interface TableDef {
   id: string;
@@ -48,14 +49,88 @@ export default function TablesPage() {
 
   const [tables, setTables] = useState<TableDef[]>(INITIAL_TABLES);
   const [zone, setZone]   = useState<Zone>('All');
-  const [showAdd, setShowAdd]       = useState(false);
+  // Query-driven overlays: ?modal=<name>[&id=t1]
+  // table (add/edit) · mark-reserved · reserved-detail · seat-guests ·
+  // table-info · add-table-category · delete-table
+  const [tableOpen, setTableOpen] = useQueryModal('table');
   const [editing, setEditing]       = useState<TableDef | null>(null);
+  const [infoOpen, setInfoOpen] = useQueryModal('table-info');
   const [selected, setSelected]     = useState<TableDef | null>(null);
+  const [markOpen, setMarkOpen] = useQueryModal('mark-reserved');
   const [markReservedTable, setMarkReservedTable] = useState<TableDef | null>(null);
+  const [reservedOpen, setReservedOpen] = useQueryModal('reserved-detail');
   const [reservedTable, setReservedTable]         = useState<TableDef | null>(null);
-  const [seatGuests, setSeatGuests] = useState(false);
-  const [showCategory, setShowCategory] = useState(false);
+  const [seatOpen, setSeatOpen] = useQueryModal('seat-guests');
+  const [categoryOpen, setCategoryOpen] = useQueryModal('add-table-category');
+  const [deleteOpen, setDeleteOpen] = useQueryModal('delete-table');
   const [deleteTarget, setDeleteTarget] = useState<TableDef | null>(null);
+
+  const findTable = (id: string | null, list: TableDef[]) =>
+    id ? (list.find((t) => t.id === id) ?? null) : null;
+
+  const openTable = (t: TableDef | null) => {
+    setEditing(t);
+    writeQueryParam('id', t?.id ?? null, false);
+    setTableOpen(true);
+  };
+  const closeTable = () => {
+    setEditing(null);
+    setTableOpen(false);
+    writeQueryParam('id', null, false);
+  };
+  const openInfo = (t: TableDef) => {
+    setSelected(t);
+    writeQueryParam('id', t.id, false);
+    setInfoOpen(true);
+  };
+  const closeInfo = () => {
+    setSelected(null);
+    setInfoOpen(false);
+    writeQueryParam('id', null, false);
+  };
+  const openMarkReserved = (t: TableDef | null) => {
+    setMarkReservedTable(t);
+    writeQueryParam('id', t?.id ?? null, false);
+    setMarkOpen(true);
+  };
+  const closeMarkReserved = () => {
+    setMarkReservedTable(null);
+    setMarkOpen(false);
+    writeQueryParam('id', null, false);
+  };
+  const openReserved = (t: TableDef | null) => {
+    setReservedTable(t);
+    writeQueryParam('id', t?.id ?? null, false);
+    setReservedOpen(true);
+  };
+  const closeReserved = () => {
+    setReservedTable(null);
+    setReservedOpen(false);
+    writeQueryParam('id', null, false);
+  };
+  const openDelete = (t: TableDef) => {
+    setDeleteTarget(t);
+    writeQueryParam('id', t.id, false);
+    setDeleteOpen(true);
+  };
+  const closeDelete = () => {
+    setDeleteTarget(null);
+    setDeleteOpen(false);
+    writeQueryParam('id', null, false);
+  };
+
+  // Cold load: restore overlay payloads from ?modal=&id=
+  useEffect(() => {
+    const modal = readQueryParam('modal');
+    const id = readQueryParam('id');
+    if (!modal) return;
+    const found = findTable(id, INITIAL_TABLES);
+    if (modal === 'table' && id && found) setEditing(found);
+    else if (modal === 'table-info' && found) setSelected(found);
+    else if (modal === 'mark-reserved' && found) setMarkReservedTable(found);
+    else if (modal === 'reserved-detail' && found) setReservedTable(found);
+    else if (modal === 'delete-table' && found) setDeleteTarget(found);
+  }, []);
 
   const filtered = zone === 'All' ? tables : tables.filter((t) => t.zone === zone);
 
@@ -70,8 +145,8 @@ export default function TablesPage() {
     setEditing((prev) => (prev && prev.id === target.id ? null : prev));
     setReservedTable((prev) => (prev && prev.id === target.id ? null : prev));
     setMarkReservedTable((prev) => (prev && prev.id === target.id ? null : prev));
-    setDeleteTarget(null);
-    setShowAdd(false);
+    closeDelete();
+    closeTable();
   };
 
   return (
@@ -109,14 +184,14 @@ export default function TablesPage() {
         {/* Add Category + Add Table */}
         <div className="flex items-center gap-2.5">
           <button
-            onClick={() => setShowCategory(true)}
+            onClick={() => setCategoryOpen(true)}
             className="inline-flex h-10 items-center gap-2 rounded-[51.28px] bg-white px-3.5 outline outline-1 outline-offset-[-1px] outline-[#686868] transition-colors hover:bg-[#F2F2F2]"
           >
             <Plus size={14} className="text-[#686868]" />
             <span className="whitespace-nowrap text-sm font-normal leading-5 text-[#686868]">{t('addCategory')}</span>
           </button>
           <button
-            onClick={() => { setEditing(null); setShowAdd(true); }}
+            onClick={() => openTable(null)}
             className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
           >
             <Plus size={17} strokeWidth={2} />
@@ -130,7 +205,7 @@ export default function TablesPage() {
         {filtered.map((tab) => (
           <div key={tab.id} className="relative mx-auto w-full max-w-[301px]">
             <button
-              onClick={() => setSelected(tab)}
+              onClick={() => openInfo(tab)}
               aria-label={isAr ? `عرض ${tab.name_ar ?? tab.name}` : `View ${tab.name}`}
               className="w-full cursor-pointer text-start transition-transform hover:-translate-y-0.5 focus:outline-none"
             >
@@ -151,7 +226,7 @@ export default function TablesPage() {
               <div className="flex items-center gap-1 rounded-full bg-white/90 p-1 shadow-sm ring-1 ring-black/5 backdrop-blur-sm">
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setEditing(tab); setShowAdd(false); }}
+                  onClick={(e) => { e.stopPropagation(); openTable(tab); }}
                   aria-label={isAr ? `تعديل ${tab.name_ar ?? tab.name}` : `Edit ${tab.name}`}
                   title={isAr ? 'تعديل' : 'Edit'}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#F2F2F2] hover:text-[#026F4F] [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:w-10"
@@ -161,7 +236,7 @@ export default function TablesPage() {
                 <span className="h-4 w-px bg-black/10" aria-hidden="true" />
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setDeleteTarget(tab); }}
+                  onClick={(e) => { e.stopPropagation(); openDelete(tab); }}
                   aria-label={isAr ? `حذف ${tab.name_ar ?? tab.name}` : `Delete ${tab.name}`}
                   title={isAr ? 'حذف' : 'Delete'}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#FDECEC] hover:text-[#E85E5E] [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:w-10"
@@ -176,49 +251,51 @@ export default function TablesPage() {
 
       {/* ── Modals ── */}
       <AddEditTableModal
-        open={showAdd || !!editing}
+        open={tableOpen}
         table={editing}
-        onClose={() => { setShowAdd(false); setEditing(null); }}
+        onClose={closeTable}
         onMarkReserved={() => {
-          setMarkReservedTable(editing);
-          setEditing(null);
+          const current = editing;
+          closeTable();
+          openMarkReserved(current);
         }}
       />
 
       <MarkReservedModal
-        open={!!markReservedTable}
+        open={markOpen}
         tableName={isAr ? (markReservedTable?.name_ar ?? markReservedTable?.name ?? '') : (markReservedTable?.name ?? '')}
-        onClose={() => setMarkReservedTable(null)}
+        onClose={closeMarkReserved}
         onSave={() => {
-          setReservedTable(markReservedTable);
-          setMarkReservedTable(null);
+          const current = markReservedTable;
+          closeMarkReserved();
+          openReserved(current);
         }}
       />
 
       <ReservedDetailModal
-        open={!!reservedTable}
+        open={reservedOpen}
         table={reservedTable}
-        onClose={() => setReservedTable(null)}
+        onClose={closeReserved}
         onSeatGuests={() => {
-          setSeatGuests(true);
-          setReservedTable(null);
+          closeReserved();
+          setSeatOpen(true);
         }}
       />
 
       <SeatGuestsModal
-        open={seatGuests}
-        onClose={() => setSeatGuests(false)}
+        open={seatOpen}
+        onClose={() => setSeatOpen(false)}
         onSave={() => {
-          setSeatGuests(false);
+          setSeatOpen(false);
           window.location.reload();
         }}
       />
 
       <TableInfoModal
-        open={!!selected}
+        open={infoOpen}
         table={selected}
-        onClose={() => setSelected(null)}
-        onEdit={(tab) => { setSelected(null); setEditing(tab as TableDef); }}
+        onClose={closeInfo}
+        onEdit={(tab) => { closeInfo(); openTable(tab as TableDef); }}
         onAddOrder={(tableId, newOrderNo) => {
           setTables((prev) =>
             prev.map((tab) =>
@@ -235,17 +312,17 @@ export default function TablesPage() {
         }}
       />
 
-      <AddTableCategoryModal open={showCategory} onClose={() => setShowCategory(false)} />
+      <AddTableCategoryModal open={categoryOpen} onClose={() => setCategoryOpen(false)} />
 
       <ConfirmDialog
-        open={!!deleteTarget}
+        open={deleteOpen}
         title={isAr ? `حذف ${iso(deleteTarget?.name_ar ?? deleteTarget?.name ?? 'الطاولة')}؟` : `Delete ${deleteTarget?.name ?? 'table'}?`}
         description={isAr
           ? `سيؤدي هذا إلى حذف ${iso(deleteTarget?.name_ar ?? deleteTarget?.name ?? 'هذه الطاولة')} نهائياً${deleteTarget?.orderNumbers?.length ? ` والطلبات المرتبطة بها (${iso(deleteTarget.orderNumbers.length)})` : ''}. لا يمكن التراجع عن هذا الإجراء.`
           : `This will permanently remove ${deleteTarget?.name ?? 'this table'}${deleteTarget?.orderNumbers?.length ? ` and its ${deleteTarget.orderNumbers.length} linked order${deleteTarget.orderNumbers.length > 1 ? 's' : ''}` : ''}. This action cannot be undone.`}
         confirmLabel={isAr ? 'حذف' : 'Delete'}
         cancelLabel={isAr ? 'إلغاء' : 'Cancel'}
-        onCancel={() => setDeleteTarget(null)}
+        onCancel={closeDelete}
         onConfirm={() => handleDeleteTable(deleteTarget)}
       />
     </main>

@@ -113,7 +113,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
       {/* Mobile hamburger */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed start-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#2D2F33] shadow xl:hidden"
+        className="fixed start-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#2D2F33] shadow lg:hidden"
         aria-label={t('openMenu')}
       >
         <Menu size={22} />
@@ -122,7 +122,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'fixed start-4 top-4 z-30 hidden h-[calc(100vh-32px)] flex-col overflow-hidden rounded-xl bg-white shadow-[1px_0_6.6px_rgba(0,0,0,0.08)] transition-[width] duration-300 xl:flex',
+          'fixed start-4 top-4 z-30 hidden h-[calc(100vh-32px)] flex-col overflow-hidden rounded-xl bg-white shadow-[1px_0_6.6px_rgba(0,0,0,0.08)] transition-[width] duration-300 lg:flex',
           collapsed ? 'w-[76px]' : 'w-[220px]',
         )}
       >

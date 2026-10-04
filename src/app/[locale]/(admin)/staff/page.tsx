@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Plus } from 'lucide-react';
 import { StaffCard, StaffMember } from '@/components/shared/StaffCard';
 import { AddTeamMemberModal } from '@/components/shared/AddTeamMemberModal';
 import { RemoveStaffModal } from '@/components/shared/RemoveStaffModal';
 import { cn } from '@/lib/utils';
+import { useQueryModal, readQueryParam, writeQueryParam } from '@/lib/use-query-modal';
 
 const STAFF: StaffMember[] = [
   {
@@ -69,10 +70,44 @@ export default function StaffPage() {
   const isAr = locale === 'ar';
 
   const [filter, setFilter]   = useState('All');
-  const [showAdd, setShowAdd] = useState(false);
+  // Query-driven modals: ?modal=staff-member[&id=s1] (add/edit), ?modal=remove-staff&id=s1
+  const [staffOpen, setStaffOpen] = useQueryModal('staff-member');
   const [editing, setEditing] = useState<StaffMember | null>(null);
+  const [removeOpen, setRemoveOpen] = useQueryModal('remove-staff');
   const [removing, setRemoving] = useState<StaffMember | null>(null);
   const [staff, setStaff] = useState<StaffMember[]>(STAFF);
+
+  const openStaff = (m: StaffMember | null) => {
+    setEditing(m);
+    writeQueryParam('id', m?.id ?? null, false);
+    setStaffOpen(true);
+  };
+  const closeStaff = () => {
+    setEditing(null);
+    setStaffOpen(false);
+    writeQueryParam('id', null, false);
+  };
+  const openRemove = (m: StaffMember) => {
+    setRemoving(m);
+    writeQueryParam('id', m.id, false);
+    setRemoveOpen(true);
+  };
+  const closeRemove = () => {
+    setRemoving(null);
+    setRemoveOpen(false);
+    writeQueryParam('id', null, false);
+  };
+
+  // Cold load: restore edit/remove targets from ?modal=&id=
+  useEffect(() => {
+    const modal = readQueryParam('modal');
+    const id = readQueryParam('id');
+    if (!id) return;
+    const found = STAFF.find((s) => s.id === id);
+    if (!found) return;
+    if (modal === 'staff-member') setEditing(found);
+    else if (modal === 'remove-staff') setRemoving(found);
+  }, []);
 
   const filtered = filter === 'All'
     ? staff
@@ -97,7 +132,7 @@ export default function StaffPage() {
         </div>
 
         <button
-          onClick={() => { setEditing(null); setShowAdd(true); }}
+          onClick={() => openStaff(null)}
           className="flex h-10 items-center gap-2 rounded-full bg-[#026F4F] px-5 text-white transition-colors hover:bg-[#015c42] sm:h-11"
         >
           <Plus size={17} strokeWidth={2} />
@@ -136,8 +171,8 @@ export default function StaffPage() {
           <StaffCard
             key={member.id}
             member={member}
-            onEdit={() => { setEditing(member); setShowAdd(true); }}
-            onRemove={() => setRemoving(member)}
+            onEdit={() => openStaff(member)}
+            onRemove={() => openRemove(member)}
             onToggleActive={() => toggleActive(member.id)}
           />
         ))}
@@ -145,16 +180,16 @@ export default function StaffPage() {
 
       {/* ── Modals ── */}
       <AddTeamMemberModal
-        open={showAdd}
+        open={staffOpen}
         member={editing}
-        onClose={() => { setShowAdd(false); setEditing(null); }}
+        onClose={closeStaff}
       />
 
       <RemoveStaffModal
-        open={!!removing}
+        open={removeOpen}
         memberName={isAr ? (removing?.name_ar ?? removing?.name ?? '') : (removing?.name ?? '')}
-        onCancel={() => setRemoving(null)}
-        onConfirm={() => setRemoving(null)}
+        onCancel={closeRemove}
+        onConfirm={closeRemove}
       />
     </main>
   );

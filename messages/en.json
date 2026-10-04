@@ -585,11 +585,11 @@
       "searchPurchases": "Search purchases...",
       "allTime": "All Time",
       "logPurchase": "Log Purchase",
-      "colOrderIdDate": "ORDER ID/ DATE",
-      "colIngredient": "INGREDIENT",
-      "colQuantityBought": "QUANTITY BOUGHT",
-      "colTotal": "TOTAL",
-      "colSupplier": "SUPPLIER",
+      "colOrderIdDate": "Order ID/ Date",
+      "colIngredient": "Ingredient",
+      "colQuantityBought": "Quantity Bought",
+      "colTotal": "Total",
+      "colSupplier": "Supplier",
       "avgCost": "Avg Cost: {cost}/{unit}"
     },
     "transfers": {
@@ -607,11 +607,11 @@
       "weeklyVarianceTrend": "Weekly Variance Trend (Spoilage/Overportioning)",
       "week": "Week",
       "recentCounts": "Recent Counts",
-      "colDate": "DATE",
-      "colIngredient": "INGREDIENT",
-      "colTheo": "THEO",
-      "colPhys": "PHYS",
-      "colVariance": "VARIANCE",
+      "colDate": "Date",
+      "colIngredient": "Ingredient",
+      "colTheo": "Theo",
+      "colPhys": "Phys",
+      "colVariance": "Variance",
       "logPhysicalCount": "Log Physical Count"
     },
     "wasteForm": {

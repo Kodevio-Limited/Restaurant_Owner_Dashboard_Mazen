@@ -7,6 +7,7 @@ import { MenuItemCard, MenuItem } from '@/components/shared/MenuItemCard';
 import { AddCategoryModal } from '@/components/shared/AddCategoryModal';
 import { AddItemModal } from '@/components/shared/AddItemModal';
 import { cn } from '@/lib/utils';
+import { useQueryModal } from '@/lib/use-query-modal';
 import Image from 'next/image';
 
 const MENU_ITEMS: MenuItem[] = [
@@ -90,8 +91,8 @@ export default function MenuPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const [active, setActive] = useState('All');
-  const [showCategory, setShowCategory] = useState(false);
-  const [showItem, setShowItem] = useState(false);
+  const [showCategory, setShowCategory] = useQueryModal('add-category');
+  const [showItem, setShowItem] = useQueryModal('add-item');
 
   const filteredItems = active === 'All'
     ? MENU_ITEMS

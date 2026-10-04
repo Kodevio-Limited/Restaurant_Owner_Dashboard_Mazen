@@ -5,6 +5,7 @@ import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, 
 import { useLocale } from 'next-intl';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn } from '@/lib/utils';
+import { useQueryModal } from '@/lib/use-query-modal';
 
 export interface TableInfoData {
   id: string;
@@ -48,7 +49,8 @@ export function TableInfoModal({
 }) {
   const locale = useLocale();
   const isAr = locale === 'ar';
-  const [showAddOrder, setShowAddOrder] = useState(false);
+  // Nested add-order overlay, query-driven (?sub=add-order) so Back closes it first.
+  const [showAddOrder, setShowAddOrder] = useQueryModal('add-order', 'sub');
   const [newOrderNo, setNewOrderNo] = useState('');
 
   useEffect(() => {
