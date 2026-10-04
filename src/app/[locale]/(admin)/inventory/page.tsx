@@ -1035,8 +1035,8 @@ function PhysicalCountTab() {
                 <div className="h-0 border-t border-slate-950/30" />
               </div>
 
-              {/* Bars — top aligned to first grid line so baseline starts at zero (Bug-1) */}
-              <div className="absolute bottom-0 inset-x-0 top-2.5 border-b-2 border-slate-950/30">
+              {/* Bars — inset matches grid py-2.5 so bar bottoms + baseline sit exactly on the 0 line (Bug-1) */}
+              <div className="absolute inset-x-0 top-2.5 bottom-2.5 border-b-2 border-slate-950/30">
                 <div className="flex h-full items-end">
                   {/* Week groups - 5 weeks, 3 bars each */}
                   {[
