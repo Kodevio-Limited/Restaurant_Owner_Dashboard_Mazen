@@ -1,17 +1,28 @@
 'use client';
 
 import { useEffect } from 'react';
-import { TriangleAlert } from 'lucide-react';
 import { cn, lockPageScroll } from '@/lib/utils';
 
+/**
+ * Centered confirmation dialog (Figma 1682:71416) — used when leaving a recipe
+ * with unsaved changes. Renders in the middle of the screen, not as a drawer.
+ */
 export function UnsavedChangesModal({
   open,
   onCancel,
   onLeave,
+  title = 'Unsaved Changes',
+  message = 'You have modified this recipe. Are you sure you want to cancel? Your changes will be lost.',
+  cancelLabel = 'Keep Editing',
+  confirmLabel = 'Discard Changes',
 }: {
   open: boolean;
   onCancel: () => void;
   onLeave: () => void;
+  title?: string;
+  message?: string;
+  cancelLabel?: string;
+  confirmLabel?: string;
 }) {
   useEffect(() => {
     lockPageScroll(open);
@@ -22,36 +33,46 @@ export function UnsavedChangesModal({
     <>
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          'fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300',
           open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
         onClick={onCancel}
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col items-center overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] p-10 shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
-          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
+          'fixed inset-0 z-[70] flex items-center justify-center p-4 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onCancel}
       >
-        <div className="flex items-center justify-center">
-          <TriangleAlert size={120} className="text-[#E85E5E]" strokeWidth={1} />
-        </div>
+        <div
+          className="flex w-full max-w-[526px] flex-col items-center rounded-[22px] bg-white px-11 pb-[25px] pt-[46px] shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Warning triangle (yellow fill, red border + mark) */}
+          <svg width="120" height="104" viewBox="0 0 120 104" fill="none" aria-hidden="true">
+            <path d="M60 6 114 98H6L60 6Z" fill="#FFD60A" stroke="#E22A2A" strokeWidth="9" strokeLinejoin="round" />
+            <rect x="55" y="34" width="10" height="34" rx="5" fill="#E22A2A" />
+            <circle cx="60" cy="80" r="6" fill="#E22A2A" />
+          </svg>
 
-        <div className="mt-6 flex flex-col items-center gap-4">
-          <h3 className="text-[33px] font-semibold leading-[46px] text-black">Unsaved Changes</h3>
-          <p className="text-center text-[23px] leading-[32px] text-[#686868]">
-            You have unsaved changes. Are you sure you want to leave without saving?
-          </p>
-        </div>
+          <h3 className="mt-[37px] text-[28px] font-medium leading-[1.4] text-black">{title}</h3>
+          <p className="mt-[19px] max-w-[438px] text-center text-[19px] leading-[1.4] text-[#989898]">{message}</p>
 
-        <div className="mt-8 flex w-full items-center justify-between gap-5">
-          <button className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#E9E9E9] text-[19px] font-medium text-[#2D2F33] outline outline-1 outline-offset-[-1px] outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]">
-            Cancel
-          </button>
-          <button className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#D50E0E] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#b80c0c]">
-            Leave Anyway
-          </button>
+          <div className="mt-[41px] flex w-full items-center justify-center gap-[26px]">
+            <button
+              onClick={onCancel}
+              className="flex h-[59px] w-[209px] max-w-[48%] items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] text-[19px] font-medium leading-[1.4] text-[#2D2F33] transition-colors hover:bg-[#DcDcDc]"
+            >
+              {cancelLabel}
+            </button>
+            <button
+              onClick={onLeave}
+              className="flex h-[59px] w-[209px] max-w-[48%] items-center justify-center rounded-[30px] bg-[#EF4444] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#dc2626]"
+            >
+              {confirmLabel}
+            </button>
+          </div>
         </div>
       </div>
     </>

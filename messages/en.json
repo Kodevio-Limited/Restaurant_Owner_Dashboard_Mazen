@@ -575,7 +575,9 @@
       "addIngredient": "Add Ingredient",
       "searchIngredients": "Search ingredients...",
       "colIngredientName": "Ingredient Name",
+      "colCurrentStock": "Current Stock",
       "colCurrentStockStatus": "Current Stock Status",
+      "colStatus": "Status",
       "colLastUpdate": "Last Update",
       "colAction": "Action",
       "noIngredients": "No ingredients found"
@@ -585,6 +587,7 @@
       "searchRecipes": "Search recipes...",
       "noIngredientsMapped": "No Ingredients mapped",
       "editRecipe": "Edit Recipe",
+      "newRecipe": "New Recipe",
       "ingredients": "Ingredients",
       "addRow": "Add Row"
     },
@@ -653,7 +656,9 @@
         "lowStockThreshold": "Low Stock Threshold"
       },
       "recipeMapping": {
-        "title": "Recipe Mapping"
+        "title": "Recipe Mapping",
+        "emptyTitle": "No ingredients mapped yet.",
+        "emptyDesc": "This item won't auto-deduct stock."
       },
       "logPurchase": {
         "title": "Log Purchase Order",

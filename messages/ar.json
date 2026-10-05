@@ -575,7 +575,9 @@
       "addIngredient": "إضافة مكوّن",
       "searchIngredients": "ابحث عن المكوّنات...",
       "colIngredientName": "اسم المكوّن",
+      "colCurrentStock": "المخزون الحالي",
       "colCurrentStockStatus": "حالة المخزون الحالية",
+      "colStatus": "الحالة",
       "colLastUpdate": "آخر تحديث",
       "colAction": "إجراء",
       "noIngredients": "لا توجد مكوّنات"

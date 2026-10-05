@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
-  FileText, Plus, User, ArrowDown, ArrowUp, Package, Clock,
+  FileText, Plus, User, Package, Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditBranchModal } from '@/components/shared/EditBranchModal';
@@ -901,8 +901,6 @@ export default function SettingsPage() {
   const [active, setActive] = useState<TabId | null>('general');
   const [editBranch, setEditBranch] = useState<typeof BRANCHES[0] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isNearBottom, setIsNearBottom] = useState(false);
-  const [canScroll, setCanScroll] = useState(false);
 
   const TABS: { id: TabId; labelKey: string; icon: React.ElementType }[] = [
     { id: 'general',       labelKey: 'tabs.general',       icon: Globe      },
@@ -916,49 +914,12 @@ export default function SettingsPage() {
 
   // Tabs with a form get the sticky Save Changes footer.
   const showSave = active === 'general' || active === 'payment-taxes' || active === 'receipt' || active === 'inventory' || active === 'session';
-  // Single dynamic quick-scroll pill lives on long (scrollable) tabs.
-  const showScroller = active === 'general' || active === 'notification';
 
-  const getScrollContainer = () => document.getElementById('admin-main-scroll');
-
+  // Reset the scroll container to the top whenever the tab changes.
   useEffect(() => {
-    const container = getScrollContainer();
-    if (!container) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      setCanScroll(scrollHeight > clientHeight + 40);
-      setIsNearBottom(scrollTop + clientHeight >= scrollHeight - 120);
-    };
-
-    // Reset to top whenever the tab changes, then measure.
-    container.scrollTo({ top: 0 });
-    handleScroll();
-    // Re-measure once late-loading content (e.g. the map iframe) settles.
-    const t = window.setTimeout(handleScroll, 150);
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
-    return () => {
-      window.clearTimeout(t);
-      container.removeEventListener('scroll', handleScroll);
-      container.removeEventListener('resize', handleScroll);
-    };
+    const container = document.getElementById('admin-main-scroll');
+    container?.scrollTo({ top: 0 });
   }, [active]);
-
-  const scrollToBottom = () => {
-    const container = getScrollContainer();
-    if (container) {
-      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTop = () => {
-    const container = getScrollContainer();
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
 
   const tabTitle = active ? TABS.find((tb) => tb.id === active)! : null;
 
@@ -1081,32 +1042,6 @@ export default function SettingsPage() {
         branch={editBranch}
         onClose={() => setEditBranch(null)}
       />
-
-      {/* Floating Quick Scroll button — single dynamic pill */}
-      {showScroller && canScroll && (
-        <button
-          type="button"
-          onClick={isNearBottom ? scrollToTop : scrollToBottom}
-          title={isNearBottom ? t('backToTop') : t('quickScroll')}
-          className={cn(
-            'fixed end-6 z-30 flex items-center gap-2 rounded-full bg-[#026F4F] px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-[#015c42] hover:shadow-xl active:scale-95 focus:outline-none',
-            // Lift above the sticky Save Changes footer when both are visible.
-            showSave ? 'bottom-24' : 'bottom-6',
-          )}
-        >
-          {isNearBottom ? (
-            <>
-              <ArrowUp size={16} />
-              <span className="hidden sm:inline">{t('backToTop')}</span>
-            </>
-          ) : (
-            <>
-              <ArrowDown size={16} />
-              <span>{t('quickScroll')}</span>
-            </>
-          )}
-        </button>
-      )}
     </main>
   );
 }

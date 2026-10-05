@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Pencil, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
 import { useQueryModal } from '@/lib/use-query-modal';
 import { cn, lockPageScroll } from '@/lib/utils';
+import { UnsavedChangesModal } from '@/components/shared/UnsavedChangesModal';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -271,9 +272,59 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
-function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose: () => void; recipe: Recipe | null }) {
+function RecipeMappingModal({
+  open,
+  onClose,
+  onSave,
+  recipe,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSave: (rows: RecipeIngredient[]) => void;
+  recipe: Recipe | null;
+}) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
+  const [rows, setRows] = useState<RecipeIngredient[]>([]);
+  const [dirty, setDirty] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  // Seed the rows from the recipe each time it opens.
+  useEffect(() => {
+    if (open) {
+      setRows(recipe?.ingredients ? [...recipe.ingredients] : []);
+      setDirty(false);
+      setConfirmOpen(false);
+    }
+  }, [open, recipe]);
+
+  useEffect(() => {
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
+  }, [open]);
+
+  const addRow = () => {
+    setRows((prev) => [...prev, { name: INGREDIENTS[0]?.name ?? '', quantity: 1, unit: INGREDIENTS[0]?.unit ?? 'pcs' }]);
+    setDirty(true);
+  };
+  const updateRow = (i: number, patch: Partial<RecipeIngredient>) => {
+    setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+    setDirty(true);
+  };
+  const removeRow = (i: number) => {
+    setRows((prev) => prev.filter((_, idx) => idx !== i));
+    setDirty(true);
+  };
+
+  const requestClose = () => {
+    if (dirty) setConfirmOpen(true);
+    else onClose();
+  };
+  const save = () => {
+    onSave(rows);
+    onClose();
+  };
+
   return (
     <>
       <div
@@ -281,97 +332,123 @@ function RecipeMappingModal({ open, onClose, recipe }: { open: boolean; onClose:
           'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
           open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
-        onClick={onClose}
+        onClick={requestClose}
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
-          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+          <button onClick={requestClose} aria-label={tc('actions.back')} className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-[#E9E9E9] transition-colors hover:bg-[#DcDcDc]">
             <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
-          <h2 className="absolute start-[182px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.recipeMapping.title')}</h2>
+          <h2 className="text-center text-[33px] font-medium leading-[1.4] text-black">{t('modals.recipeMapping.title')}</h2>
+          <span className="w-[50px]" />
         </div>
+        <p className="mt-[11px] shrink-0 text-center font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">
+          {recipe?.name ?? ''}
+        </p>
 
-        <div className="px-[30px] pt-[65px]">
-          <h3 className="text-center text-xl font-medium text-zinc-800 leading-7 font-satoshi">{recipe?.name ?? 'Classic Burger'}</h3>
-        </div>
-
-        <div className="px-[30px] pb-5 pt-[32px]">
-          <section className="relative h-56 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
-            <div className="px-[18px] pt-[18px]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('recipe.ingredients')}</h3>
-                <button className="flex items-center gap-[4.75px] rounded-[5px]">
-                  <span className="flex h-5 w-5 items-center justify-center">
-                    <Plus size={16} className="text-emerald-700" />
-                  </span>
-                  <span className="text-base font-medium leading-6 text-emerald-700">{t('recipe.addRow')}</span>
-                </button>
-              </div>
+        {/* Ingredients card */}
+        <div className="mt-8 min-h-0 flex-1 overflow-y-auto overscroll-contain px-[30px]">
+          <section className="rounded-[13px] bg-white p-[18px]">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[19px] font-medium leading-[1.4] text-[#2D2F33]">{t('recipe.ingredients')}</h3>
+              <button onClick={addRow} className="flex items-center gap-[4.75px] rounded-[5px] text-[#026F4F] transition-opacity hover:opacity-80">
+                <Plus size={19} />
+                <span className="text-[16px] font-medium leading-[1.4]">{t('recipe.addRow')}</span>
+              </button>
             </div>
 
-            <div className="px-[18px] pt-[32px] flex flex-col gap-[22px]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-96 items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                      <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
-                      <ChevronDown size={18} className="text-[#686868]" />
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                      <div className="relative flex h-14 w-14 items-center justify-center rounded-[87px] bg-zinc-100">
-                        <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">1</span>
-                      </div>
-                      <span className="text-xs font-medium leading-5 text-neutral-400">pcs</span>
-                    </div>
-                  </div>
-                  <ChevronDown size={14} className="text-neutral-400" />
-                </div>
-                <button className="flex h-7 w-7 items-center justify-center">
-                  <Trash2 size={18} className="text-red-600" />
-                </button>
+            {rows.length === 0 ? (
+              <div className="mt-[19px] flex h-[104px] flex-col items-center justify-center gap-[11px] rounded-[7px] bg-[#F2F2F2] px-4 text-center">
+                <p className="text-[16px] font-medium leading-[1.4] text-[#989898]">{t('modals.recipeMapping.emptyTitle')}</p>
+                <p className="text-[13px] font-normal leading-[1.4] text-[#989898]">{t('modals.recipeMapping.emptyDesc')}</p>
               </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-96 items-center justify-between rounded-[87px] bg-rose-100 px-4">
-                      <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
-                      <ChevronDown size={18} className="text-[#686868]" />
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                      <div className="relative flex h-14 w-14 items-center justify-center rounded-[87px] bg-rose-100">
-                        <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">1</span>
+            ) : (
+              <div className="mt-[19px] flex flex-col gap-[17px]">
+                {rows.map((row, i) => (
+                  <div key={i} className="flex items-center justify-between gap-[10px]">
+                    <div className="flex min-w-0 flex-1 items-center gap-[14px]">
+                      {/* Ingredient */}
+                      <div className="relative min-w-0 flex-1">
+                        <select
+                          aria-label={t('recipe.ingredients')}
+                          value={row.name}
+                          onChange={(e) => {
+                            const ing = INGREDIENTS.find((x) => x.name === e.target.value);
+                            updateRow(i, { name: e.target.value, unit: ing?.unit ?? row.unit });
+                          }}
+                          className="h-[53px] w-full appearance-none rounded-[87px] bg-[#F2F2F2] ps-[16px] pe-[40px] font-satoshi text-[16px] font-medium leading-[1.4] text-[#989898] outline-none focus:ring-2 focus:ring-[#026F4F]"
+                        >
+                          {INGREDIENTS.map((ing) => (
+                            <option key={ing.id} value={ing.name}>{ing.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={18} className="pointer-events-none absolute end-[16px] top-1/2 -translate-y-1/2 text-[#989898]" />
                       </div>
-                      <span className="text-xs font-medium leading-5 text-neutral-400">liter</span>
+                      {/* Qty */}
+                      <input
+                        value={row.quantity}
+                        onChange={(e) => updateRow(i, { quantity: parseFloat(e.target.value) || 0 })}
+                        inputMode="decimal"
+                        dir="ltr"
+                        className="h-[53px] w-[54px] shrink-0 rounded-[87px] bg-[#F2F2F2] text-center font-satoshi text-[16px] font-medium leading-[1.4] text-[#989898] outline-none focus:ring-2 focus:ring-[#026F4F]"
+                      />
+                      {/* Unit */}
+                      <div className="relative shrink-0">
+                        <select
+                          aria-label="unit"
+                          value={row.unit}
+                          onChange={(e) => updateRow(i, { unit: e.target.value })}
+                          className="h-[53px] appearance-none rounded-[87px] bg-transparent pe-[22px] ps-0 text-center text-[13px] font-medium leading-[1.4] text-[#989898] outline-none"
+                        >
+                          {['pcs', 'kg', 'g', 'L', 'ml'].map((u) => (
+                            <option key={u} value={u}>{u}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="pointer-events-none absolute end-0 top-1/2 -translate-y-1/2 text-[#989898]" />
+                      </div>
                     </div>
+                    <button onClick={() => removeRow(i)} aria-label={tc('actions.delete')} className="shrink-0 transition-opacity hover:opacity-70">
+                      <Trash2 size={30} className="text-[#E85E5E]" />
+                    </button>
                   </div>
-                  <ChevronDown size={14} className="text-neutral-400" />
-                </div>
-                <button className="flex h-7 w-7 items-center justify-center">
-                  <Trash2 size={18} className="text-red-600" />
-                </button>
+                ))}
               </div>
-            </div>
+            )}
           </section>
         </div>
 
-        <div className="shrink-0 px-[30px] py-4">
-          <div className="flex items-center justify-between gap-5">
-            <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
+        {/* Footer */}
+        <div className="shrink-0 px-[30px] pb-[29px] pt-4">
+          <div className="flex items-center justify-between gap-[26px]">
+            <button
+              onClick={requestClose}
+              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] text-[19px] font-medium leading-[1.4] text-[#2D2F33] transition-colors hover:bg-[#DcDcDc]"
+            >
               {tc('actions.cancel')}
             </button>
-            <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
+            <button
+              onClick={save}
+              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+            >
               {tc('actions.save')}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Centered unsaved-changes confirmation */}
+      <UnsavedChangesModal
+        open={confirmOpen}
+        onCancel={() => setConfirmOpen(false)}
+        onLeave={() => { setConfirmOpen(false); onClose(); }}
+      />
     </>
   );
 }
@@ -739,38 +816,41 @@ function StockTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full">
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col className="w-[26%]" />
+            <col className="w-[15%]" />
+            <col className="w-[16%]" />
+            <col className="w-[19%]" />
+            <col className="w-[24%]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-neutral-100 bg-gray-200">
               <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colIngredientName')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colCurrentStockStatus')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colCurrentStock')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colStatus')}</th>
               <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colLastUpdate')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colAction')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colAction')}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((ing) => (
               <tr key={ing.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 sm:h-10 sm:w-10">
-                      <PackageOpen size={16} className="text-neutral-400 sm:size-18" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-zinc-800 sm:text-base">{ing.name}</div>
-                      <div className="whitespace-nowrap text-xs text-neutral-400 sm:text-sm">{ing.currentStock} {ing.unit}</div>
-                    </div>
-                  </div>
+                <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="truncate text-sm font-medium text-zinc-800 sm:text-base">{ing.name}</div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
-                <td className="whitespace-nowrap px-3 py-3 text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
-                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="flex items-center justify-end gap-1 sm:gap-2">
+                <td className="whitespace-nowrap px-3 py-3 align-middle text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">
+                  {ing.currentStock} <span className="font-normal text-neutral-400">{ing.unit}</span>
+                </td>
+                <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
+                <td className="whitespace-nowrap px-3 py-3 align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
+                <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2">
                     <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600 sm:h-9 sm:w-9">
-                      <Pencil size={16} className="sm:size-18" />
+                      <Pencil size={16} className="sm:size-[18px]" />
                     </button>
-                    <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 sm:h-9 sm:w-9">
-                      <Trash2 size={16} className="sm:size-18" />
+                    <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 sm:h-9 sm:w-9">
+                      <Trash2 size={16} className="sm:size-[18px]" />
                     </button>
                   </div>
                 </td>
@@ -778,7 +858,7 @@ function StockTab() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-neutral-400">{t('stock.noIngredients')}</td>
+                <td colSpan={5} className="px-6 py-12 text-center text-neutral-400">{t('stock.noIngredients')}</td>
               </tr>
             )}
           </tbody>
@@ -792,7 +872,17 @@ function StockTab() {
 
 function RecipeTab() {
   const t = useTranslations('inventory');
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [recipes, setRecipes] = useState<Recipe[]>(RECIPES);
+  const [editing, setEditing] = useState<Recipe | null>(null);
+
+  const saveMapping = (rows: RecipeIngredient[]) => {
+    if (!editing) return;
+    setRecipes((prev) => {
+      const exists = prev.some((r) => r.id === editing.id);
+      const updated: Recipe = { ...editing, ingredients: rows };
+      return exists ? prev.map((r) => (r.id === editing.id ? updated : r)) : [...prev, updated];
+    });
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -805,76 +895,76 @@ function RecipeTab() {
             className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 text-base outline-none transition-colors focus:border-emerald-500"
           />
         </div>
-        <button className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800">
+        <button
+          onClick={() => setEditing({ id: `r-${Date.now()}`, name: t('recipe.newRecipe'), status: 'available', ingredients: [] })}
+          className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
+        >
           <Plus size={20} />
           <span className="text-lg font-medium leading-7">{t('recipe.addRecipe')}</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-        {RECIPES.map((recipe) => (
-          <div key={recipe.id} className="flex w-full max-w-80 flex-col overflow-hidden rounded-2xl bg-white">
-            <div className="relative flex flex-col gap-2.5 p-[14.64px]">
-              <div className="relative h-64 w-full overflow-hidden rounded-xl bg-zinc-100">
+        {recipes.map((recipe) => (
+          <div key={recipe.id} className="flex w-full max-w-[322px] flex-col gap-[21px] overflow-hidden rounded-[22.5px] bg-white p-[14.64px]">
+            <div className="flex flex-col gap-[11px]">
+              <div className="relative h-[263.5px] w-full overflow-hidden rounded-[11.26px] bg-zinc-100">
                 <div className="flex h-full w-full items-center justify-center">
                   <Image
-                    src="https://placehold.co/182x182"
+                    src="/images/food-41e5d7.png"
                     alt={recipe.name}
                     width={182}
                     height={182}
-                    className="object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
                 <div
                   className={cn(
-                    'absolute start-[9.01px] top-[10.13px] inline-flex items-center gap-3 rounded-lg px-3 py-2.5',
-                    recipe.status === 'available' ? 'bg-green-500' : 'bg-red-600',
+                    'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.88px] px-[11.26px] py-[9.01px]',
+                    recipe.status === 'available' ? 'bg-[#10D935]' : 'bg-[#D91010]',
                   )}
                 >
-                  <span className="text-sm font-medium leading-5 text-white">
+                  <span className="text-[13.5px] font-medium leading-[1.4] text-white">
                     {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
                   </span>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <h3 className="text-xl font-medium leading-7 text-zinc-800 font-satoshi">{recipe.name}</h3>
+              <div className="flex flex-col gap-[12px]">
+                <h3 className="truncate font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
                 <div className="relative h-20 w-full overflow-hidden rounded-[5px] bg-zinc-100">
                   {recipe.ingredients.length > 0 ? (
-                    <div className="absolute start-[10px] top-[11px] flex flex-col gap-3">
+                    <div className="absolute inset-x-[9px] top-[11px] flex flex-col gap-[13px]">
                       {recipe.ingredients.slice(0, 2).map((ing, idx) => (
-                        <div key={idx} className="flex items-center gap-36">
-                          <span className={cn(
-                            'text-base font-normal leading-6',
-                            recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600',
-                          )}>{ing.name}</span>
-                          <span className={cn(
-                            'text-base font-normal leading-6',
-                            recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600',
-                          )}>{ing.quantity} {ing.unit}</span>
+                        <div key={idx} className="flex items-center justify-between text-[16px] font-normal leading-[1.4]">
+                          <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.name}</span>
+                          <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.quantity} {ing.unit}</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="absolute start-[13.84px] top-[10.92px] text-base font-normal leading-6 text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
+                    <div className="absolute start-[13.84px] top-[10.92px] text-[16px] font-normal leading-[1.4] text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="px-[14.64px] pb-[14.64px]">
-              <button
-                onClick={() => setSelectedRecipe(recipe)}
-                className="flex h-14 w-full items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
-              >
-                {t('recipe.editRecipe')}
-              </button>
-            </div>
+            <button
+              onClick={() => setEditing(recipe)}
+              className="flex h-[53px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+            >
+              {t('recipe.editRecipe')}
+            </button>
           </div>
         ))}
       </div>
 
-      <RecipeMappingModal open={!!selectedRecipe} onClose={() => setSelectedRecipe(null)} recipe={selectedRecipe} />
+      <RecipeMappingModal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        onSave={saveMapping}
+        recipe={editing}
+      />
     </div>
   );
 }
@@ -910,7 +1000,14 @@ function PurchasesTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full">
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col className="w-[20%]" />
+            <col className="w-[26%]" />
+            <col className="w-[16%]" />
+            <col className="w-[16%]" />
+            <col className="w-[22%]" />
+          </colgroup>
           <thead>
             <tr className="bg-gray-200">
               <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colOrderIdDate')}</th>
@@ -940,19 +1037,7 @@ function PurchasesTab() {
                   <span className="text-sm font-semibold leading-6 text-emerald-700 sm:text-base"><bdi dir="ltr">${p.total.toFixed(2)}</bdi></span>
                 </td>
                 <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
-                      <div className="absolute left-[3px] top-[3px] h-4 w-3.5 outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[3px] top-[3px] h-0 w-4 outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[9px] top-[8px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[9px] top-[12px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[9px] top-[16px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[14px] top-[8px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[14px] top-[12px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                      <div className="absolute left-[14px] top-[16px] h-0 w-px outline outline-1 outline-offset-[-0.5px] outline-black" />
-                    </div>
-                    <span className="max-w-[110px] truncate text-sm font-normal leading-7 text-zinc-800 sm:max-w-[160px] sm:text-base lg:max-w-none">{p.supplier}</span>
-                  </div>
+                  <span className="block max-w-[110px] truncate text-sm font-normal leading-7 text-zinc-800 sm:max-w-[160px] sm:text-base lg:max-w-none">{p.supplier}</span>
                 </td>
               </tr>
             ))}
@@ -1001,7 +1086,16 @@ function TransfersTab() {
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-        <table className="w-full">
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col className="w-[15%]" />
+            <col className="w-[13%]" />
+            <col className="w-[18%]" />
+            <col className="w-[12%]" />
+            <col className="w-[14%]" />
+            <col className="w-[14%]" />
+            <col className="w-[14%]" />
+          </colgroup>
           <thead>
             <tr className="bg-gray-200">
               <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTransferId')}</th>
@@ -1154,7 +1248,14 @@ function PhysicalCountTab() {
             <h2 className="text-2xl font-medium leading-8 text-black">{t('physicalCount.recentCounts')}</h2>
           </div>
 
-          <table className="w-full">
+          <table className="w-full table-fixed">
+            <colgroup>
+              <col className="w-[22%]" />
+              <col className="w-[30%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+            </colgroup>
             <thead>
               <tr className="bg-gray-200">
                 <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
@@ -1223,7 +1324,14 @@ function WasteLogTab() {
           </div>
         </div>
 
-          <table className="w-full">
+          <table className="w-full table-fixed">
+            <colgroup>
+              <col className="w-[16%]" />
+              <col className="w-[28%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+              <col className="w-[24%]" />
+            </colgroup>
             <thead>
               <tr className="bg-gray-200">
                 <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
