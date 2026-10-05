@@ -170,8 +170,8 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
             className={cn(
               'flex items-center transition-colors',
               collapsed
-                ? 'h-[44px] w-[44px] justify-center rounded-full text-[#E56767] hover:bg-[#FFE6E6]'
-                : 'gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E56767] hover:bg-[#FFE6E6]',
+                ? 'h-[44px] w-[44px] justify-center rounded-full text-[#E22A2A] hover:bg-[#FDECEC]'
+                : 'gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E22A2A] hover:bg-[#FDECEC]',
             )}
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-full">
@@ -214,7 +214,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
                 <NavItems showLabels onNavigate={() => setOpen(false)} />
               </div>
               <div className="border-t border-[#F2F2F2] px-3 py-2.5">
-                <button className="flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E56767] hover:bg-[#FFE6E6]">
+                <button className="flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E22A2A] hover:bg-[#FDECEC]">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full">
                     <LogOut size={20} strokeWidth={1.8} />
                   </span>

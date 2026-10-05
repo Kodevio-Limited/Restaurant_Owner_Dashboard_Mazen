@@ -14,7 +14,7 @@ interface StatCardProps {
   unit?: ReactNode;
   sub?: StatSub | string;
   icon: ReactNode;
-  action?: { label: string; href: string };
+  action?: { label: string; href?: string; onClick?: () => void };
 }
 
 export function StatCard({ label, value, unit, sub, icon, action }: StatCardProps) {
@@ -46,7 +46,7 @@ export function StatCard({ label, value, unit, sub, icon, action }: StatCardProp
         {icon}
       </div>
 
-      {action && (
+      {action && (action.href ? (
         <Link
           href={action.href}
           className="absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-[rgba(53,140,114,0.12)] px-3 py-1.5 text-[12px] font-medium text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)]"
@@ -54,7 +54,15 @@ export function StatCard({ label, value, unit, sub, icon, action }: StatCardProp
           <span>{action.label}</span>
           <ArrowUpRight size={13} className="rtl:scale-x-[-1]" />
         </Link>
-      )}
+      ) : (
+        <button
+          onClick={action.onClick}
+          className="absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-[rgba(53,140,114,0.12)] px-3 py-1.5 text-[12px] font-medium text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)]"
+        >
+          <span>{action.label}</span>
+          <ArrowUpRight size={13} className="rtl:scale-x-[-1]" />
+        </button>
+      ))}
     </div>
   );
 }

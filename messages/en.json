@@ -279,7 +279,7 @@
       "inventory": "Inventory",
       "session": "Session",
       "paymentTaxes": "Payment and Taxes",
-      "receipt": "Receipt Format",
+      "receipt": "Recipe Customization",
       "notification": "Notification"
     },
     "inventory": {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
+import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
@@ -650,8 +651,10 @@ function ReceiptFormatTab() {
       {/* Right: receipt preview */}
       <div className="w-80 shrink-0 overflow-hidden rounded-xl bg-white py-10">
         <div className="flex flex-col items-center gap-7 px-6">
-          {/* Logo placeholder */}
-          <div className="h-10 w-32 rounded bg-[#F2F2F2]" />
+          {/* Receipt logo */}
+          <div className="relative h-12 w-36">
+            <Image src="/images/logo-69e842.png" alt="Restaurant logo" fill sizes="144px" className="object-contain" />
+          </div>
 
           <p className="w-60 text-center text-base font-light text-black leading-6">
             {t('footerSample')}
@@ -707,9 +710,6 @@ function NotificationTab() {
   const t = useTranslations('settings.notification');
   const locale = useLocale();
   const isAr = locale === 'ar';
-  const [orderUpdates, setOrderUpdates] = useState(true);
-  const [staffAlerts, setStaffAlerts] = useState(true);
-  const [promotions, setPromotions] = useState(false);
 
   const notifications = [
     { name: 'Brian Griffin', name_ar: 'براين غريفين', actionKey: 'collab', timeKey: 'fiveDaysAgo', bold: true },
@@ -724,14 +724,6 @@ function NotificationTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <SectionCard title={t('preferencesTitle')}>
-        <div className="flex flex-col gap-6">
-          <ToggleRow title={t('orderUpdates')} desc={t('orderUpdatesDesc')} on={orderUpdates} onChange={setOrderUpdates} />
-          <ToggleRow title={t('staffAlerts')} desc={t('staffAlertsDesc')} on={staffAlerts} onChange={setStaffAlerts} />
-          <ToggleRow title={t('promotions')} desc={t('promotionsDesc')} on={promotions} onChange={setPromotions} />
-        </div>
-      </SectionCard>
-
       <SectionCard title={t('recentTitle')}>
         <div className="rounded-xl overflow-hidden max-w-[700px]">
           <div className="flex flex-col divide-y divide-slate-100">
@@ -1050,8 +1042,8 @@ export default function SettingsPage() {
 
       {/* ── Content area ── */}
       <div className="flex-1 p-4 lg:py-5 lg:pe-5 lg:ps-0">
-        {/* Page title */}
-        {active && tabTitle && (
+        {/* Page title (hidden on the notification tab per client) */}
+        {active && tabTitle && active !== 'notification' && (
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 bg-[#F2F2F2] lg:sticky lg:top-0 lg:z-20 lg:py-3">
             {(() => {
               const Icon = tabTitle.icon;
@@ -1059,7 +1051,7 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-2.5">
                   <Icon size={22} className="text-[#2D2F33]" strokeWidth={1.8} />
                   <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
-                    {t('tabsSettings', { tab: t(tabTitle.labelKey) })}
+                    {active === 'receipt' ? t(tabTitle.labelKey) : t('tabsSettings', { tab: t(tabTitle.labelKey) })}
                   </h1>
                 </div>
               );

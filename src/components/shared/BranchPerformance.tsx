@@ -179,10 +179,8 @@ export function BranchPerformance() {
               dataKey={isArabic ? 'branch_ar' : 'branch'}
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12.5, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
-              angle={-32}
-              textAnchor="end"
-              height={52}
+              tick={{ fontSize: 12, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
+              height={40}
               interval={0}
             />
             <YAxis

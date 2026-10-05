@@ -17,10 +17,10 @@ export function TopHeader() {
         </span>
       </div>
 
-      {/* Restaurant Closed */}
+      {/* Restaurant Closed — green per client */}
       <div className="flex shrink-0 items-center gap-2">
-        <span className="size-2 shrink-0 rounded-full bg-[#E22A2A]" />
-        <span className="hidden whitespace-nowrap text-[13px] leading-none text-[#E22A2A] min-[480px]:inline">
+        <span className="size-2 shrink-0 rounded-full bg-[#1FB711]" />
+        <span className="hidden whitespace-nowrap text-[13px] leading-none text-[#1FB711] min-[480px]:inline">
           {t('restaurantClosed')}
         </span>
       </div>

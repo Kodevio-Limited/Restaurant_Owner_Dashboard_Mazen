@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ChevronDown } from 'lucide-react';
 import {
   DollarSign, Receipt, Flame, Armchair, CreditCard,
@@ -15,6 +15,37 @@ import { ItemsTable } from '@/components/shared/ItemsTable';
 import { SalesPerHour } from '@/components/shared/SalesPerHour';
 import { TipsCollection } from '@/components/shared/TipsCollection';
 import { ShiftReportTable } from '@/components/shared/ShiftReportTable';
+import { StatDetailsDrawer } from '@/components/shared/StatDetailsDrawer';
+import { useQueryModal } from '@/lib/use-query-modal';
+
+// Recent orders shown in the Total Orders drawer. TODO(api): GET /orders?date=today.
+const RECENT_ORDERS = [
+  { id: '#0044', type: 'Dine In',  party: 'Table 03', amount: '$45.99', status: 'Paid' },
+  { id: '#0043', type: 'Takeaway', party: 'Walk-in',  amount: '$24.50', status: 'Unpaid' },
+  { id: '#0045', type: 'Dine In',  party: 'Table 09', amount: '$32.40', status: 'Unpaid' },
+  { id: '#0042', type: 'Delivery', party: 'Gulshan',  amount: '$41.80', status: 'Paid' },
+  { id: '#0041', type: 'Dine In',  party: 'Table 02', amount: '$28.40', status: 'Paid' },
+  { id: '#0040', type: 'Takeaway', party: 'Walk-in',  amount: '$19.75', status: 'Unpaid' },
+];
+
+// Cancelled orders shown in the Cancelled Order drawer. TODO(api): GET /orders?status=cancelled.
+const CANCELLED_ORDERS = [
+  { id: '#0038', party: 'Table 07', amount: '$18.20', reason: 'Customer left' },
+  { id: '#0035', party: 'Delivery', amount: '$42.10', reason: 'Address unreachable' },
+  { id: '#0031', party: 'Table 01', amount: '$27.50', reason: 'Duplicate order' },
+  { id: '#0029', party: 'Walk-in',  amount: '$11.99', reason: 'Payment failed' },
+  { id: '#0026', party: 'Table 12', amount: '$63.40', reason: 'Item unavailable' },
+];
+
+function StatusPill({ status }: { status: string }) {
+  const tone =
+    status === 'Paid' || status === 'Refunded'
+      ? 'bg-[#D9F5D9] text-[#158F15]'
+      : status === 'Unpaid'
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-red-100 text-red-700';
+  return <span className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold ${tone}`}>{status}</span>;
+}
 
 const TOP_ITEMS = [
   { id: 't1', name: 'Shoyu Ramen',     name_ar: 'شويو رامن',     qty: 145, revenue: '$15.99' },
@@ -90,6 +121,11 @@ export function AnalyticsContent() {
   const t  = useTranslations('analytics');
   const tc = useTranslations('analytics.cards');
   const ta = useTranslations('common.actions');
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
+  // Stat "View" drawers (query-based, no navigation): ?modal=total-orders | cancelled-orders
+  const [totalOrdersOpen, setTotalOrdersOpen] = useQueryModal('total-orders');
+  const [cancelledOpen, setCancelledOpen] = useQueryModal('cancelled-orders');
 
   return (
     <main className="flex flex-col gap-5">
@@ -115,7 +151,7 @@ export function AnalyticsContent() {
           sub={{ text: tc('fromYesterday', { value: '12.5%' }), positive: true }}
           icon={<DollarSign size={22} />}
         />
-        <StatCard label={tc('totalOrders')} value="48" sub={tc('today')} icon={<Receipt size={22} />} action={{ label: ta('view'), href: '/orders' }} />
+        <StatCard label={tc('totalOrders')} value="48" sub={tc('today')} icon={<Receipt size={22} />} action={{ label: ta('view'), onClick: () => setTotalOrdersOpen(true) }} />
         <StatCard label={tc('activeOrders')} value="12" sub={tc('kitchenIsBusy')} icon={<Flame size={22} />} />
         <StatCard label={tc('activeTables')} value="8" sub={tc('outOfTables', { total: 20 })} icon={<Armchair size={22} />} />
         <StatCard
@@ -142,7 +178,7 @@ export function AnalyticsContent() {
           value="32"
           sub={{ text: tc('fromYesterdayNeg', { value: '5.2%' }), positive: false }}
           icon={<XCircle size={22} />}
-          action={{ label: ta('view'), href: '/orders' }}
+          action={{ label: ta('view'), onClick: () => setCancelledOpen(true) }}
         />
         <StatCard
           label={tc('tableUtilization')}
@@ -178,6 +214,77 @@ export function AnalyticsContent() {
       </div>
 
       <ShiftReportTable />
+
+      {/* Total Orders drawer */}
+      <StatDetailsDrawer
+        open={totalOrdersOpen}
+        title={tc('totalOrders')}
+        subtitle={`48 ${tc('today')}`}
+        onClose={() => setTotalOrdersOpen(false)}
+      >
+        {/* Today's orders */}
+        <section className="rounded-xl bg-white p-4">
+          <h3 className="text-base font-semibold text-[#2D2F33]">{isArabic ? 'طلبات اليوم' : "Today's Orders"}</h3>
+          <div className="mt-3 flex flex-col divide-y divide-gray-100">
+            {RECENT_ORDERS.map((o) => (
+              <div key={o.id} className="flex items-center justify-between gap-3 py-3">
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-sm font-semibold text-[#2D2F33]" dir="ltr">{o.id} · {o.type}</span>
+                  <span className="text-xs text-[#989898]">{o.party}</span>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-sm font-semibold text-[#026F4F]" dir="ltr">{o.amount}</span>
+                  <StatusPill status={o.status} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Channel breakdown */}
+        <section className="mt-4 rounded-xl bg-white p-4">
+          <h3 className="text-base font-semibold text-[#2D2F33]">{isArabic ? 'حسب القناة' : 'By Channel'}</h3>
+          <div className="mt-3 flex flex-col gap-2.5">
+            {CHANNEL_DATA.map((c) => (
+              <div key={c.key} className="flex items-center justify-between gap-3 rounded-lg bg-[#F8F9FA] px-3 py-2.5">
+                <span className="flex items-center gap-2.5">
+                  <span className="h-3.5 w-3.5 shrink-0 rounded-full" style={{ background: c.color }} />
+                  <span className="text-sm font-medium text-[#2D2F33]">{c.label}</span>
+                </span>
+                <span className="flex items-center gap-3">
+                  <span className="text-sm font-semibold text-[#2D2F33]">{c.count}</span>
+                  <span className="min-w-[72px] text-end text-sm font-semibold text-[#026F4F]">{c.revenue}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </StatDetailsDrawer>
+
+      {/* Cancelled Order drawer */}
+      <StatDetailsDrawer
+        open={cancelledOpen}
+        title={tc('cancelledOrder')}
+        subtitle={`32 ${isArabic ? 'هذا الشهر' : 'this month'}`}
+        onClose={() => setCancelledOpen(false)}
+      >
+        <section className="rounded-xl bg-white p-4">
+          <div className="flex flex-col divide-y divide-gray-100">
+            {CANCELLED_ORDERS.map((o) => (
+              <div key={o.id} className="flex items-center justify-between gap-3 py-3.5">
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-sm font-semibold text-[#2D2F33]" dir="ltr">{o.id} · {o.party}</span>
+                  <span className="text-xs text-[#989898]">{o.reason}</span>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-sm font-semibold text-[#E52B2B]" dir="ltr">{o.amount}</span>
+                  <StatusPill status="Cancelled" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </StatDetailsDrawer>
     </main>
   );
 }
