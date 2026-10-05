@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Download, ArrowUpRight, Edit3, FileText, CookingPot, Check, BadgeCheck, QrCode, Plus } from 'lucide-react';
+import { useEffect } from 'react';
+import Image from 'next/image';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn, lockPageScroll } from '@/lib/utils';
-import { useQueryModal } from '@/lib/use-query-modal';
 
 export interface TableInfoData {
   id: string;
@@ -27,11 +26,12 @@ const STATUS_STYLES: Record<string, { label: string; label_ar: string; bg: strin
   reserved: { label: 'RESERVED', label_ar: 'محجوز', bg: '#0DADE8' },
 };
 
+// Order-progress steps (Figma 421:2215) — ring + glyph swap per state.
 const STEPS = [
-  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', active: true, icon: FileText },
-  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', active: true, icon: CookingPot },
-  { key: 'ready', label: 'Ready', label_ar: 'جاهز', active: false, icon: Check },
-  { key: 'served', label: 'Served', label_ar: 'تم التقديم', active: false, icon: BadgeCheck },
+  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', active: true, doneIcon: '/images/figma/step-placed.svg', todoIcon: '/images/figma/step-placed-grey.svg' },
+  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', active: true, doneIcon: '/images/figma/step-cooking.svg', todoIcon: '/images/figma/step-cooking-grey.svg' },
+  { key: 'ready', label: 'Ready', label_ar: 'جاهز', active: false, doneIcon: '/images/figma/step-check-green.svg', todoIcon: '/images/figma/step-check.svg' },
+  { key: 'served', label: 'Served', label_ar: 'تم التقديم', active: false, doneIcon: '/images/figma/step-served-green.svg', todoIcon: '/images/figma/step-served.svg' },
 ];
 
 export function TableInfoModal({
@@ -39,19 +39,18 @@ export function TableInfoModal({
   table,
   onClose,
   onEdit,
-  onAddOrder,
+  onDelete,
+  onClearTable,
 }: {
   open: boolean;
   table: TableInfoData | null;
   onClose: () => void;
   onEdit?: (table: TableInfoData) => void;
-  onAddOrder?: (tableId: string, orderNo: string) => void;
+  onDelete?: (table: TableInfoData) => void;
+  onClearTable?: (table: TableInfoData) => void;
 }) {
   const locale = useLocale();
   const isAr = locale === 'ar';
-  // Nested add-order overlay, query-driven (?sub=add-order) so Back closes it first.
-  const [showAddOrder, setShowAddOrder] = useQueryModal('add-order', 'sub');
-  const [newOrderNo, setNewOrderNo] = useState('');
 
   useEffect(() => {
     lockPageScroll(open);
@@ -77,206 +76,122 @@ export function TableInfoModal({
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[620px]',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-center justify-between px-4 pt-5 sm:px-5 sm:pt-6">
+        {/* Header — back, centered title + status pill, delete */}
+        <div className="flex shrink-0 items-start justify-between px-[30px] pt-[50px]">
           <button
             onClick={onClose}
             aria-label={isAr ? 'رجوع' : 'Back'}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC] sm:h-12 sm:w-12"
+            className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC]"
           >
-            <ArrowLeft size={20} className="rtl:scale-x-[-1]" />
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
 
-          <div className="flex flex-col items-center gap-2 sm:gap-2.5">
-            <h2 className="text-[22px] font-medium leading-8 text-black sm:text-[32px] sm:leading-10">{displayName}</h2>
+          <div className="flex flex-col items-center gap-[12px]">
+            <h2 className="text-center text-[33px] font-medium leading-[1.4] text-black">{displayName}</h2>
             <span
-              className="inline-flex items-center rounded-[37px] px-3 py-[6px] text-xs font-medium leading-5 text-white"
+              className="inline-flex h-[30px] items-center justify-center rounded-[37px] px-[12px] py-[6px] text-[13px] font-medium leading-[1.4] text-white"
               style={{ backgroundColor: s.bg }}
             >
               {isAr ? s.label_ar : s.label}
             </span>
-
-            {/* List of order numbers under occupied */}
-            {occupied && table.orderNumbers && table.orderNumbers.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-0.5">
-                {table.orderNumbers.map((orderNo, idx) => (
-                  <span
-                    key={idx}
-                    dir="ltr"
-                    className="inline-flex items-center rounded-full bg-[#026F4F]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#026F4F]"
-                  >
-                    {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
-          <div className="h-10 w-10 sm:h-12 sm:w-12" />
+          <button
+            onClick={() => onDelete?.(table)}
+            aria-label={isAr ? 'حذف' : 'Delete'}
+            className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-[#FBEAEA] text-[#E85E5E] transition-colors hover:bg-[#f8d9d9]"
+          >
+            <Trash2 size={22} />
+          </button>
         </div>
 
         {/* QR Code */}
-        <div className="flex flex-col items-center gap-4 px-4 pt-4 sm:px-5 sm:pt-6">
-          <div className="flex h-[120px] w-[120px] items-center justify-center rounded-xl bg-white outline outline-1 outline-[#E9E9E9] sm:h-[154px] sm:w-[154px]">
-            <QrCodePlaceholder size={110} />
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(242,211,255,0.54)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)] sm:text-base">
-              <Download size={20} />
-              {isAr ? 'تحميل' : 'Download'}
-            </button>
-            <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(53,140,114,0.12)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#026F4F] transition-colors hover:bg-[rgba(53,140,114,0.22)] sm:text-base">
-              <QrCode size={20} />
-              {isAr ? 'إنشاء' : 'Generate'}
-            </button>
-          </div>
+        <div className="flex shrink-0 flex-col items-center gap-[19px] px-4 pt-[18px]">
+          <Image src="/images/figma/table-qr.png" alt="Table QR code" width={154} height={154} className="size-[154px]" />
+          <button className="inline-flex items-center gap-[7px] rounded-[44px] bg-[rgba(242,211,255,0.54)] px-[10px] py-[7px] text-[16px] font-medium leading-[1.4] text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)]">
+            <Image src="/images/figma/download.svg" alt="" width={24} height={24} className="size-6" />
+            {isAr ? 'تخصيص وتنزيل رمز QR' : 'Customize & Download Printable QR'}
+          </button>
         </div>
 
         {/* Body */}
-        <div className="flex flex-col gap-3 px-4 pt-4 pb-4 sm:gap-4 sm:px-5 sm:pt-4 sm:pb-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-[17px] overflow-y-auto overscroll-contain px-[30px] pb-5 pt-[18px]">
           {/* Time & Bill (occupied only) */}
-          {occupied && (
-            <section className="flex items-center justify-between rounded-xl bg-white px-4 py-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[22px] sm:py-[19px]">
-              <div className="flex flex-col gap-2 sm:w-[112px] sm:gap-4">
-                <span className="text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
-                  {isAr ? 'وقت الجلوس' : 'TIME SEATED'}
-                </span>
-                <span className="text-xl font-semibold leading-7 text-black sm:text-[32px] sm:leading-10">{displayTime}</span>
-              </div>
-              <div className="flex flex-col items-end gap-2 sm:w-[112px] sm:gap-4">
-                <span className="text-end text-xs font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
-                  {isAr ? 'الفاتورة الحالية' : 'CURRENT BILL'}
-                </span>
-                <span dir="ltr" className="text-end text-xl font-semibold leading-7 text-[#026F4F] sm:text-[32px] sm:leading-10">{table.bill}</span>
+          {occupied && (table.bill || displayTime) && (
+            <section className="rounded-[13px] bg-white px-5 py-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col items-start gap-[17px]">
+                  <span className="text-[15px] font-medium leading-[1.4] text-[#686868]">
+                    {isAr ? 'وقت الجلوس' : 'TIME SEATED'}
+                  </span>
+                  <span className="text-[28px] font-semibold leading-[1.4] text-black">{displayTime}</span>
+                </div>
+                <div className="flex flex-col items-end gap-[17px] text-right">
+                  <span className="text-[15px] font-medium leading-[1.4] text-[#686868]">
+                    {isAr ? 'الفاتورة الحالية' : 'CURRENT BILL'}
+                  </span>
+                  <span dir="ltr" className="text-[28px] font-semibold leading-[1.4] text-[#026F4F]">{table.bill}</span>
+                </div>
               </div>
             </section>
           )}
 
           {/* Active Order (occupied only) */}
           {occupied && (
-            <section className="rounded-[10px] bg-white px-4 pb-4 pt-3 outline outline-1 outline-[#E9E9E9] sm:px-5 sm:pb-5 sm:pt-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">
-                    {isAr ? 'الطلبات النشطة' : 'Active Orders'}
-                  </h3>
-                  {table.orderNumbers && table.orderNumbers.length > 0 && (
-                    <span className="rounded-full bg-[#026F4F]/10 px-2 py-0.5 text-xs font-semibold text-[#026F4F]">
-                      {table.orderNumbers.length}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <button
-                    onClick={() => setShowAddOrder(!showAddOrder)}
-                    className="inline-flex items-center gap-1 rounded-full bg-[#026F4F]/10 px-2.5 py-1 text-xs font-semibold text-[#026F4F] transition-colors hover:bg-[#026F4F]/20"
-                  >
-                    <Plus size={13} />
-                    {isAr ? 'إضافة طلب' : 'Add Order'}
-                  </button>
-                  <button className="flex items-center gap-1 text-xs font-medium leading-5 text-[#026F4F]">
-                    {isAr ? 'عرض التفاصيل' : 'View Details'}
-                    <ArrowUpRight size={16} className="rtl:rotate-[-90deg]" />
-                  </button>
-                </div>
+            <section className="rounded-[10px] bg-white px-5 pb-4 pt-4">
+              <div className="flex items-end justify-between gap-4">
+                <h3 className="text-[19px] font-medium leading-[1.4] text-[#2D2F33]">
+                  {isAr ? 'الطلب النشط' : 'Active Order'}
+                </h3>
+                <button className="flex items-center gap-[7px] text-[13px] font-medium leading-[1.4] text-[#026F4F]">
+                  {isAr ? 'عرض التفاصيل' : 'View Details'}
+                  <Image src="/images/figma/arrow-up.svg" alt="" width={22} height={22} className="size-[22px] rotate-90 rtl:-rotate-90" />
+                </button>
               </div>
 
-              {/* Order Numbers tags */}
-              {table.orderNumbers && table.orderNumbers.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {table.orderNumbers.map((orderNo, idx) => (
-                    <span
-                      key={idx}
-                      dir="ltr"
-                      className="inline-flex items-center rounded-lg border border-[#026F4F]/20 bg-[#026F4F]/5 px-2.5 py-1 text-xs font-semibold text-[#026F4F]"
-                    >
-                      {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Quick Add Order form */}
-              {showAddOrder && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-[#F8F9FA] p-2">
-                  <input
-                    type="text"
-                    value={newOrderNo}
-                    dir="ltr"
-                    onChange={(e) => setNewOrderNo(e.target.value)}
-                    placeholder="#0049"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newOrderNo.trim()) {
-                        const formatted = newOrderNo.trim().startsWith('#') ? newOrderNo.trim() : `#${newOrderNo.trim()}`;
-                        onAddOrder?.(table.id, formatted);
-                        setNewOrderNo('');
-                        setShowAddOrder(false);
-                      }
-                    }}
-                    className="h-8 w-32 rounded-lg border border-[#D1D5DB] px-2.5 text-xs text-black focus:border-[#026F4F] focus:outline-none"
-                  />
-                  <button
-                    onClick={() => {
-                      if (newOrderNo.trim()) {
-                        const formatted = newOrderNo.trim().startsWith('#') ? newOrderNo.trim() : `#${newOrderNo.trim()}`;
-                        onAddOrder?.(table.id, formatted);
-                        setNewOrderNo('');
-                        setShowAddOrder(false);
-                      }
-                    }}
-                    className="h-8 rounded-lg bg-[#026F4F] px-3 text-xs font-medium text-white transition-colors hover:bg-[#015c42]"
-                  >
-                    {isAr ? 'إضافة' : 'Add'}
-                  </button>
-                  <button
-                    onClick={() => { setShowAddOrder(false); setNewOrderNo(''); }}
-                    className="h-8 rounded-lg bg-[#E9E9E9] px-2.5 text-xs text-[#686868] transition-colors hover:bg-[#dcdcdc]"
-                  >
-                    {isAr ? 'إلغاء' : 'Cancel'}
-                  </button>
-                </div>
-              )}
-
-              <div className="mt-5 flex items-start justify-between overflow-x-auto px-1 sm:mt-7">
+              <div className="relative mt-[18px] flex">
                 {STEPS.map((step, i) => {
-                  const Icon = step.icon;
                   const isActive = step.active;
                   const isLast = i === STEPS.length - 1;
+                  const nextDone = !isLast && STEPS[i + 1].active;
                   return (
-                    <div key={step.key} className="flex items-center">
-                      <div className="flex flex-col items-center">
-                        <span
-                          className={cn(
-                            'flex h-8 w-8 items-center justify-center rounded-full bg-white sm:h-9 sm:w-9',
-                            isActive
-                              ? 'border-2 border-[#358C72] shadow-[0_0_0_3px_rgba(53,140,114,0.15)]'
-                              : 'border border-[#B9B9B9]',
-                          )}
-                        >
-                          <Icon size={16} className={isActive ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
-                        </span>
-                        <span
-                          className={cn(
-                            'mt-1 text-[10px] font-normal leading-3 sm:mt-1.5 sm:text-xs sm:leading-4',
-                            isActive ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
-                          )}
-                        >
-                          {isAr ? step.label_ar : step.label}
-                        </span>
-                      </div>
+                    <div key={step.key} className="relative flex flex-1 flex-col items-center">
                       {!isLast && (
-                        <div
-                          className={cn(
-                            'mx-0.5 h-0.5 w-5 sm:mx-1 sm:w-10',
-                            STEPS[i + 1].active ? 'bg-[#358C72]' : isActive ? 'bg-[#358C72]' : 'bg-[#B9B9B9]',
-                          )}
+                        <img
+                          src={nextDone ? '/images/figma/connector-solid.svg' : '/images/figma/connector-dashed.svg'}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute start-1/2 top-[18px] h-[2px] w-full"
                         />
                       )}
+                      <span className="relative z-10 block size-[38px]">
+                        <img
+                          src={isActive ? '/images/figma/ring-green.svg' : '/images/figma/ring-grey.svg'}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-0 size-full"
+                        />
+                        <img
+                          src={isActive ? step.doneIcon : step.todoIcon}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2"
+                        />
+                      </span>
+                      <span
+                        className={cn(
+                          'mt-2 w-full text-[12px] font-normal leading-[1.4]',
+                          isActive ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
+                          i === 0 ? 'text-left' : isLast ? 'text-right' : 'text-center',
+                        )}
+                      >
+                        {isAr ? step.label_ar : step.label}
+                      </span>
                     </div>
                   );
                 })}
@@ -285,48 +200,44 @@ export function TableInfoModal({
           )}
 
           {/* Table Info */}
-          <section className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[21px]">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-medium leading-6 text-[#2D2F33] sm:text-lg sm:leading-7">
+          <section className="rounded-[13px] bg-white px-[19px] py-[21px]">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-[19px] font-medium leading-[1.4] text-[#2D2F33]">
                 {isAr ? 'معلومات الطاولة' : 'Table Info'}
               </h3>
-              {!occupied && (
-                <button
-                  onClick={() => { onEdit?.(table); onClose(); }}
-                  className="flex items-center gap-1 text-base font-normal leading-6 text-[#026F4F] sm:gap-[5px] sm:text-lg sm:leading-7"
-                >
-                  <Edit3 size={20} />
-                  {isAr ? 'تعديل' : 'Edit'}
-                </button>
-              )}
+              <button
+                onClick={() => { onEdit?.(table); onClose(); }}
+                className="flex items-center gap-[5px] text-[19px] font-normal leading-[1.4] text-[#026F4F]"
+              >
+                <Image src="/images/figma/pencil.svg" alt="" width={24} height={24} className="size-6" />
+                {isAr ? 'تعديل' : 'Edit'}
+              </button>
             </div>
 
-            <div className="mt-5 flex flex-col gap-2 sm:mt-11">
-              <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+            <div className="mt-[28px] flex flex-col gap-[15px]">
+              <div className="flex flex-col gap-[8px]">
+                <span className="text-[15px] font-medium leading-[1.4] text-[#686868]">
                   {isAr ? 'اسم الطاولة / الرقم' : 'Table Name / Number'}
                 </span>
-                <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{displayName}</span>
+                <div className="flex h-[53px] items-center rounded-[87px] bg-[#F2F2F2] px-[16px]">
+                  <span className="font-satoshi text-[16px] font-medium leading-[1.4] text-[#989898]">{displayName}</span>
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+              <div className="flex flex-col gap-[8px]">
+                <span className="text-[15px] font-medium leading-[1.4] text-[#686868]">
                   {isAr ? 'السعة' : 'Seating Capacity'}
                 </span>
-                <div className="flex h-11 items-center rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{table.capacity}</span>
+                <div className="flex h-[53px] items-center rounded-[87px] bg-[#F2F2F2] px-[16px]">
+                  <span className="font-satoshi text-[16px] font-medium leading-[1.4] text-[#989898]">{table.capacity}</span>
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-sm font-medium leading-4 text-[#686868] sm:text-base sm:leading-5">
+              <div className="flex flex-col gap-[8px]">
+                <span className="text-[15px] font-medium leading-[1.4] text-[#686868]">
                   {isAr ? 'الفئة' : 'Category'}
                 </span>
-                <div className="flex h-11 items-center justify-between rounded-[87px] bg-[#F2F2F2] px-4 sm:h-14">
-                  <span className="font-satoshi text-sm font-medium leading-5 text-[#989898] sm:text-base sm:leading-6">{displayZone}</span>
-                  <span className="flex h-5 w-5 items-center justify-center sm:h-6 sm:w-6">
-                    <span className="block h-2.5 w-2.5 rotate-45 border-b-2 border-l-2 border-[#989898] sm:h-3 sm:w-3" />
-                  </span>
+                <div className="flex h-[53px] items-center justify-between rounded-[87px] bg-[#F2F2F2] px-[16px]">
+                  <span className="font-satoshi text-[16px] font-medium leading-[1.4] text-[#989898]">{displayZone}</span>
+                  <Image src="/images/figma/chevron-down.svg" alt="" width={24} height={12} className="h-3 w-6" />
                 </div>
               </div>
             </div>
@@ -334,8 +245,11 @@ export function TableInfoModal({
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-[#E2E2E2] px-4 py-3 sm:px-5 sm:py-4">
-          <button className="flex h-12 w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-base font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] sm:h-14 sm:text-lg">
+        <div className="shrink-0 px-[30px] pb-[29px] pt-4">
+          <button
+            onClick={() => onClearTable?.(table)}
+            className="flex h-[59px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] font-satoshi text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42]"
+          >
             {isAr ? 'إخلاء الطاولة' : 'Clear table'}
           </button>
         </div>

@@ -296,19 +296,17 @@ export default function TablesPage() {
         table={selected}
         onClose={closeInfo}
         onEdit={(tab) => { closeInfo(); openTable(tab as TableDef); }}
-        onAddOrder={(tableId, newOrderNo) => {
+        onDelete={(tab) => { closeInfo(); openDelete(tab as TableDef); }}
+        onClearTable={(tab) => {
+          const target = tab as TableDef;
           setTables((prev) =>
-            prev.map((tab) =>
-              tab.id === tableId
-                ? { ...tab, orderNumbers: [...(tab.orderNumbers || []), newOrderNo] }
-                : tab
-            )
+            prev.map((t) =>
+              t.id === target.id
+                ? { ...t, status: 'available' as const, bill: undefined, time: undefined, time_ar: undefined, orderNumbers: [] }
+                : t,
+            ),
           );
-          setSelected((prev) =>
-            prev && prev.id === tableId
-              ? { ...prev, orderNumbers: [...(prev.orderNumbers || []), newOrderNo] }
-              : prev
-          );
+          closeInfo();
         }}
       />
 

@@ -49,7 +49,7 @@ export function ReservedDetailModal({
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-full flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
+          'fixed end-0 top-0 z-50 flex h-full w-full flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300 sm:w-[619px]',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
@@ -91,8 +91,8 @@ export function ReservedDetailModal({
           </div>
         </div>
 
-        {/* Body */}
-        <div className="flex flex-col gap-3 px-4 pt-4 pb-4 sm:gap-4 sm:px-5 sm:pt-4 sm:pb-5">
+        {/* Body — flex-1 scroll region pushes the footer buttons to the bottom */}
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 pt-4 pb-4 sm:gap-4 sm:px-5 sm:pt-4 sm:pb-5">
           {/* Reservation form */}
           <section className="rounded-xl bg-white px-4 pb-4 pt-4 outline outline-1 outline-offset-[-1px] outline-[#E9E9E9] sm:px-[19px] sm:pb-5 sm:pt-[19px]">
             <div className="flex w-full flex-col gap-3 sm:gap-[17px]">

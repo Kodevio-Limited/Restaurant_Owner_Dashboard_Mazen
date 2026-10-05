@@ -32,8 +32,8 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
         <Image src="/images/food-41e5d7.png" alt={name} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 33vw, 50vw" className="object-cover" />
         <span
           className={cn(
-            'absolute start-2 top-2 inline-flex items-center gap-3 rounded-md px-2 py-1 text-[10.5px] font-medium leading-4 text-white',
-            item.available ? 'bg-[#026F4F]' : 'bg-[#E85E5E]',
+            'absolute start-2 top-2 inline-flex items-center gap-3 rounded-[8px] px-3 py-2 text-[13px] font-medium leading-none text-white',
+            item.available ? 'bg-[#10D935]' : 'bg-[#E85E5E]',
           )}
         >
           {item.available ? (isAr ? 'متاح' : 'AVAILABLE') : (isAr ? 'غير متاح' : 'UNAVAILABLE')}
@@ -52,8 +52,8 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
         <p className="line-clamp-2 text-xs font-normal leading-4 text-[#989898]">{description}</p>
       </div>
 
-      {/* Divider */}
-      <div className="mx-2 mt-2.5 border-t border-[#E9E9E9]" />
+      {/* Divider — dashed per Figma */}
+      <div className="mx-2 mt-2.5 border-t border-dashed border-[#B9B9B9]" />
 
       {/* Actions */}
       <div className="mx-3 mt-3 flex items-center justify-between">
@@ -74,15 +74,15 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
         <div className="flex items-center gap-2">
           <button
             aria-label={isAr ? 'تعديل' : 'Edit'}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E9E9E9] text-[#686868] outline outline-1 outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
+            className="flex h-11 w-11 items-center justify-center rounded-[7px] bg-[#E9E9E9] text-[#686868] outline outline-1 outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
           >
-            <Pencil size={15} />
+            <Pencil size={16} />
           </button>
           <button
             aria-label={isAr ? 'حذف' : 'Delete'}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
+            className="flex h-11 w-11 items-center justify-center rounded-[7px] bg-[#E85E5E] text-white transition-colors hover:bg-[#d94a4a]"
           >
-            <Trash2 size={15} />
+            <Trash2 size={16} />
           </button>
         </div>
       </div>

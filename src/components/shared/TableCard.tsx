@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock3 } from 'lucide-react';
+import Image from 'next/image';
 import { useLocale } from 'next-intl';
 
 export type TableStatus = 'available' | 'occupied' | 'reserved';
@@ -23,7 +23,7 @@ interface TableCardProps {
   orderNumbers?: string[];
 }
 
-export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, time_ar, orderNumbers }: TableCardProps) {
+export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, time_ar }: TableCardProps) {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const cfg = STATUS_CONFIG[status];
@@ -65,57 +65,40 @@ export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, ti
         style={railStyle}
       />
 
-      {/* Main table body */}
+      {/* Main table body (Figma 421:2110) */}
       <div
-        className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-lg border border-[#B9B9B9]"
+        className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-[9px] border border-[#B9B9B9]"
         style={{ backgroundColor: cfg.bodyBg }}
       >
-        <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
+        <div className="absolute inset-x-[12px] top-[12px] flex items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col">
-            <span className="truncate font-satoshi text-[16px] font-medium leading-[1.4] text-black">
+            <span className="truncate font-satoshi text-[23px] font-medium leading-[1.4] text-black">
               {displayName}
             </span>
-            <span className="text-[12px] font-medium leading-[1.4] text-[#6E727A]">
+            <span className="mt-[7px] text-[16px] font-medium leading-[1.4] text-[#989898]">
               {displayZone}
             </span>
           </div>
 
-          <div className="flex min-w-[70px] shrink-0 flex-col items-center gap-1">
-            <span
-              className="inline-flex h-[24px] w-full shrink-0 items-center justify-center rounded-[37px] px-2.5 text-[10px] font-medium leading-[1.4] text-white"
-              style={{ backgroundColor: cfg.pillBg }}
-            >
-              {displayLabel}
-            </span>
-
-            {/* List of order numbers under occupied */}
-            {status === 'occupied' && orderNumbers && orderNumbers.length > 0 && (
-              <div className="flex max-h-[64px] w-full flex-col items-center gap-1 overflow-y-auto pt-0.5">
-                {orderNumbers.map((orderNo, idx) => (
-                  <span
-                    key={idx}
-                    dir="ltr"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-white/85 py-0.5 font-satoshi text-[11px] font-semibold leading-tight text-[#026F4F] shadow-xs"
-                  >
-                    {orderNo.startsWith('#') ? orderNo : `#${orderNo}`}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+          <span
+            className="inline-flex h-[30px] shrink-0 items-center justify-center rounded-[37px] px-[12px] py-[6px] text-[13px] font-medium leading-[1.4] text-white"
+            style={{ backgroundColor: cfg.pillBg }}
+          >
+            {displayLabel}
+          </span>
         </div>
 
         {(bill || time) && (
-          <div className="absolute inset-x-2.5 bottom-2.5 flex items-center justify-between gap-2">
+          <div className="absolute inset-x-[12px] bottom-[12px] flex items-center justify-between gap-2">
             {bill && (
-              <span dir="ltr" className="text-[17px] font-semibold leading-[1.4] text-[#026F4F]">
+              <span dir="ltr" className="text-[25px] font-semibold leading-[1.4] text-[#026F4F]">
                 {bill}
               </span>
             )}
             {displayTime && (
-              <div className="flex items-center gap-1">
-                <Clock3 size={14} className="shrink-0 text-[#989898]" />
-                <span className="text-[12px] leading-[1.4] text-[#989898]">{displayTime}</span>
+              <div className="flex shrink-0 items-center gap-[5px]">
+                <Image src="/images/figma/clock-light.svg" alt="" width={25} height={25} className="size-[25px]" />
+                <span className="whitespace-nowrap text-[18px] leading-[1.4] text-[#989898]">{displayTime}</span>
               </div>
             )}
           </div>
