@@ -124,13 +124,20 @@
   "topHeader": {
     "searchPlaceholder": "Search Task...",
     "restaurantOpen": "Restaurant Open",
+    "restaurantClosed": "Restaurant Closed",
     "shiftStarted": "Shift Started:",
     "shiftTime": "9PM",
     "currentCashier": "Current Cashier:",
     "cashierName": "Mazen Alqassif",
+    "lastCashier": "Last Cashier:",
+    "lastCashierName": "Sarah Jessie",
+    "shiftEnded": "Shift Ended at:",
+    "shiftEndedTime": "8:00 AM",
     "notifications": "Notifications",
     "profileAlt": "Profile photo",
-    "branchSelector": "Dhanmondi"
+    "profileName": "Sarah Jessie",
+    "profileEmail": "Sarah@gmail.com",
+    "branchSelector": "Dhanmondi (This Branch)"
   },
   "languageToggle": {
     "english": "English",

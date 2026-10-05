@@ -3,65 +3,70 @@
 import Image from 'next/image';
 import { Bell, ChevronDown, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { LanguageToggle } from './LanguageToggle';
 
 export function TopHeader() {
   const t = useTranslations('topHeader');
 
   return (
-    <header className="flex w-full items-center gap-2 rounded-xl bg-white px-3 py-2.5 sm:gap-3 sm:px-4 lg:h-[64px] lg:py-0">
-      {/* Search — icon-only on tablet, full pill on desktop (Bug-7 minimalist) */}
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F2F2F2] xl:w-auto xl:rounded-[55px] xl:px-4">
+    <header className="flex w-full min-w-0 items-center gap-2 rounded-xl bg-white px-3 py-2.5 sm:gap-3 sm:px-4 lg:h-[76px] lg:gap-4 lg:px-5 lg:py-0 min-[1600px]:h-[92px]">
+      {/* Search — icon-only until lg, full pill on lg+ */}
+      <div className="flex h-10 min-w-0 shrink-0 items-center gap-2 rounded-full bg-[#F2F2F2] px-3 lg:w-[clamp(200px,22vw,320px)] lg:px-4">
         <Search size={17} className="shrink-0 text-[#989898]" />
-        <span className="hidden whitespace-nowrap font-satoshi text-sm font-medium leading-none text-[#989898] xl:inline">
+        <span className="hidden truncate font-satoshi text-sm font-medium leading-none text-[#989898] lg:inline">
           {t('searchPlaceholder')}
         </span>
       </div>
 
-      {/* Restaurant Open */}
+      {/* Restaurant Closed */}
       <div className="flex shrink-0 items-center gap-2">
-        <span className="hidden whitespace-nowrap text-[12px] leading-[18px] text-[#37CE2A] min-[400px]:inline sm:text-[13px]">{t('restaurantOpen')}</span>
-        <span className="inline-block h-3 w-3 rounded-full bg-[#37CE2A] sm:h-3.5 sm:w-3.5" />
+        <span className="size-2 shrink-0 rounded-full bg-[#E22A2A]" />
+        <span className="hidden whitespace-nowrap text-[13px] leading-none text-[#E22A2A] min-[480px]:inline">
+          {t('restaurantClosed')}
+        </span>
       </div>
 
-      {/* Center: Shift & Cashier — desktop only to avoid crowding (Bug-7) */}
-      <div className="hidden min-w-0 flex-1 items-center justify-center gap-2.5 2xl:flex">
-        <div className="flex items-baseline gap-1.5">
-          <span className="whitespace-nowrap text-[12px] font-normal leading-[16px] text-[#989898]">{t('shiftStarted')}</span>
-          <span className="whitespace-nowrap text-[13px] font-medium leading-[18px] text-[#2D2F33]">{t('shiftTime')}</span>
+      {/* Center: Last Cashier | Shift Ended — xl+ (needs room beside sidebar) */}
+      <div className="hidden min-w-0 flex-1 items-center justify-center gap-4 xl:flex">
+        <div className="flex min-w-0 flex-col leading-tight">
+          <span className="text-[11px] leading-tight text-[#989898]">{t('lastCashier')}</span>
+          <span className="truncate text-sm font-medium leading-tight text-[#2D2F33]">
+            &ldquo;{t('lastCashierName')}&rdquo;
+          </span>
         </div>
-        <span className="h-[32px] w-px shrink-0 bg-[#B9B9B9]" />
-        <div className="flex min-w-0 items-baseline gap-1.5">
-          <span className="whitespace-nowrap text-[12px] font-normal leading-[16px] text-[#989898]">{t('currentCashier')}</span>
-          <span className="truncate whitespace-nowrap text-[13px] font-medium leading-[18px] text-[#2D2F33]">{t('cashierName')}</span>
+        <span className="h-6 w-px shrink-0 bg-[#E0E0E0]" />
+        <div className="flex min-w-0 flex-col leading-tight">
+          <span className="text-[11px] leading-tight text-[#989898]">{t('shiftEnded')}</span>
+          <span className="truncate text-sm font-medium leading-tight text-[#2D2F33]">
+            &ldquo;{t('shiftEndedTime')}&rdquo;
+          </span>
         </div>
       </div>
 
-      {/* Branch selector — desktop only (Bug-7) */}
-      <button className="ms-auto hidden h-10 shrink-0 items-center gap-1.5 rounded-[59px] border border-[#B9B9B9] bg-white px-3.5 xl:flex sm:px-4">
-        <span className="max-w-[130px] truncate whitespace-nowrap text-[13px] leading-none text-[#686868] sm:text-sm">
+      {/* Branch selector */}
+      <button className="ms-auto flex h-10 min-w-0 shrink items-center gap-1.5 rounded-full border border-[#E0E0E0] bg-white px-3 text-[#686868] transition-colors hover:border-[#B9B9B9] sm:shrink-0 xl:ms-0 xl:px-4">
+        <span className="max-w-[110px] truncate whitespace-nowrap text-[13px] sm:max-w-[150px] xl:max-w-none xl:text-sm">
           {t('branchSelector')}
         </span>
-        <ChevronDown size={14} className="shrink-0 text-[#686868]" />
+        <ChevronDown size={15} className="shrink-0" />
       </button>
 
-      {/* Language toggle (desktop / tablet) */}
-      <div className="ms-auto flex shrink-0 items-center xl:ms-0">
-        <LanguageToggle />
-      </div>
+      {/* Notifications */}
+      <button
+        className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-[#F2F2F2] text-[#2D2F33] transition-colors hover:bg-gray-200"
+        aria-label={t('notifications')}
+      >
+        <Bell size={18} />
+        <span className="absolute end-2 top-2 size-2 rounded-full bg-[#E22A2A] ring-2 ring-white" />
+      </button>
 
-      {/* Right: Bell + Profile */}
-      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-        <button
-          className="relative flex h-9 w-9 items-center justify-center rounded-xl text-[#2D2F33] sm:h-10 sm:w-10"
-          aria-label={t('notifications')}
-        >
-          <Bell size={19} />
-          <span className="absolute end-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#E56767]" />
-        </button>
-
-        <div className="relative h-9 w-9 shrink-0 sm:h-10 sm:w-10 lg:h-11 lg:w-11">
-          <Image src="/images/avatar.png" alt={t('profileAlt')} fill priority sizes="44px" className="rounded-full object-cover" />
+      {/* Profile */}
+      <div className="flex shrink-0 items-center gap-2.5">
+        <div className="relative size-10 shrink-0">
+          <Image src="/images/avatar.png" alt={t('profileAlt')} fill priority sizes="40px" className="rounded-full object-cover" />
+        </div>
+        <div className="hidden min-w-0 leading-tight min-[1600px]:block">
+          <p className="truncate text-sm font-medium text-[#2D2F33]">{t('profileName')}</p>
+          <p className="truncate text-xs text-[#6E727A]">{t('profileEmail')}</p>
         </div>
       </div>
     </header>

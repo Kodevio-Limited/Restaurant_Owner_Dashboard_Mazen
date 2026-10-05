@@ -124,13 +124,20 @@
   "topHeader": {
     "searchPlaceholder": "بحث...",
     "restaurantOpen": "المطعم مفتوح",
+    "restaurantClosed": "المطعم مغلق",
     "shiftStarted": "بدء الوردية:",
     "shiftTime": "9PM",
     "currentCashier": "أمين الصندوق الحالي:",
     "cashierName": "Mazen Alqassif",
+    "lastCashier": "آخر أمين صندوق:",
+    "lastCashierName": "Sarah Jessie",
+    "shiftEnded": "انتهت الوردية عند:",
+    "shiftEndedTime": "8:00 AM",
     "notifications": "الإشعارات",
     "profileAlt": "صورة الملف الشخصي",
-    "branchSelector": "الضهراء"
+    "profileName": "Sarah Jessie",
+    "profileEmail": "Sarah@gmail.com",
+    "branchSelector": "الضهراء (هذا الفرع)"
   },
   "languageToggle": {
     "english": "English",
