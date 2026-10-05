@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck, Share2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { Order, OrderFlowStep } from '@/components/shared/OrderCard';
 import { cn, lockPageScroll } from '@/lib/utils';
@@ -29,13 +29,17 @@ export function OrderDetailsModal({
   open,
   order,
   step = 'new',
+  paid,
   onStepChange,
+  onMarkPaid,
   onClose,
 }: {
   open: boolean;
   order: Order | null;
   step?: OrderFlowStep;
+  paid?: boolean;
   onStepChange?: (step: OrderFlowStep) => void;
+  onMarkPaid?: () => void;
   onClose: () => void;
 }) {
   const locale = useLocale();
@@ -47,6 +51,8 @@ export function OrderDetailsModal({
   }, [open]);
 
   if (!order) return null;
+
+  const isPaid = paid ?? order.status === 'paid';
 
   const itemCount = order.items.reduce((s, i) => s + i.qty, 0);
   const subtotal = order.items.reduce((s, i) => s + parsePrice(i.price) * i.qty, 0);
@@ -91,7 +97,14 @@ export function OrderDetailsModal({
             </h2>
             <p className="text-[19px] leading-[26.6px] text-[#686868]">{tableDisplay}</p>
           </div>
-          <div className="h-12 w-12" />
+          <div className="flex h-12 w-12 items-center justify-center">
+            <button
+              aria-label={isAr ? 'مشاركة' : 'Share'}
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC]"
+            >
+              <Share2 size={22} />
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -112,22 +125,29 @@ export function OrderDetailsModal({
 
           <section className="rounded-[10px] bg-white px-5 pb-4 pt-2.5">
             <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{isAr ? 'الحالة' : 'Status'}</h3>
-            <div className="relative mt-7 flex justify-between px-2">
+            <div className="mt-7 flex items-start">
               {STEPS.map((stage, i) => {
                 const Icon = stage.icon;
-                const active = i < progress;
+                const done = i < progress;
                 return (
-                  <div key={stage.key} className="flex flex-col items-center">
+                  <div key={stage.key} className="relative flex flex-1 flex-col items-center">
+                    {i > 0 && (
+                      <span
+                        className={cn(
+                          'absolute end-1/2 top-[18px] w-full border-t-2 border-dashed',
+                          done ? 'border-[#026F4F]' : 'border-[#B9B9B9]',
+                        )}
+                      />
+                    )}
                     <span
-                      className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white"
-                      style={{
-                        border: `1px ${active ? '#358C72' : '#B9B9B9'} solid`,
-                        boxShadow: active ? '0 0 0 3px rgba(53,140,114,0.15)' : undefined,
-                      }}
+                      className={cn(
+                        'relative z-10 flex h-[38px] w-[38px] items-center justify-center rounded-full',
+                        done ? 'bg-[#026F4F] text-white' : 'bg-[#EDEDED] text-[#B9B9B9]',
+                      )}
                     >
-                      <Icon size={20} className={active ? 'text-[#358C72]' : 'text-[#B9B9B9]'} />
+                      <Icon size={19} />
                     </span>
-                    <span className={cn('mt-1.5 text-[12px] leading-[16.8px]', active ? 'text-[#026F4F]' : 'text-[#B9B9B9]')}>
+                    <span className={cn('mt-2 text-[12px] leading-[17px]', done ? 'text-[#026F4F]' : 'text-[#B9B9B9]')}>
                       {isAr ? stage.label_ar : stage.label}
                     </span>
                   </div>
@@ -201,49 +221,28 @@ export function OrderDetailsModal({
               </div>
               <div className="flex items-center justify-between pt-2">
                 <span className="text-[16px] leading-[22px] text-[#989898]">{isAr ? 'الحالة' : 'Status'}</span>
-                <span className={cn('inline-flex items-center rounded-full px-2 py-1 text-[13px] leading-[18px] text-white', order.status === 'paid' ? 'bg-[#16C722]' : 'bg-[#D75F3B]')}>
-                  {order.status === 'paid' ? (isAr ? 'مدفوع' : 'Paid') : (isAr ? 'غير مدفوع' : 'Unpaid')}
+                <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-[13px] leading-[18px] text-white', isPaid ? 'bg-[#16C722]' : 'bg-[#D75F3B]')}>
+                  {isPaid ? (isAr ? 'مدفوع' : 'Paid') : (isAr ? 'غير مدفوع' : 'Unpaid')}
                 </span>
               </div>
             </div>
           </section>
         </div>
 
-        <div className="shrink-0 border-t border-[#E2E2E2] px-5 py-4">
-          <div className="flex items-center justify-between gap-4">
-            {step === 'new' && (
-              <button
-                onClick={() => onStepChange?.('accepted')}
-                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#64C864] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#4fb84f]"
-              >
-                {isAr ? 'قبول الطلب' : 'Accept Order'}
-              </button>
-            )}
-            {step === 'accepted' && (
-              <button
-                onClick={() => onStepChange?.('ready')}
-                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#F97316] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#ea690b]"
-              >
-                {isAr ? 'تحديد كجاهز' : 'Mark Ready'}
-              </button>
-            )}
-            {step === 'ready' && (
-              <button
-                onClick={() => onStepChange?.('served')}
-                className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#16A34A] text-[19px] font-medium text-white shadow-[0px_4px_16.3px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#128a3e]"
-              >
-                {isAr ? 'تقديم' : 'Serve'}
-              </button>
-            )}
-            {step === 'served' && (
-              <button
-                disabled
-                aria-disabled="true"
-                className="flex h-[59px] flex-1 cursor-not-allowed items-center justify-center rounded-[30px] bg-[#9CA3AF] text-[19px] font-medium text-white"
-              >
-                {isAr ? 'تم التقديم' : 'Served'}
-              </button>
-            )}
+        <div className="shrink-0 px-5 pb-5 pt-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onStepChange?.('ready')}
+              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#F97316] text-[19px] font-medium text-white transition-colors hover:bg-[#ea690b]"
+            >
+              {isAr ? 'تحديد كجاهز' : 'Mark Ready'}
+            </button>
+            <button
+              onClick={onMarkPaid}
+              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#025c42]"
+            >
+              {isAr ? 'تحديد كمدفوع' : 'Mark Paid'}
+            </button>
           </div>
         </div>
       </div>

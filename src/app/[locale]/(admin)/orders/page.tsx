@@ -175,27 +175,29 @@ export default function OrdersPage() {
   const [active, setActive] = useState<FilterId>('all');
   const [selected, setSelected] = useState<Order | null>(null);
   const [steps, setSteps] = useState<Record<string, OrderFlowStep>>({});
+  const [paidMap, setPaidMap] = useState<Record<string, boolean>>({});
 
   const filtered = ORDERS.filter((o) => FILTER_MATCH[active](o));
 
   const getStep = (id: string): OrderFlowStep => steps[id] ?? 'new';
   const setStep = (id: string, step: OrderFlowStep) =>
     setSteps((prev) => ({ ...prev, [id]: step }));
+  const isPaid = (o: Order) => paidMap[o.id] ?? o.status === 'paid';
 
   return (
     <main className="flex flex-col gap-5">
       {/* Page header */}
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-[22px] font-medium leading-[30px] text-[#2D2F33] sm:text-[26px] sm:leading-[36px] xl:text-[30px] xl:leading-[40px]">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[28px] font-medium leading-[38px] text-[#2D2F33] sm:text-[34px] sm:leading-[44px] xl:text-[40px] xl:leading-[56px]">
             {t('title')}
           </h1>
-          <p className="text-[13px] text-[#989898] sm:text-[15px] xl:text-base">{t('subtitle')}</p>
+          <p className="text-[15px] leading-[21px] text-[#989898] sm:text-[18px] xl:text-[23px] xl:leading-[32px]">{t('subtitle')}</p>
         </div>
       </div>
 
       {/* Status filter bar */}
-      <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+      <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 lg:gap-4">
         {FILTER_IDS.map((id) => {
           const match = FILTER_MATCH[id];
           const count = ORDERS.filter(match).length;
@@ -206,14 +208,19 @@ export default function OrdersPage() {
               onClick={() => setActive(id)}
               aria-pressed={isActive}
               className={cn(
-                'flex shrink-0 items-center gap-2 rounded-[33px] border bg-white py-1.5 ps-3.5 pe-1.5 transition-colors',
-                isActive ? 'border-[#026F4F] shadow-sm' : 'border-[#E9E9E9] hover:border-[#B9B9B9]',
+                'flex h-[44px] shrink-0 items-center gap-2.5 rounded-[33px] ps-[18px] pe-[6px] transition-colors xl:h-[50px]',
+                isActive ? 'bg-[#026F4F]' : 'bg-white hover:bg-[#F7F7F7]',
               )}
             >
-              <span className={cn('whitespace-nowrap text-[14px] leading-[23px] sm:text-[15px]', isActive ? 'font-medium text-[#2D2F33]' : 'text-[#686868]')}>
+              <span className={cn('whitespace-nowrap text-[15px] leading-none sm:text-[17px] xl:text-[24px]', isActive ? 'text-white' : 'text-[#686868]')}>
                 {t(`filters.${id}`)}
               </span>
-              <span className={cn('flex h-7 w-7 items-center justify-center rounded-full text-[11.5px] font-medium leading-none', isActive ? 'bg-[#026F4F] text-white' : 'bg-[#E6F1ED] text-[#026F4F]')}>
+              <span
+                className={cn(
+                  'flex size-8 items-center justify-center rounded-full text-[13px] font-medium leading-none xl:size-[40px] xl:text-[13.5px]',
+                  isActive ? 'bg-white text-black' : 'bg-[#E6F1ED] text-[#026F4F]',
+                )}
+              >
                 {count}
               </span>
             </button>
@@ -227,7 +234,7 @@ export default function OrdersPage() {
           {filtered.map((order) => (
             <div key={order.id} className="h-full w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5">
               <OrderCard
-                order={order}
+                order={{ ...order, status: isPaid(order) ? 'paid' : 'unpaid' }}
                 step={getStep(order.id)}
                 onStepChange={(s) => setStep(order.id, s)}
                 onOpen={setSelected}
@@ -245,7 +252,9 @@ export default function OrdersPage() {
         open={!!selected}
         order={selected}
         step={selected ? getStep(selected.id) : 'new'}
+        paid={selected ? isPaid(selected) : false}
         onStepChange={(s) => selected && setStep(selected.id, s)}
+        onMarkPaid={() => selected && setPaidMap((prev) => ({ ...prev, [selected.id]: true }))}
         onClose={() => setSelected(null)}
       />
     </main>
