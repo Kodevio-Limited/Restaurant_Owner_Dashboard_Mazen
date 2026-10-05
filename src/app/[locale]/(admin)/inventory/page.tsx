@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Pencil, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
+import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
 import { useQueryModal } from '@/lib/use-query-modal';
 import { cn, lockPageScroll } from '@/lib/utils';
 import { UnsavedChangesModal } from '@/components/shared/UnsavedChangesModal';
@@ -200,7 +200,7 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
@@ -212,7 +212,7 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
           <h2 className="absolute start-[192px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.addIngredient.title')}</h2>
         </div>
 
-        <div className="space-y-5 px-[30px] pb-5 pt-[147px]">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-[30px] pb-5 pt-8">
           <section className="relative flex w-full flex-col justify-center rounded-xl bg-white px-[19px] py-[21px] outline outline-1 outline-offset-[-1px] overflow-hidden">
             <div>
               <h3 className="text-lg font-medium text-zinc-800 leading-7">{t('modals.addIngredient.basicInfo')}</h3>
@@ -847,7 +847,7 @@ function StockTab() {
                 <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <div className="flex items-center justify-center gap-1 sm:gap-2">
                     <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600 sm:h-9 sm:w-9">
-                      <Pencil size={16} className="sm:size-[18px]" />
+                      <Image src="/images/figma/pencil.svg" alt="" width={18} height={18} className="size-[18px]" />
                     </button>
                     <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 sm:h-9 sm:w-9">
                       <Trash2 size={16} className="sm:size-[18px]" />

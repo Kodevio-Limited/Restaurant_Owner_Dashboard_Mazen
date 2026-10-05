@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck, Share2 } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { Order, OrderFlowStep } from '@/components/shared/OrderCard';
 import { cn, lockPageScroll } from '@/lib/utils';
@@ -102,7 +102,9 @@ export function OrderDetailsModal({
               aria-label={isAr ? 'مشاركة' : 'Share'}
               className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E9E9E9] text-black transition-colors hover:bg-[#DCDCDC]"
             >
-              <Share2 size={22} />
+              <svg width="24" height="24" viewBox="13 13 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M33 25L26.6 18V21.5C23.4 21.5 17 23.6 17 32C17 30.833 18.92 28.5 26.6 28.5V32L33 25Z" />
+              </svg>
             </button>
           </div>
         </div>

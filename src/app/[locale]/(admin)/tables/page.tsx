@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import { TableCard, TableStatus } from '@/components/shared/TableCard';
 import { SeatGuestsModal } from '@/components/shared/SeatGuestsModal';
 import { AddEditTableModal } from '@/components/shared/AddEditTableModal';
@@ -231,7 +232,7 @@ export default function TablesPage() {
                   title={isAr ? 'تعديل' : 'Edit'}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-[#686868] transition-colors hover:bg-[#F2F2F2] hover:text-[#026F4F] [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:w-10"
                 >
-                  <Pencil size={14} strokeWidth={1.75} />
+                  <Image src="/images/figma/pencil.svg" alt="" width={14} height={14} className="size-[14px]" />
                 </button>
                 <span className="h-4 w-px bg-black/10" aria-hidden="true" />
                 <button

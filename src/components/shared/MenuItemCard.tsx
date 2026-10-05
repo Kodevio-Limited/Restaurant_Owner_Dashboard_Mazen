@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
@@ -76,7 +76,7 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
             aria-label={isAr ? 'تعديل' : 'Edit'}
             className="flex h-11 w-11 items-center justify-center rounded-[7px] bg-[#E9E9E9] text-[#686868] outline outline-1 outline-[#B9B9B9] transition-colors hover:bg-[#DcDcDc]"
           >
-            <Pencil size={16} />
+            <Image src="/images/figma/pencil.svg" alt="" width={16} height={16} className="size-4" />
           </button>
           <button
             aria-label={isAr ? 'حذف' : 'Delete'}

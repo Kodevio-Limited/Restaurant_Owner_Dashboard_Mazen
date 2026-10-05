@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, X, Globe, Upload, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, X, Globe, ImageUp, Plus, Trash2, ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn, lockPageScroll } from '@/lib/utils';
 
@@ -200,54 +200,55 @@ function CustomizationGroup({ onRemove, isAr }: { onRemove: () => void; isAr: bo
           </div>
         </div>
 
-        {/* Selection type */}
-        <div className="flex w-64 flex-col gap-2">
-          <span className="text-sm font-medium leading-5 text-[#686868]">
-            {isAr ? 'نوع الاختيار' : 'Selection Type'}
-          </span>
-          <div className="relative flex h-12 items-center rounded-[35.08px] bg-[#E9E9E9]">
+        {/* Selection type + Required (same row; Required sits on the right) */}
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex w-64 flex-col gap-2">
+            <span className="text-sm font-medium leading-5 text-[#686868]">
+              {isAr ? 'نوع الاختيار' : 'Selection Type'}
+            </span>
+            <div className="relative flex h-12 items-center rounded-[35.08px] bg-[#E9E9E9]">
+              <button
+                onClick={() => setSelectionType('Single')}
+                className={cn(
+                  'flex h-full flex-1 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors',
+                  selectionType === 'Single' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
+                )}
+              >
+                {isAr ? 'فردي' : 'Single'}
+              </button>
+              <button
+                onClick={() => setSelectionType('Multi')}
+                className={cn(
+                  'flex h-full flex-1 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors',
+                  selectionType === 'Multi' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
+                )}
+              >
+                {isAr ? 'متعدد' : 'Multi'}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-nowrap items-center gap-3 pb-1">
+            <span className="whitespace-nowrap text-sm font-medium leading-5 text-[#686868]">
+              {isAr ? 'اختيار إلزامي' : 'Required Selection'}
+            </span>
             <button
-              onClick={() => setSelectionType('Single')}
+              type="button"
+              onClick={() => setRequired((v) => !v)}
+              aria-pressed={required}
               className={cn(
-                'flex h-full flex-1 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors',
-                selectionType === 'Single' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
+                'relative h-6 w-12 shrink-0 cursor-pointer rounded-[18.96px] transition-colors',
+                required ? 'bg-[#026F4F]' : 'bg-[#989898]',
               )}
             >
-              {isAr ? 'فردي' : 'Single'}
-            </button>
-            <button
-              onClick={() => setSelectionType('Multi')}
-              className={cn(
-                'flex h-full flex-1 items-center justify-center rounded-3xl text-sm font-medium leading-5 transition-colors',
-                selectionType === 'Multi' ? 'bg-[#026F4F] text-white' : 'text-[#989898]',
-              )}
-            >
-              {isAr ? 'متعدد' : 'Multi'}
+              <span
+                className={cn(
+                  'absolute top-[3.32px] h-4 w-4 rounded-full bg-white transition-all',
+                  required ? 'start-[28px]' : 'start-[3.79px]',
+                )}
+              />
             </button>
           </div>
-        </div>
-
-        {/* Required */}
-        <div className="flex items-center gap-8">
-          <span className="text-sm font-medium leading-5 text-[#686868]">
-            {isAr ? 'اختيار إلزامي' : 'Required Selection'}
-          </span>
-          <button
-            type="button"
-            onClick={() => setRequired((v) => !v)}
-            aria-pressed={required}
-            className={cn(
-              'relative h-6 w-12 cursor-pointer rounded-[18.96px] transition-colors',
-              required ? 'bg-[#026F4F]' : 'bg-[#989898]',
-            )}
-          >
-            <span
-              className={cn(
-                'absolute top-[3.32px] h-4 w-4 rounded-full bg-white transition-all',
-                required ? 'start-[28px]' : 'start-[3.79px]',
-              )}
-            />
-          </button>
         </div>
 
         {/* Selection limit */}
@@ -386,7 +387,7 @@ export function AddItemModal({
                 className="sr-only"
                 onChange={(e) => setImageName(e.target.files?.[0]?.name ?? null)}
               />
-              <Upload size={40} className="text-[#989898]" />
+              <ImageUp size={40} className="text-[#989898]" strokeWidth={1.5} />
               <span className="block max-w-full text-lg font-semibold leading-7 text-[#026F4F]">
                 {imageName ?? (isAr ? 'تحميل صورة' : 'Upload Photo')}
                 {!imageName && (
