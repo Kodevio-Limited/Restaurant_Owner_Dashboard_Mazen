@@ -107,8 +107,8 @@ export function OrderDetailsModal({
           </div>
         </div>
 
-        {/* Body */}
-        <div className="space-y-[15px] overflow-y-auto px-5 pb-5 pt-8">
+        {/* Body — flex-1 scroll region so the footer stays pinned and scrolling is contained */}
+        <div className="min-h-0 flex-1 space-y-[15px] overflow-y-auto overscroll-contain px-5 pb-5 pt-8">
           <section className="rounded-[10px] bg-white p-5">
             <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{customerName}</h3>
             <div className="mt-3.5 flex flex-col gap-2.5">
@@ -129,6 +129,7 @@ export function OrderDetailsModal({
               {STEPS.map((stage, i) => {
                 const Icon = stage.icon;
                 const done = i < progress;
+                const current = i === progress;
                 return (
                   <div key={stage.key} className="relative flex flex-1 flex-col items-center">
                     {i > 0 && (
@@ -142,12 +143,16 @@ export function OrderDetailsModal({
                     <span
                       className={cn(
                         'relative z-10 flex h-[38px] w-[38px] items-center justify-center rounded-full',
-                        done ? 'bg-[#026F4F] text-white' : 'bg-[#EDEDED] text-[#B9B9B9]',
+                        done
+                          ? 'bg-[#026F4F] text-white'
+                          : current
+                            ? 'border border-[#358C72] bg-white text-[#358C72]'
+                            : 'bg-[#EDEDED] text-[#B9B9B9]',
                       )}
                     >
                       <Icon size={19} />
                     </span>
-                    <span className={cn('mt-2 text-[12px] leading-[17px]', done ? 'text-[#026F4F]' : 'text-[#B9B9B9]')}>
+                    <span className={cn('mt-2 text-[12px] leading-[17px]', done ? 'text-[#026F4F]' : current ? 'text-[#358C72]' : 'text-[#B9B9B9]')}>
                       {isAr ? stage.label_ar : stage.label}
                     </span>
                   </div>
@@ -170,15 +175,15 @@ export function OrderDetailsModal({
                         <div className="relative h-[70px] w-[70px] shrink-0 overflow-hidden rounded-[7px] bg-[#F2F2F2]">
                           <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="70px" className="object-cover" />
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[16px] font-medium leading-[22px] text-[#2D2F33]">{itemName}</span>
-                          {itemModifiers?.map((m, idx) => (
-                            <span key={idx} className="text-[13px] leading-[18px]">
-                              <span className="text-[16px] text-[#2DC35F]">+</span>{' '}
-                              <span className="text-[#989898]">{m}</span>
-                            </span>
-                          ))}
-                        </div>
+                      <div className="flex min-w-0 flex-col gap-[5px]">
+                        <span className="text-[16px] font-medium leading-[22px] text-[#2D2F33]">{itemName}</span>
+                        {itemModifiers?.map((m, idx) => (
+                          <span key={idx} className="text-[13px] leading-[18px]">
+                            <span className="text-[16px] text-[#2DC35F]">+</span>{' '}
+                            <span className="text-[#989898]">{m}</span>
+                          </span>
+                        ))}
+                      </div>
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-3">
                         <span className="text-[18px] font-semibold leading-[25px] text-[#026F4F]">{item.price}</span>
@@ -188,10 +193,12 @@ export function OrderDetailsModal({
                       </div>
                     </div>
                     {itemNote && (
-                      <div className="mt-3 flex items-center gap-2 rounded-[5px] bg-[#F2F2F2] px-3 py-2.5 outline outline-1 outline-[#B9B9B9]">
-                        <span className="h-[15px] w-[15px] shrink-0 bg-[#E5BA42]" />
-                        <span className="text-[13px] font-medium leading-[18px] text-[#989898]">{isAr ? 'ملاحظة:' : 'NOTE:'}</span>
-                        <span className="text-[13px] font-medium leading-[18px] text-[#2D2F33]">{itemNote}</span>
+                      <div className="mt-3 flex items-center gap-2 rounded-[5px] border border-[#B9B9B9] bg-[#F2F2F2] px-[9px] py-2.5">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="shrink-0" aria-hidden="true">
+                          <path d="M7.5 1.5C10.8082 1.5 13.5 4.19175 13.5 7.5C13.5 10.8082 10.8082 13.5 7.5 13.5C4.19175 13.5 1.5 10.8082 1.5 7.5C1.5 4.19175 4.19175 1.5 7.5 1.5ZM7.5 0C3.35775 0 0 3.35775 0 7.5C0 11.6422 3.35775 15 7.5 15C11.6422 15 15 11.6422 15 7.5C15 3.35775 11.6422 0 7.5 0ZM8.25 9.75H6.75V11.25H8.25V9.75ZM6.75 8.25H8.25L8.625 3.75H6.375L6.75 8.25Z" fill="#E5BA42" />
+                        </svg>
+                        <span className="shrink-0 text-[13px] font-medium leading-[18px] text-[#989898]">{isAr ? 'ملاحظة:' : 'NOTE:'}</span>
+                        <span className="min-w-0 flex-1 break-words text-[13px] font-medium leading-[18px] text-[#2D2F33]">{itemNote}</span>
                       </div>
                     )}
                   </div>

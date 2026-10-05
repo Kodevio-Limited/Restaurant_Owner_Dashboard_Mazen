@@ -8,11 +8,8 @@ import { cn } from '@/lib/utils';
 function CardGlyph({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M5 4h14a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Zm-1 4v1.5h16V8H4Z"
-      />
+      <path d="M6.5 5A3.5 3.5 0 0 0 3 8.5V9.5h18V8.5A3.5 3.5 0 0 0 17.5 5h-11Z" />
+      <path d="M3 11h18v4.5A3.5 3.5 0 0 1 17.5 19h-11A3.5 3.5 0 0 1 3 15.5V11Z" />
     </svg>
   );
 }
@@ -127,11 +124,11 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
             <div key={item.id}>
               {idx > 0 && <div className="border-t border-dashed border-[#E0E0E0]" />}
               <div className="flex items-center justify-between gap-3 py-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="relative h-[74px] w-[68px] shrink-0 overflow-hidden rounded-[7px] bg-[#F2F2F2]">
-                    <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="68px" className="object-cover" />
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <div className="relative h-[78px] w-[72px] shrink-0 overflow-hidden rounded-[8px] bg-[#F2F2F2]">
+                    <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="72px" className="object-contain p-[10px]" />
                   </div>
-                  <div className="flex min-w-0 flex-col gap-1">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="truncate text-[15px] font-medium leading-[21px] text-[#2D2F33]">{itemName}</span>
                     {itemNote && (
                       <span className="truncate text-[12px] leading-[17px] text-[#989898]">&ldquo;{itemNote}&rdquo;</span>
