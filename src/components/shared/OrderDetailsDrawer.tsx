@@ -1,17 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, Phone, Mail, FileText, CookingPot, Check, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, Phone, Mail } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { Order, OrderFlowStep } from '@/components/shared/OrderCard';
 import { cn, lockPageScroll } from '@/lib/utils';
 
+// Order-progress steps — ring + glyph swap per state (Figma 295:4483).
 const STEPS = [
-  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', icon: FileText },
-  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', icon: CookingPot },
-  { key: 'ready', label: 'Ready', label_ar: 'جاهز', icon: Check },
-  { key: 'served', label: 'Served', label_ar: 'تم التقديم', icon: BadgeCheck },
+  { key: 'placed', label: 'Placed', label_ar: 'تم الطلب', doneIcon: '/images/figma/step-placed.svg', todoIcon: '/images/figma/step-placed-grey.svg' },
+  { key: 'preparing', label: 'Preparing', label_ar: 'قيد التحضير', doneIcon: '/images/figma/step-cooking.svg', todoIcon: '/images/figma/step-cooking-grey.svg' },
+  { key: 'ready', label: 'Ready', label_ar: 'جاهز', doneIcon: '/images/figma/step-check-green.svg', todoIcon: '/images/figma/step-check.svg' },
+  { key: 'served', label: 'Served', label_ar: 'تم التقديم', doneIcon: '/images/figma/step-served-green.svg', todoIcon: '/images/figma/step-served.svg' },
 ];
 
 const STEP_PROGRESS: Record<OrderFlowStep, number> = {
@@ -129,35 +130,42 @@ export function OrderDetailsModal({
             <h3 className="text-[19px] font-medium leading-[26px] text-[#2D2F33]">{isAr ? 'الحالة' : 'Status'}</h3>
             <div className="mt-7 flex items-start">
               {STEPS.map((stage, i) => {
-                const Icon = stage.icon;
-                const done = i < progress;
-                const current = i === progress;
+                const active = i <= progress;
                 return (
-                  <div key={stage.key} className="relative flex flex-1 flex-col items-center">
+                  <Fragment key={stage.key}>
                     {i > 0 && (
-                      <span
-                        className={cn(
-                          'absolute end-1/2 top-[18px] w-full border-t-2 border-dashed',
-                          done ? 'border-[#026F4F]' : 'border-[#B9B9B9]',
-                        )}
+                      <img
+                        src={active ? '/images/figma/connector-solid.svg' : '/images/figma/connector-dashed.svg'}
+                        alt=""
+                        aria-hidden="true"
+                        className="mx-2 mt-[18px] h-[2px] min-w-[36px] flex-1 self-start"
                       />
                     )}
-                    <span
-                      className={cn(
-                        'relative z-10 flex h-[38px] w-[38px] items-center justify-center rounded-full',
-                        done
-                          ? 'bg-[#026F4F] text-white'
-                          : current
-                            ? 'border border-[#358C72] bg-white text-[#358C72]'
-                            : 'bg-[#EDEDED] text-[#B9B9B9]',
-                      )}
-                    >
-                      <Icon size={19} />
-                    </span>
-                    <span className={cn('mt-2 text-[12px] leading-[17px]', done ? 'text-[#026F4F]' : current ? 'text-[#358C72]' : 'text-[#B9B9B9]')}>
-                      {isAr ? stage.label_ar : stage.label}
-                    </span>
-                  </div>
+                    <div className="flex shrink-0 flex-col items-center">
+                      <span className="relative z-10 block size-[38px]">
+                        <img
+                          src={active ? '/images/figma/ring-green.svg' : '/images/figma/ring-grey.svg'}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-0 size-full"
+                        />
+                        <img
+                          src={active ? stage.doneIcon : stage.todoIcon}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2"
+                        />
+                      </span>
+                      <span
+                        className={cn(
+                          'mt-1.5 text-center text-[12px] font-normal leading-[1.4]',
+                          active ? 'text-[#026F4F]' : 'text-[#B9B9B9]',
+                        )}
+                      >
+                        {isAr ? stage.label_ar : stage.label}
+                      </span>
+                    </div>
+                  </Fragment>
                 );
               })}
             </div>

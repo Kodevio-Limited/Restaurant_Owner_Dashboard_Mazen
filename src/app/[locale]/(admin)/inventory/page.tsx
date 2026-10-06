@@ -83,15 +83,36 @@ interface WasteRecord {
 // Mock Data
 // ──────────────────────────────────────────────
 
+// Relative "Last Update" stamps — e.g. "10 min ago" / "1 h ago".
+const MOCK_NOW = Date.now();
+const minutesAgo = (minutes: number) => new Date(MOCK_NOW - minutes * 60_000).toISOString();
+
+function timeAgo(iso: string, isAr: boolean): string {
+  const elapsed = Date.now() - new Date(iso).getTime();
+  const minutes = Math.floor(elapsed / 60_000);
+
+  if (minutes < 1) return isAr ? 'الآن' : 'Just now';
+  if (minutes < 60) return isAr ? `منذ ${minutes} دقيقة` : `${minutes} min ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return isAr ? (hours === 1 ? 'منذ ساعة' : `منذ ${hours} ساعات`) : `${hours} h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 30) return isAr ? (days === 1 ? 'منذ يوم' : `منذ ${days} يوم`) : `${days} d ago`;
+
+  const months = Math.floor(days / 30);
+  return isAr ? `منذ ${months} شهر` : `${months} mo ago`;
+}
+
 const INGREDIENTS: Ingredient[] = [
-  { id: 'i1', name: 'Beef Patties', currentStock: 200, unit: 'pcs', status: 'in-stock', lastUpdate: '2026-08-27' },
-  { id: 'i2', name: 'Buns', currentStock: 45, unit: 'pcs', status: 'low-stock', lastUpdate: '2026-08-27' },
-  { id: 'i3', name: 'Lettuce', currentStock: 0, unit: 'kg', status: 'out-of-stock', lastUpdate: '2026-08-26' },
-  { id: 'i4', name: 'Cheese Slices', currentStock: 120, unit: 'pcs', status: 'in-stock', lastUpdate: '2026-08-27' },
-  { id: 'i5', name: 'Tomato', currentStock: 15, unit: 'kg', status: 'low-stock', lastUpdate: '2026-08-26' },
-  { id: 'i6', name: 'Onion', currentStock: 8, unit: 'kg', status: 'low-stock', lastUpdate: '2026-08-25' },
-  { id: 'i7', name: 'French Fries', currentStock: 300, unit: 'kg', status: 'in-stock', lastUpdate: '2026-08-27' },
-  { id: 'i8', name: 'Chicken Breast', currentStock: 0, unit: 'kg', status: 'out-of-stock', lastUpdate: '2026-08-24' },
+  { id: 'i1', name: 'Beef Patties', currentStock: 200, unit: 'pcs', status: 'in-stock', lastUpdate: minutesAgo(10) },
+  { id: 'i2', name: 'Buns', currentStock: 45, unit: 'pcs', status: 'low-stock', lastUpdate: minutesAgo(45) },
+  { id: 'i3', name: 'Lettuce', currentStock: 0, unit: 'kg', status: 'out-of-stock', lastUpdate: minutesAgo(2 * 60) },
+  { id: 'i4', name: 'Cheese Slices', currentStock: 120, unit: 'pcs', status: 'in-stock', lastUpdate: minutesAgo(30) },
+  { id: 'i5', name: 'Tomato', currentStock: 15, unit: 'kg', status: 'low-stock', lastUpdate: minutesAgo(5 * 60) },
+  { id: 'i6', name: 'Onion', currentStock: 8, unit: 'kg', status: 'low-stock', lastUpdate: minutesAgo(26 * 60) },
+  { id: 'i7', name: 'French Fries', currentStock: 300, unit: 'kg', status: 'in-stock', lastUpdate: minutesAgo(25) },
+  { id: 'i8', name: 'Chicken Breast', currentStock: 0, unit: 'kg', status: 'out-of-stock', lastUpdate: minutesAgo(72 * 60) },
 ];
 
 const RECIPES: Recipe[] = [
@@ -841,6 +862,8 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
 
 function StockTab() {
   const t = useTranslations('inventory');
+  const locale = useLocale();
+  const isAr = locale === 'ar';
   const [showAdd, setShowAdd] = useQueryModal('add-ingredient');
   const [search, setSearch] = useState('');
 
@@ -909,7 +932,7 @@ function StockTab() {
                   {ing.currentStock} <span className="font-normal text-neutral-400">{ing.unit}</span>
                 </td>
                 <td className="px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
-                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{timeAgo(ing.lastUpdate, isAr)}</td>
                 <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <div className="flex items-center justify-center gap-1 sm:gap-2">
                     <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600 sm:h-9 sm:w-9">
@@ -1020,10 +1043,10 @@ function RecipeTab() {
                 </div>
 
                 <div className="flex w-full flex-col gap-[12px]">
-                  <h3 className="w-full font-satoshi text-[21.391px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
+                  <h3 className="w-full truncate font-satoshi text-[21.391px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
                   <div className="relative h-[80px] w-full overflow-clip rounded-[5px] bg-[#F2F2F2]">
                     {recipe.ingredients.length > 0 ? (
-                      <div className="absolute start-1/2 top-[11px] flex w-[275px] -translate-x-1/2 flex-col gap-[13px] text-[16px] font-normal leading-[1.4]">
+                      <div className="absolute start-1/2 top-[11px] flex w-[93.2%] -translate-x-1/2 flex-col gap-[13px] text-[16px] font-normal leading-[1.4]">
                         {recipe.ingredients.slice(0, 2).map((ing, idx) => (
                           <div key={idx} className="flex items-center justify-between">
                             <span className={recipe.status === 'available' ? 'text-[#989898]' : 'text-[#D91010]'}>{ing.name}</span>

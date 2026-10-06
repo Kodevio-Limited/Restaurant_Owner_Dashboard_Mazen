@@ -253,14 +253,9 @@ export function AddTeamMemberModal({
                       ]
                 ).map((note, i) => (
                   <div key={i} className="w-full rounded-[20px] bg-[#F2F2F2] px-[15px] py-[13px]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-base font-medium leading-5 text-black">
-                        {isAr ? 'أضيفت بواسطة: جين سميث (المشرف)' : 'Added by: Jane Smith (Admin)'}
-                      </span>
-                      <button className="flex h-5 w-5 shrink-0 items-center justify-center" aria-label={isAr ? 'حذف الملاحظة' : 'Delete note'}>
-                        <Trash2 size={18} className="text-[#E85E5E]" />
-                      </button>
-                    </div>
+                    <span className="block text-base font-medium leading-5 text-black">
+                      {isAr ? 'أضيفت بواسطة: جين سميث (المشرف)' : 'Added by: Jane Smith (Admin)'}
+                    </span>
                     <div className="mt-[10px] flex flex-col gap-1">
                       <span className="font-satoshi text-base font-medium leading-6 text-[#989898]">
                         {isAr ? (note.text_ar ?? note.text) : note.text}
@@ -268,6 +263,14 @@ export function AddTeamMemberModal({
                       <span className="text-xs font-normal leading-5 text-[#686868]">
                         {note.date}
                       </span>
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <button
+                        className="flex h-5 w-5 shrink-0 items-center justify-center"
+                        aria-label={isAr ? 'حذف الملاحظة' : 'Delete note'}
+                      >
+                        <Trash2 size={18} className="text-[#E85E5E]" />
+                      </button>
                     </div>
                   </div>
                 ))}

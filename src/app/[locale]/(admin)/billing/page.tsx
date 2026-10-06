@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useTranslations, useLocale, useMessages } from 'next-intl';
-import { Download, Headphones, Check, Lock } from 'lucide-react';
+import { Download, Headphones, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ─── Static plan metadata ─────────────────────────────────────────────────────
@@ -43,17 +44,30 @@ const BILLING_HISTORY = [
   { date: 'Apr 25, 2026', date_ar: '25 أبريل 2026', amount: '$45.00', statusKey: 'paid' as const },
 ];
 
+// Figma 1939:989 — 18px icon box (icon offset 2px from top) + 8px gap + 13px/17.875px text.
 function PlanFeatureItem({ text, available }: { text: string; available: boolean }) {
   return (
     <div className="flex items-start gap-2">
-      <div className="mt-0.5 shrink-0">
+      <div className="h-5 w-[18px] shrink-0 pt-0.5">
         {available ? (
-          <Check size={16} className="text-[#026F4F]" strokeWidth={2.5} />
+          <Image
+            src="/images/figma/check-circle.svg"
+            alt=""
+            aria-hidden="true"
+            width={18}
+            height={18}
+            className="size-[18px]"
+          />
         ) : (
-          <Lock size={16} className="text-[#C0C0C0]" strokeWidth={2} />
+          <Lock size={18} className="text-[#C0C0C0]" strokeWidth={2} />
         )}
       </div>
-      <span className={cn('text-[13px] leading-[1.4]', available ? 'text-[#2D2F33]' : 'text-[#C0C0C0]')}>
+      <span
+        className={cn(
+          'text-[13px] leading-[17.875px]',
+          available ? 'text-[#2D2F33]' : 'text-[#C0C0C0]',
+        )}
+      >
         {text}
       </span>
     </div>
