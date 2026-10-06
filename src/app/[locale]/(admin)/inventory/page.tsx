@@ -6,7 +6,7 @@ import { useQueryModal } from '@/lib/use-query-modal';
 import { cn, lockPageScroll } from '@/lib/utils';
 import { UnsavedChangesModal } from '@/components/shared/UnsavedChangesModal';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // ──────────────────────────────────────────────
 // Types
@@ -31,6 +31,7 @@ interface Recipe {
   id: string;
   name: string;
   status: 'available' | 'out-of-stock';
+  kind: 'main' | 'addon';
   ingredients: RecipeIngredient[];
   image?: string;
 }
@@ -98,6 +99,7 @@ const RECIPES: Recipe[] = [
     id: 'r1',
     name: 'Classic Burger',
     status: 'available',
+    kind: 'main',
     ingredients: [
       { name: 'Beef Patties', quantity: 1, unit: 'pcs' },
       { name: 'Buns', quantity: 1, unit: 'pcs' },
@@ -109,6 +111,7 @@ const RECIPES: Recipe[] = [
     id: 'r2',
     name: 'Double Cheese Burger',
     status: 'out-of-stock',
+    kind: 'main',
     ingredients: [
       { name: 'Beef Patties', quantity: 2, unit: 'pcs' },
       { name: 'Buns', quantity: 1, unit: 'pcs' },
@@ -119,12 +122,14 @@ const RECIPES: Recipe[] = [
     id: 'r3',
     name: 'Chicken Sandwich',
     status: 'available',
+    kind: 'main',
     ingredients: [],
   },
   {
     id: 'r4',
     name: 'Veggie Wrap',
     status: 'available',
+    kind: 'main',
     ingredients: [
       { name: 'Lettuce', quantity: 100, unit: 'g' },
       { name: 'Tomato', quantity: 80, unit: 'g' },
@@ -135,9 +140,45 @@ const RECIPES: Recipe[] = [
     id: 'r5',
     name: 'French Fries',
     status: 'available',
+    kind: 'main',
     ingredients: [
       { name: 'French Fries', quantity: 200, unit: 'g' },
     ],
+  },
+  {
+    id: 'a1',
+    name: 'Extra Cheese (Cheddar)',
+    status: 'available',
+    kind: 'addon',
+    ingredients: [{ name: 'Cheese Slices', quantity: 2, unit: 'pcs' }],
+  },
+  {
+    id: 'a2',
+    name: 'Extra Patty',
+    status: 'available',
+    kind: 'addon',
+    ingredients: [{ name: 'Beef Patties', quantity: 1, unit: 'pcs' }],
+  },
+  {
+    id: 'a3',
+    name: 'Avocado Add-on',
+    status: 'available',
+    kind: 'addon',
+    ingredients: [{ name: 'Tomato', quantity: 2, unit: 'pcs' }],
+  },
+  {
+    id: 'a4',
+    name: 'Bacon Strips',
+    status: 'out-of-stock',
+    kind: 'addon',
+    ingredients: [{ name: 'Beef Patties', quantity: 2, unit: 'pcs' }],
+  },
+  {
+    id: 'a5',
+    name: 'Extra Sauce',
+    status: 'available',
+    kind: 'addon',
+    ingredients: [{ name: 'Cheese Slices', quantity: 1, unit: 'pcs' }],
   },
 ];
 
@@ -456,6 +497,10 @@ function RecipeMappingModal({
 function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
+  useEffect(() => {
+    lockPageScroll(open);
+    return () => lockPageScroll(false);
+  }, [open]);
   return (
     <>
       <div
@@ -467,7 +512,7 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
       />
       <div
         className={cn(
-          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col overflow-y-auto rounded-ss-3xl rounded-es-3xl bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
           open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
         )}
         onClick={(e) => e.stopPropagation()}
@@ -479,48 +524,54 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
           <h2 className="absolute start-[152px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.logPurchase.title')}</h2>
         </div>
 
-        <div className="px-[30px] pb-5 pt-[97px]">
-          <section className="relative h-96 w-full rounded-xl bg-white outline outline-1 outline-offset-[-1px] overflow-hidden">
-            <div className="px-[19px] py-[25px] flex flex-col gap-3.5">
-              <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
-                <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
-                  <ChevronDown size={18} className="text-[#686868]" />
-                </div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[30px] pb-5 pt-8">
+          <section className="relative flex w-full flex-col gap-3.5 rounded-xl bg-white px-[19px] py-[25px] outline outline-1 outline-offset-[-1px]">
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.ingredientName')}</span>
+              <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Beef Patties</span>
+                <ChevronDown size={18} className="text-[#686868]" />
               </div>
+            </div>
 
-              <div className="flex items-start gap-6">
-                <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
-                  <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
-                  </div>
-                </div>
-                <div className="flex w-60 flex-col gap-2">
-                  <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.totalCost')}</span>
-                  <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
-                    <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.supplierOptional')}</span>
+            <div className="flex items-start gap-6">
+              <div className="flex w-60 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
                 <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
-                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.logPurchase.supplierPlaceholder')}</span>
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">120</span>
+                </div>
+              </div>
+              <div className="flex w-60 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.totalCost')}</span>
+                <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
                 </div>
               </div>
             </div>
-            <div className="px-[19px] pb-[19px]">
-              <p className="text-xs font-normal leading-5 text-green-400">{t('modals.logPurchase.hint')}</p>
+
+            <div className="flex items-start gap-6">
+              <div className="flex w-60 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.date')}</span>
+                <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.logPurchase.datePlaceholder')}</span>
+                </div>
+              </div>
             </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logPurchase.supplierOptional')}</span>
+              <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.logPurchase.supplierPlaceholder')}</span>
+              </div>
+            </div>
+
+            <p className="text-xs font-normal leading-5 text-green-600">{t('modals.logPurchase.hint')}</p>
           </section>
         </div>
 
-        <div className="shrink-0 px-[30px] py-4">
+        <div className="shrink-0 border-t border-zinc-200 px-[30px] py-4">
           <div className="flex items-center justify-between gap-5">
-            <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
+            <button onClick={onClose} className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
               {tc('actions.cancel')}
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
@@ -593,6 +644,21 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
                 <div className="flex h-14 w-full items-center justify-between rounded-[87px] bg-zinc-100 px-4">
                   <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Downtown</span>
                   <ChevronDown size={18} className="text-[#686868]" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.date')}</span>
+                <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.transferStock.datePlaceholder')}</span>
+                </div>
+              </div>
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.transferStock.responsible')}</span>
+                <div className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4">
+                  <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.transferStock.responsiblePlaceholder')}</span>
                 </div>
               </div>
             </div>
@@ -761,7 +827,7 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
         {/* Submit pinned to bottom (Bug-2) */}
         <div className="shrink-0 border-t border-zinc-200 bg-[#F2F2F2] px-[22.69px] py-6">
           <button className="flex h-14 w-full max-w-[400px] items-center justify-center rounded-[30.29px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4.04px_16.46px_11.11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
-            <span className="font-satoshi">{t('wasteForm.submit')}</span>
+            <span className="font-satoshi">{t('wasteForm.logWaste')}</span>
           </button>
         </div>
       </div>
@@ -825,25 +891,25 @@ function StockTab() {
             <col className="w-[24%]" />
           </colgroup>
           <thead>
-            <tr className="border-b border-neutral-100 bg-gray-200">
-              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colIngredientName')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colCurrentStock')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colStatus')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colLastUpdate')}</th>
+            <tr className="divide-x divide-[#E0E0E0] border-b border-neutral-100 bg-gray-200">
+              <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colIngredientName')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colCurrentStock')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colStatus')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colLastUpdate')}</th>
               <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('stock.colAction')}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((ing) => (
-              <tr key={ing.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+              <tr key={ing.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
                 <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="truncate text-sm font-medium text-zinc-800 sm:text-base">{ing.name}</div>
+                  <div className="truncate text-center text-sm font-medium text-zinc-800 sm:text-base">{ing.name}</div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 align-middle text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">
                   {ing.currentStock} <span className="font-normal text-neutral-400">{ing.unit}</span>
                 </td>
-                <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
-                <td className="whitespace-nowrap px-3 py-3 align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
+                <td className="px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(ing.status)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{ing.lastUpdate}</td>
                 <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <div className="flex items-center justify-center gap-1 sm:gap-2">
                     <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-zinc-100 hover:text-emerald-600 sm:h-9 sm:w-9">
@@ -872,8 +938,11 @@ function StockTab() {
 
 function RecipeTab() {
   const t = useTranslations('inventory');
+  const locale = useLocale();
+  const isAr = locale === 'ar';
   const [recipes, setRecipes] = useState<Recipe[]>(RECIPES);
   const [editing, setEditing] = useState<Recipe | null>(null);
+  const [subTab, setSubTab] = useState<'main' | 'addon'>('main');
 
   const saveMapping = (rows: RecipeIngredient[]) => {
     if (!editing) return;
@@ -883,6 +952,8 @@ function RecipeTab() {
       return exists ? prev.map((r) => (r.id === editing.id ? updated : r)) : [...prev, updated];
     });
   };
+
+  const visible = recipes.filter((r) => r.kind === subTab);
 
   return (
     <div className="flex flex-col gap-6">
@@ -896,7 +967,7 @@ function RecipeTab() {
           />
         </div>
         <button
-          onClick={() => setEditing({ id: `r-${Date.now()}`, name: t('recipe.newRecipe'), status: 'available', ingredients: [] })}
+          onClick={() => setEditing({ id: `r-${Date.now()}`, name: t('recipe.newRecipe'), status: 'available', kind: subTab, ingredients: [] })}
           className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
         >
           <Plus size={20} />
@@ -904,60 +975,115 @@ function RecipeTab() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-        {recipes.map((recipe) => (
-          <div key={recipe.id} className="flex w-full max-w-[322px] flex-col gap-[21px] overflow-hidden rounded-[22.5px] bg-white p-[14.64px]">
-            <div className="flex flex-col gap-[11px]">
-              <div className="relative h-[263.5px] w-full overflow-hidden rounded-[11.26px] bg-zinc-100">
-                <div className="flex h-full w-full items-center justify-center">
+      {/* Sub-tabs: Main Menu Item | Add on & Extras */}
+      <div className="flex items-center gap-6 border-b border-[#B9B9B9]">
+        {([
+          { id: 'main' as const, label: isAr ? 'الأصناف الأساسية' : 'Main Menu Item' },
+          { id: 'addon' as const, label: isAr ? 'الإضافات' : 'Add on & Extras' },
+        ]).map((st) => (
+          <button
+            key={st.id}
+            onClick={() => setSubTab(st.id)}
+            className={cn(
+              'border-b-2 px-1 pb-3 text-[16px] leading-[1.4] transition-colors',
+              subTab === st.id ? 'border-[#026F4F] font-medium text-[#026F4F]' : 'border-transparent text-[#989898] hover:text-[#2D2F33]',
+            )}
+          >
+            {st.label}
+          </button>
+        ))}
+      </div>
+
+      {subTab === 'main' ? (
+        <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {visible.map((recipe) => (
+            <div key={recipe.id} className="flex w-full max-w-[322px] flex-col gap-[18px] overflow-hidden rounded-[22.5px] bg-white p-[20px]">
+              <div className="flex flex-col gap-[11px]">
+                <div className="relative h-[263.5px] w-full overflow-hidden rounded-[11.26px] bg-[#F2F2F2]">
                   <Image
                     src="/images/food-41e5d7.png"
                     alt={recipe.name}
-                    width={182}
-                    height={182}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(min-width:1536px) 20vw, (min-width:1024px) 25vw, (min-width:640px) 33vw, 50vw"
+                    className="object-cover"
                   />
+                  <div
+                    className={cn(
+                      'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.88px] px-[11.26px] py-[9.01px]',
+                      recipe.status === 'available' ? 'bg-[#10D935]' : 'bg-[#D91010]',
+                    )}
+                  >
+                    <span className="text-[13.5px] font-medium leading-[1.4] text-white">
+                      {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
+                    </span>
+                  </div>
                 </div>
-                <div
-                  className={cn(
-                    'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.88px] px-[11.26px] py-[9.01px]',
-                    recipe.status === 'available' ? 'bg-[#10D935]' : 'bg-[#D91010]',
-                  )}
-                >
-                  <span className="text-[13.5px] font-medium leading-[1.4] text-white">
-                    {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
-                  </span>
+
+                <div className="flex flex-col gap-[12px]">
+                  <h3 className="truncate font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
+                  <div className="relative h-20 w-full overflow-hidden rounded-[5px] bg-zinc-100">
+                    {recipe.ingredients.length > 0 ? (
+                      <div className="absolute inset-x-[9px] top-[11px] flex flex-col gap-[13px]">
+                        {recipe.ingredients.slice(0, 2).map((ing, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-[16px] font-normal leading-[1.4]">
+                            <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.name}</span>
+                            <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.quantity} {ing.unit}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="absolute start-[13.84px] top-[10.92px] text-[16px] font-normal leading-[1.4] text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-[12px]">
-                <h3 className="truncate font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
-                <div className="relative h-20 w-full overflow-hidden rounded-[5px] bg-zinc-100">
-                  {recipe.ingredients.length > 0 ? (
-                    <div className="absolute inset-x-[9px] top-[11px] flex flex-col gap-[13px]">
-                      {recipe.ingredients.slice(0, 2).map((ing, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-[16px] font-normal leading-[1.4]">
-                          <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.name}</span>
-                          <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.quantity} {ing.unit}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="absolute start-[13.84px] top-[10.92px] text-[16px] font-normal leading-[1.4] text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
-                  )}
-                </div>
-              </div>
+              <button
+                onClick={() => setEditing(recipe)}
+                className="flex h-[53px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+              >
+                {t('recipe.editRecipe')}
+              </button>
             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {visible.map((recipe) => (
+            <div key={recipe.id} className="flex w-full flex-col gap-[12px] rounded-[22.5px] bg-white p-[13.94px]">
+              <span
+                className={cn(
+                  'inline-flex w-fit items-center justify-center rounded-[7.9px] px-[11.29px] py-[9.03px] text-[13.5px] font-medium leading-[1.4] text-white',
+                  recipe.status === 'available' ? 'bg-[#10D935]' : 'bg-[#D91010]',
+                )}
+              >
+                {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
+              </span>
+              <h3 className="truncate font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
+              <div className="flex min-h-[45px] items-center rounded-[5px] bg-zinc-100 px-[9px]">
+                {recipe.ingredients.length > 0 ? (
+                  <div className="flex w-full items-center justify-between text-[16px] font-normal leading-[1.4]">
+                    <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{recipe.ingredients[0].name}</span>
+                    <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{recipe.ingredients[0].quantity} {recipe.ingredients[0].unit}</span>
+                  </div>
+                ) : (
+                  <span className="text-[16px] font-normal leading-[1.4] text-neutral-400">{t('recipe.noIngredientsMapped')}</span>
+                )}
+              </div>
+              <button
+                onClick={() => setEditing(recipe)}
+                className="flex h-[53px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+              >
+                {t('recipe.editRecipe')}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-            <button
-              onClick={() => setEditing(recipe)}
-              className="flex h-[53px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
-            >
-              {t('recipe.editRecipe')}
-            </button>
-          </div>
-        ))}
-      </div>
+      {visible.length === 0 && (
+        <p className="py-10 text-center text-sm text-[#989898]">{t('recipe.noIngredientsMapped')}</p>
+      )}
 
       <RecipeMappingModal
         open={!!editing}
@@ -1009,34 +1135,34 @@ function PurchasesTab() {
             <col className="w-[22%]" />
           </colgroup>
           <thead>
-            <tr className="bg-gray-200">
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colOrderIdDate')}</th>
-              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colQuantityBought')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colTotal')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colSupplier')}</th>
+            <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colOrderIdDate')}</th>
+              <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colQuantityBought')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colTotal')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colSupplier')}</th>
             </tr>
           </thead>
           <tbody>
             {PURCHASES.map((p) => (
-              <tr key={p.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="flex flex-col gap-0.5">
+              <tr key={p.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex flex-col items-center gap-0.5">
                     <span className="text-sm font-medium leading-6 text-zinc-800 sm:text-base">{p.orderId}</span>
                     <span className="text-xs leading-5 text-neutral-400 sm:text-sm">{p.date}</span>
                   </div>
                 </td>
-                <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                  <div className="flex flex-col items-start gap-1.5">
+                <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex flex-col items-center gap-1.5">
                     <span className="max-w-[150px] truncate text-sm font-medium leading-6 text-zinc-800 sm:max-w-[200px] sm:text-base lg:max-w-none">{p.ingredient}</span>
                     <span className="inline-flex whitespace-nowrap rounded-3xl bg-green-200 px-2.5 py-1 text-xs font-normal leading-5 text-green-700 sm:text-sm">{t('purchases.avgCost', { cost: `$${p.avgCost.toFixed(2)}`, unit: p.unit })}</span>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 text-sm text-neutral-400 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{p.quantity} {p.unit}</td>
-                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm text-neutral-400 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{p.quantity} {p.unit}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <span className="text-sm font-semibold leading-6 text-emerald-700 sm:text-base"><bdi dir="ltr">${p.total.toFixed(2)}</bdi></span>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
                   <span className="block max-w-[110px] truncate text-sm font-normal leading-7 text-zinc-800 sm:max-w-[160px] sm:text-base lg:max-w-none">{p.supplier}</span>
                 </td>
               </tr>
@@ -1097,26 +1223,26 @@ function TransfersTab() {
             <col className="w-[14%]" />
           </colgroup>
           <thead>
-            <tr className="bg-gray-200">
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTransferId')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colDate')}</th>
-              <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colIngredient')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colQuantity')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colFrom')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTo')}</th>
-              <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colStatus')}</th>
+            <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTransferId')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colDate')}</th>
+              <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colIngredient')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colQuantity')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colFrom')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colTo')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('transfers.colStatus')}</th>
             </tr>
           </thead>
           <tbody>
             {TRANSFERS.map((t) => (
-              <tr key={t.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                <td className="whitespace-nowrap px-3 py-3 text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.transferId}</td>
-                <td className="whitespace-nowrap px-3 py-3 text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{t.date}</td>
-                <td className="max-w-[110px] truncate px-3 py-3 text-sm font-medium text-zinc-800 sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.ingredient}</td>
-                <td className="whitespace-nowrap px-3 py-3 text-sm text-neutral-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.quantity} {t.unit}</td>
-                <td className="max-w-[90px] truncate px-3 py-3 text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.from}</td>
-                <td className="max-w-[90px] truncate px-3 py-3 text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.to}</td>
-                <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(t.status)}</td>
+              <tr key={t.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.transferId}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-xs text-neutral-500 sm:px-4 sm:py-4 sm:text-sm lg:px-6 lg:py-5">{t.date}</td>
+                <td className="max-w-[110px] truncate px-3 py-3 text-center align-middle text-sm font-medium text-zinc-800 sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.ingredient}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm text-neutral-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{t.quantity} {t.unit}</td>
+                <td className="max-w-[90px] truncate px-3 py-3 text-center align-middle text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.from}</td>
+                <td className="max-w-[90px] truncate px-3 py-3 text-center align-middle text-sm text-neutral-500 sm:max-w-[130px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{t.to}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">{statusBadge(t.status)}</td>
               </tr>
             ))}
           </tbody>
@@ -1257,23 +1383,23 @@ function PhysicalCountTab() {
               <col className="w-[16%]" />
             </colgroup>
             <thead>
-              <tr className="bg-gray-200">
-                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
-                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
-                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colTheo')}</th>
-                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colPhys')}</th>
-                <th className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colVariance')}</th>
+              <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
+                <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colIngredient')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colTheo')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colPhys')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colVariance')}</th>
               </tr>
             </thead>
             <tbody>
               {COUNTS.map((c) => (
-                <tr key={c.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.date}</td>
-                  <td className="max-w-[140px] truncate px-3 py-3 text-sm font-medium leading-6 text-black sm:max-w-[200px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{c.ingredient}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.theo}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.phys}</td>
+                <tr key={c.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.date}</td>
+                  <td className="max-w-[140px] truncate px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:max-w-[200px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{c.ingredient}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.theo}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.phys}</td>
                   <td className={cn(
-                    'whitespace-nowrap px-3 py-3 text-end text-sm font-medium leading-6 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5',
+                    'whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5',
                     c.variance < 0 ? 'text-red-500' : c.variance > 0 ? 'text-green-500' : 'text-black',
                   )}>
                     {c.variance > 0 ? `+${c.variance}` : c.variance}
@@ -1333,27 +1459,27 @@ function WasteLogTab() {
               <col className="w-[24%]" />
             </colgroup>
             <thead>
-              <tr className="bg-gray-200">
-                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
-                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colItem')}</th>
-                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colQtyWasted')}</th>
-                <th className="px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colReason')}</th>
-                <th className="whitespace-nowrap px-3 py-3 text-start text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colLoggedBy')}</th>
+              <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colDate')}</th>
+                <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colItem')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colQtyWasted')}</th>
+                <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colReason')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colLoggedBy')}</th>
               </tr>
             </thead>
             <tbody>
               {WASTE_RECORDS.map((w) => (
-                <tr key={w.id} className="border-b border-neutral-50 transition-colors hover:bg-neutral-50">
-                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.date}</td>
-                  <td className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-5">
-                    <div className="flex flex-col items-start gap-1">
+                <tr key={w.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.date}</td>
+                  <td className="px-3 py-3 align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                    <div className="flex flex-col items-center gap-1">
                       <span className="max-w-[150px] truncate text-sm font-medium leading-6 text-black sm:max-w-[200px] sm:text-base lg:max-w-none">{w.item}</span>
                       <span className="max-w-[150px] truncate text-xs font-normal leading-6 text-neutral-400 sm:max-w-[200px] sm:text-sm lg:max-w-none">{w.notes}</span>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-red-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.qtyWasted}</td>
-                  <td className="max-w-[120px] truncate px-3 py-3 text-sm font-medium leading-6 text-black sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{w.reason}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-sm font-medium leading-6 text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.loggedBy}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-red-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.qtyWasted}</td>
+                  <td className="max-w-[120px] truncate px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{w.reason}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.loggedBy}</td>
                 </tr>
               ))}
             </tbody>

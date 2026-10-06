@@ -26,10 +26,12 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
   const description = isAr ? (item.description_ar ?? item.description) : item.description;
 
   return (
-    <div className="flex w-full max-w-[320px] flex-col rounded-2xl bg-white pb-3">
-      {/* Image */}
-      <div className="relative mx-3 mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-[#F2F2F2]">
-        <Image src="/images/food-41e5d7.png" alt={name} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 33vw, 50vw" className="object-cover" />
+    <div className="flex w-full max-w-[300px] flex-col rounded-2xl bg-white p-3">
+      {/* Image — full picture visible (contain) with padding */}
+      <div className="relative h-20 w-full overflow-hidden rounded-xl bg-[#F2F2F2] p-2">
+        <div className="relative h-full w-full">
+          <Image src="/images/food-41e5d7.png" alt={name} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 33vw, 50vw" className="object-contain" />
+        </div>
         <span
           className={cn(
             'absolute start-2 top-2 inline-flex items-center gap-3 rounded-[8px] px-3 py-2 text-[13px] font-medium leading-none text-white',
@@ -41,7 +43,7 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
       </div>
 
       {/* Info */}
-      <div className="mx-3 mt-3 flex flex-col gap-2">
+      <div className="mt-3 flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-1">
             <h3 className="truncate font-satoshi text-[15px] font-medium leading-5 text-[#2D2F33]">{name}</h3>
@@ -53,10 +55,10 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
       </div>
 
       {/* Divider — dashed per Figma */}
-      <div className="mx-2 mt-2.5 border-t border-dashed border-[#B9B9B9]" />
+      <div className="mt-3 border-t border-dashed border-[#B9B9B9]" />
 
       {/* Actions */}
-      <div className="mx-3 mt-3 flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between">
         {/* Toggle */}
         <div className="relative h-6 w-11 cursor-pointer">
           <span

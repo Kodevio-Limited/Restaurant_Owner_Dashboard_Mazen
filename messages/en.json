@@ -634,7 +634,8 @@
       "chooseResponsible": "Choose who is responsible for",
       "addContext": "Add Context...",
       "exampleQty": "e.g. 2",
-      "submit": "Submit Count"
+      "submit": "Submit Count",
+      "logWaste": "Log Waste"
     },
     "wasteLog": {
       "logWastedItem": "Log Wasted Item",
@@ -663,6 +664,10 @@
       "logPurchase": {
         "title": "Log Purchase Order",
         "totalCost": "Total Cost ($)",
+        "date": "Date",
+        "datePlaceholder": "e.g. 2026-08-27",
+        "responsible": "Responsible Person",
+        "responsiblePlaceholder": "e.g. John. D",
         "supplierOptional": "Supplier (Optional)",
         "supplierPlaceholder": "e.g. Metro Meats Co.",
         "hint": "Logging this purchase will automatically update your current stock and recalculate the Average Cost per unit for profit margin tracking.",
@@ -672,6 +677,10 @@
         "title": "Transfer Stock",
         "fromLocation": "From Location",
         "toLocation": "To Location",
+        "date": "Date",
+        "datePlaceholder": "e.g. 2026-08-27",
+        "responsible": "Responsible Person",
+        "responsiblePlaceholder": "e.g. John. D",
         "submit": "Execute Transfer"
       },
       "physicalCount": {

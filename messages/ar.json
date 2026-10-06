@@ -633,7 +633,8 @@
       "chooseResponsible": "اختر المسؤول",
       "addContext": "أضف تفاصيل...",
       "exampleQty": "مثال: 2",
-      "submit": "تسجيل الجرد"
+      "submit": "تسجيل الجرد",
+      "logWaste": "تسجيل الهدر"
     },
     "wasteLog": {
       "logWastedItem": "تسجيل عنصر هالك",
@@ -660,6 +661,10 @@
       "logPurchase": {
         "title": "تسجيل أمر شراء",
         "totalCost": "التكلفة الإجمالية ($)",
+        "date": "التاريخ",
+        "datePlaceholder": "مثال: 2026-08-27",
+        "responsible": "الشخص المسؤول",
+        "responsiblePlaceholder": "مثال: جون د",
         "supplierOptional": "المورّد (اختياري)",
         "supplierPlaceholder": "مثال: شركة ميترو ميتس",
         "hint": "سيؤدي تسجيل هذه المشتريات إلى تحديث مخزونك الحالي تلقائيًا وإعادة حساب متوسط التكلفة للوحدة الواحدة لتتبع هامش الربح.",
@@ -669,6 +674,10 @@
         "title": "تحويل مخزون",
         "fromLocation": "من الموقع",
         "toLocation": "إلى الموقع",
+        "date": "التاريخ",
+        "datePlaceholder": "مثال: 2026-08-27",
+        "responsible": "الشخص المسؤول",
+        "responsiblePlaceholder": "مثال: جون د",
         "submit": "تنفيذ التحويل"
       },
       "physicalCount": {
