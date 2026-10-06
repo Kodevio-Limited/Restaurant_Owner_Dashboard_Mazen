@@ -995,44 +995,44 @@ function RecipeTab() {
       </div>
 
       {subTab === 'main' ? (
-        <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {visible.map((recipe) => (
-            <div key={recipe.id} className="flex w-full max-w-[322px] flex-col gap-[18px] overflow-hidden rounded-[22.5px] bg-white p-[20px]">
-              <div className="flex flex-col gap-[11px]">
-                <div className="relative h-[263.5px] w-full overflow-hidden rounded-[11.26px] bg-[#F2F2F2]">
-                  <Image
-                    src="/images/food-41e5d7.png"
-                    alt={recipe.name}
-                    fill
-                    sizes="(min-width:1536px) 20vw, (min-width:1024px) 25vw, (min-width:640px) 33vw, 50vw"
-                    className="object-cover"
-                  />
+            <div key={recipe.id} className="flex w-full max-w-[324px] flex-col items-start gap-[21px] overflow-clip rounded-[22.517px] bg-white p-[14.64px]">
+              <div className="flex w-full flex-col gap-[11px]">
+                <div className="relative aspect-[295/263] w-full overflow-clip rounded-[11.258px] bg-[#F2F2F2]">
+                  <div className="pointer-events-none absolute left-1/2 top-[15.38%] aspect-square w-[61.76%] -translate-x-1/2 overflow-clip">
+                    <img
+                      src="/images/figma/recipe-food.png"
+                      alt={recipe.name}
+                      className="absolute left-[-8%] top-[-1.51%] h-[110.19%] w-[110.42%] max-w-none"
+                    />
+                  </div>
                   <div
                     className={cn(
-                      'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.88px] px-[11.26px] py-[9.01px]',
+                      'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.881px] px-[11.258px] py-[9.007px]',
                       recipe.status === 'available' ? 'bg-[#10D935]' : 'bg-[#D91010]',
                     )}
                   >
-                    <span className="text-[13.5px] font-medium leading-[1.4] text-white">
+                    <span className="text-[13.51px] font-medium leading-[1.4] text-white">
                       {recipe.status === 'available' ? t('status.available') : t('status.outOfStock')}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-[12px]">
-                  <h3 className="truncate font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
-                  <div className="relative h-20 w-full overflow-hidden rounded-[5px] bg-zinc-100">
+                <div className="flex w-full flex-col gap-[12px]">
+                  <h3 className="w-full font-satoshi text-[21.391px] font-medium leading-[1.4] text-[#2D2F33]">{recipe.name}</h3>
+                  <div className="relative h-[80px] w-full overflow-clip rounded-[5px] bg-[#F2F2F2]">
                     {recipe.ingredients.length > 0 ? (
-                      <div className="absolute inset-x-[9px] top-[11px] flex flex-col gap-[13px]">
+                      <div className="absolute start-1/2 top-[11px] flex w-[275px] -translate-x-1/2 flex-col gap-[13px] text-[16px] font-normal leading-[1.4]">
                         {recipe.ingredients.slice(0, 2).map((ing, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-[16px] font-normal leading-[1.4]">
-                            <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.name}</span>
-                            <span className={recipe.status === 'available' ? 'text-neutral-400' : 'text-red-600'}>{ing.quantity} {ing.unit}</span>
+                          <div key={idx} className="flex items-center justify-between">
+                            <span className={recipe.status === 'available' ? 'text-[#989898]' : 'text-[#D91010]'}>{ing.name}</span>
+                            <span className={recipe.status === 'available' ? 'text-[#989898]' : 'text-[#D91010]'}>{ing.quantity} {ing.unit}</span>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="absolute start-[13.84px] top-[10.92px] text-[16px] font-normal leading-[1.4] text-neutral-400">{t('recipe.noIngredientsMapped')}</div>
+                      <div className="absolute start-[13.84px] top-[10.92px] text-[16px] font-normal leading-[1.4] text-[#989898]">{t('recipe.noIngredientsMapped')}</div>
                     )}
                   </div>
                 </div>
@@ -1040,7 +1040,7 @@ function RecipeTab() {
 
               <button
                 onClick={() => setEditing(recipe)}
-                className="flex h-[53px] w-full items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
+                className="flex h-[53px] w-full shrink-0 items-center justify-center whitespace-nowrap rounded-[30px] bg-[#026F4F] text-[19px] font-medium leading-[1.4] text-white shadow-[0px_4px_8.15px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800"
               >
                 {t('recipe.editRecipe')}
               </button>

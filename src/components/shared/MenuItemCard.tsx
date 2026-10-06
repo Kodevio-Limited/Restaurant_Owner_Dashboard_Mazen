@@ -26,16 +26,20 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
   const description = isAr ? (item.description_ar ?? item.description) : item.description;
 
   return (
-    <div className="flex w-full max-w-[300px] flex-col rounded-2xl bg-white p-3">
-      {/* Image — full picture visible (contain) with padding */}
-      <div className="relative h-20 w-full overflow-hidden rounded-xl bg-[#F2F2F2] p-2">
-        <div className="relative h-full w-full">
-          <Image src="/images/food-41e5d7.png" alt={name} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 33vw, 50vw" className="object-contain" />
+    <div className="flex w-full max-w-[324px] flex-col items-start gap-[21px] overflow-clip rounded-[22.517px] bg-white p-[14.64px]">
+      {/* Image container */}
+      <div className="relative aspect-[295/263] w-full overflow-clip rounded-[11.258px] bg-[#F2F2F2]">
+        <div className="pointer-events-none absolute left-1/2 top-[15.38%] aspect-square w-[61.76%] -translate-x-1/2 overflow-clip">
+          <img
+            src="/images/figma/recipe-food.png"
+            alt={name}
+            className="absolute left-[-8%] top-[-1.51%] h-[110.19%] w-[110.42%] max-w-none"
+          />
         </div>
         <span
           className={cn(
-            'absolute start-2 top-2 inline-flex items-center gap-3 rounded-[8px] px-3 py-2 text-[13px] font-medium leading-none text-white',
-            item.available ? 'bg-[#10D935]' : 'bg-[#E85E5E]',
+            'absolute start-[9.01px] top-[10.13px] inline-flex items-center justify-center rounded-[7.881px] px-[11.258px] py-[9.007px] text-[13.51px] font-medium leading-[1.4] text-white',
+            item.available ? 'bg-[#10D935]' : 'bg-[#D91010]',
           )}
         >
           {item.available ? (isAr ? 'متاح' : 'AVAILABLE') : (isAr ? 'غير متاح' : 'UNAVAILABLE')}
@@ -43,10 +47,10 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
       </div>
 
       {/* Info */}
-      <div className="mt-3 flex flex-col gap-2">
-        <div className="flex items-start justify-between gap-2">
+      <div className="flex w-full flex-col gap-[12px]">
+        <div className="flex w-full items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-1">
-            <h3 className="truncate font-satoshi text-[15px] font-medium leading-5 text-[#2D2F33]">{name}</h3>
+            <h3 className="w-full truncate font-satoshi text-[21.391px] font-medium leading-[1.4] text-[#2D2F33]">{name}</h3>
             <p className="text-xs font-medium leading-4 text-[#686868]">{category}</p>
           </div>
           <span className="shrink-0 text-base font-semibold leading-5 text-[#026F4F]">{item.price}</span>
@@ -55,10 +59,10 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
       </div>
 
       {/* Divider — dashed per Figma */}
-      <div className="mt-3 border-t border-dashed border-[#B9B9B9]" />
+      <div className="w-full border-t border-dashed border-[#B9B9B9]" />
 
       {/* Actions */}
-      <div className="mt-3 flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         {/* Toggle */}
         <div className="relative h-6 w-11 cursor-pointer">
           <span
