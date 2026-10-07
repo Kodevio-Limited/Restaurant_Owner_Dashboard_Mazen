@@ -70,8 +70,8 @@ export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, ti
         className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-[9px] border border-[#B9B9B9]"
         style={{ backgroundColor: cfg.bodyBg }}
       >
-        <div className="absolute inset-x-[12px] top-[12px] flex items-start justify-between gap-2">
-          <div className="flex min-w-0 flex-col">
+        <div className="absolute inset-x-[12px] top-[12px] flex flex-wrap items-start gap-x-2 gap-y-1">
+          <div className="flex min-w-0 grow flex-col">
             <span className="truncate font-satoshi text-[23px] font-medium leading-[1.4] text-black">
               {displayName}
             </span>
@@ -81,7 +81,7 @@ export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, ti
           </div>
 
           <span
-            className="inline-flex h-[30px] shrink-0 items-center justify-center rounded-[37px] px-[12px] py-[6px] text-[13px] font-medium leading-[1.4] text-white"
+            className="ms-auto inline-flex h-[30px] shrink-0 items-center justify-center rounded-[37px] px-[12px] py-[6px] text-[13px] font-medium leading-[1.4] text-white"
             style={{ backgroundColor: cfg.pillBg }}
           >
             {displayLabel}

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, X, Globe, ImageUp, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, X, Globe, Plus, Trash2, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import { cn, lockPageScroll } from '@/lib/utils';
 
@@ -387,7 +388,16 @@ export function AddItemModal({
                 className="sr-only"
                 onChange={(e) => setImageName(e.target.files?.[0]?.name ?? null)}
               />
-              <ImageUp size={40} className="text-[#989898]" strokeWidth={1.5} />
+              <span className="flex size-[52px] items-center justify-center">
+                <Image
+                  src="/images/figma/upload-gallery.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={45}
+                  height={45}
+                  className="size-[44.833px]"
+                />
+              </span>
               <span className="block max-w-full text-lg font-semibold leading-7 text-[#026F4F]">
                 {imageName ?? (isAr ? 'تحميل صورة' : 'Upload Photo')}
                 {!imageName && (

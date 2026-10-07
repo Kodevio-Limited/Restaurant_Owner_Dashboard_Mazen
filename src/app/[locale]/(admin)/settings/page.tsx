@@ -4,7 +4,7 @@ import { useState, useEffect, Fragment } from 'react';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import {
-  ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe, Camera,
+  ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe,
   Search, Crosshair, Bell, Receipt, Building2, CreditCard,
   FileText, Plus, User, Package, Clock,
 } from 'lucide-react';
@@ -251,18 +251,27 @@ function GeneralBrandTab() {
       <SectionCard title={t('branding')}>
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
           {/* Logo upload */}
-          <label className="flex h-44 w-72 shrink-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-[#B9B9B9] bg-[#F2F2F2] transition-colors hover:border-[#026F4F]">
+          <label className="flex h-44 w-72 shrink-0 cursor-pointer flex-col items-center justify-center gap-[9px] rounded-lg border border-dashed border-[#989898] bg-[#F2F2F2] transition-colors hover:border-[#026F4F]">
             <input
               type="file"
               accept="image/png,image/jpeg"
               className="sr-only"
               onChange={(e) => setLogoName(e.target.files?.[0]?.name ?? null)}
             />
-            <Camera size={44} className="text-[#686868]" />
-            <span className="max-w-[90%] truncate text-base font-medium text-[#2D2F33]">
+            <span className="flex size-[52px] items-center justify-center">
+              <Image
+                src="/images/figma/upload-gallery.svg"
+                alt=""
+                aria-hidden="true"
+                width={45}
+                height={45}
+                className="size-[44.833px]"
+              />
+            </span>
+            <span className="max-w-[90%] truncate text-center text-[16px] font-medium leading-[1.4] text-[#2D2F33]">
               {logoName ?? t('uploadLogo')}
             </span>
-            <span className="text-xs text-[#989898]">{t('logoHint')}</span>
+            <span className="text-center text-[13px] font-medium leading-[1.4] text-[#989898]">{t('logoHint')}</span>
           </label>
 
           {/* Two columns: Color + Language */}

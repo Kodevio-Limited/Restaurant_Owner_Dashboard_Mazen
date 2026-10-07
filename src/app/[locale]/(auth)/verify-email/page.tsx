@@ -1,5 +1,7 @@
 import { Link } from '@/i18n/routing';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import AuthShell from '@/components/auth/AuthShell';
+import { AuthHeader, AuthButton } from '@/components/auth/AuthFields';
 
 export default async function VerifyEmailPage({
   params,
@@ -11,53 +13,47 @@ export default async function VerifyEmailPage({
   const t = await getTranslations('auth.verifyEmail');
 
   return (
-    <>
-      <div className="flex w-full flex-col items-center gap-3 text-center">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-['Satoshi'] text-zinc-800">
-          {t('title')}
-        </h1>
-        <p className="max-w-[492px] text-sm sm:text-base md:text-lg text-zinc-500 font-normal">
-          {t('subtitle')}
-        </p>
-      </div>
+    <AuthShell
+      photo="/images/figma/auth/signin.webp"
+      photoAlt="Waiter taking an order at a restaurant table"
+    >
+      <div className="flex w-full flex-col gap-[clamp(32px,3.13vw,60.34px)]">
+        <div className="flex w-full flex-col items-center gap-[clamp(36px,3.49vw,67px)]">
+          <AuthHeader title={t('title')} subtitle={t('subtitle')} />
 
-      {/* OTP Input */}
-      <div className="w-full flex flex-col items-center gap-6">
-        <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4" dir="ltr">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-12 h-14 sm:w-16 sm:h-20 bg-gray-200 rounded-xl sm:rounded-2xl flex items-center justify-center text-zinc-800 text-2xl sm:text-3xl font-bold"
-            >
-              <input
-                type="text"
-                maxLength={1}
-                className="w-full h-full bg-transparent text-center outline-none text-zinc-800 text-2xl sm:text-3xl font-bold"
-              />
+          <div className="flex w-full flex-col items-center gap-[clamp(14px,1.57vw,30.223px)]">
+            <div className="flex flex-wrap items-center justify-center gap-[clamp(8px,1.04vw,20px)]" dir="ltr">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <input
+                  key={i}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  aria-label={`Digit ${i + 1}`}
+                  className="h-[clamp(56px,5.73vw,110px)] w-[clamp(44px,4.32vw,83px)] rounded-[clamp(12px,1.15vw,22px)] bg-[#E9E9E9] text-center font-['Satoshi'] text-[clamp(20px,1.88vw,36px)] font-bold text-[#2D2F33] outline-none focus:ring-2 focus:ring-[#026F4F]"
+                />
+              ))}
             </div>
-          ))}
+            <button
+              type="button"
+              className="font-['Satoshi'] text-[clamp(13px,0.94vw,18.134px)] font-semibold text-[#026F4F] hover:underline"
+            >
+              {t('sendAgain')}
+            </button>
+          </div>
         </div>
+
+        <Link href="/create-password" className="group flex w-full">
+          <AuthButton>{t('verify')}</AuthButton>
+        </Link>
+
+        <Link
+          href="/login"
+          className="text-center font-['Satoshi'] text-[clamp(13px,0.94vw,18.134px)] font-semibold text-[#026F4F] hover:underline"
+        >
+          {t('back')}
+        </Link>
       </div>
-
-      {/* Verify Button */}
-      <button className="w-full h-12 sm:h-14 bg-emerald-700 hover:bg-emerald-800 transition-colors rounded-full shadow-md flex justify-center items-center">
-        <span className="text-white text-base sm:text-lg font-medium">
-          {t('verify')}
-        </span>
-      </button>
-
-      <div className="flex flex-col items-center gap-1.5 text-center">
-        <button className="text-emerald-700 text-sm sm:text-base font-semibold hover:underline">
-          {t('sendAgain')}
-        </button>
-      </div>
-
-      <Link
-        href="/login"
-        className="text-center text-emerald-700 text-sm sm:text-base font-semibold hover:underline"
-      >
-        {t('back')}
-      </Link>
-    </>
+    </AuthShell>
   );
 }

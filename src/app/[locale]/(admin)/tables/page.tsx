@@ -206,7 +206,7 @@ export default function TablesPage() {
       </div>
 
       {/* ── Table grid ── */}
-      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {filtered.map((tab) => (
           <div key={tab.id} className="relative mx-auto w-full max-w-[301px]">
             <button

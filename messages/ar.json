@@ -351,10 +351,10 @@
       "address": "العنوان"
     },
     "editBranch": {
-      "back": "رجوع",
       "title": "تعديل الفرع",
+      "back": "رجوع",
       "branchName": "اسم الفرع",
-      "branchNamePlaceholder": "مثال: وسط المدينة (الرئيسي)",
+      "branchNamePlaceholder": "مثال: الفرع الرئيسي",
       "address": "العنوان",
       "addressPlaceholder": "عنوان الفرع الكامل...",
       "email": "البريد الإلكتروني",
@@ -422,21 +422,7 @@
     "saveChanges": "حفظ التغييرات",
     "tabsSettings": "إعدادات {tab}",
     "backToTop": "العودة إلى الأعلى",
-    "quickScroll": "تمرير سريع للأسفل",
-    "editBranch": {
-      "title": "تعديل الفرع",
-      "back": "رجوع",
-      "branchName": "اسم الفرع",
-      "branchNamePlaceholder": "مثال: الفرع الرئيسي",
-      "address": "العنوان",
-      "addressPlaceholder": "عنوان الفرع الكامل...",
-      "email": "البريد الإلكتروني",
-      "emailPlaceholder": "أدخل بريدك الإلكتروني",
-      "phone": "هاتف التواصل",
-      "phonePlaceholder": "(555) 000000",
-      "cancel": "إلغاء",
-      "saveBranch": "حفظ الفرع"
-    }
+    "quickScroll": "تمرير سريع للأسفل"
   },
   "billing": {
     "title": "الاشتراك والفواتير",
@@ -519,7 +505,7 @@
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور",
-      "subtitle": "أدخل بريدك الإلكتروني لتلقي رمز الاستعادة",
+      "subtitle": "أدخل البريد الإلكتروني الذي استخدمته لإنشاء حسابك",
       "emailLabel": "البريد الإلكتروني",
       "emailPlaceholder": "أدخل بريدك الإلكتروني...",
       "getCode": "الحصول على الرمز",
@@ -527,7 +513,7 @@
     },
     "createPassword": {
       "title": "إنشاء كلمة مرور جديدة",
-      "subtitle": "أنشئ كلمة مرور جديدة لحسابك",
+      "subtitle": "يجب إنشاء كلمة مرور جديدة بعد الاسترجاع",
       "newPasswordLabel": "كلمة المرور الجديدة",
       "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
       "retypePasswordLabel": "إعادة كتابة كلمة المرور",
@@ -542,9 +528,11 @@
       "back": "رجوع"
     },
     "chooseBranch": {
-      "title": "اختيار الفرع",
-      "subtitle": "حدد الفرع الذي ستعمل فيه اليوم",
-      "confirm": "تأكيد"
+      "title": "مرحباً بعودتك، صاحب المطعم",
+      "subtitle": "يرجى اختيار فرع لإدارة عملياته.",
+      "confirm": "تأكيد",
+      "todayRevenue": "إيرادات اليوم",
+      "reportsAnalytics": "التقارير والتحليلات"
     }
   },
   "inventory": {

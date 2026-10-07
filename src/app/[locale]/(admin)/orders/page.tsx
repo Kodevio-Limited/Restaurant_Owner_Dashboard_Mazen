@@ -230,7 +230,7 @@ export default function OrdersPage() {
 
       {/* Order cards */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 items-stretch justify-items-center gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 items-stretch justify-items-center gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((order) => (
             <div key={order.id} className="h-full w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5">
               <OrderCard

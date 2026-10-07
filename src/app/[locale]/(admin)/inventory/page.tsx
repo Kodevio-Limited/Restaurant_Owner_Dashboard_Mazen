@@ -741,21 +741,21 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
 
         {/* Form — scrolls, takes remaining space so submit stays pinned bottom */}
         <div className="flex-1 overflow-y-auto px-[22.69px] pb-6 pt-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+          <section className="relative flex w-full flex-col justify-center gap-4 rounded-xl bg-white px-[19px] py-6 outline outline-1 outline-offset-[-1px] overflow-hidden">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('labels.quantity')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('modals.physicalCount.choose')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('modals.physicalCount.choose')}</span>
                 <ChevronDown size={18} className="text-[#686868]" />
               </div>
             </div>
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.physicalCount.actualPhysicalCount')}</span>
-              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">$120.00</span>
+              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">$120.00</span>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Submit pinned to bottom */}
@@ -808,41 +808,41 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
 
         {/* Form — scrolls, takes remaining space so submit stays pinned bottom (Bug-2) */}
         <div className="flex-1 overflow-y-auto px-[22.69px] pb-6 pt-8">
-          <div className="flex flex-col gap-5">
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+          <section className="relative flex w-full flex-col justify-center gap-4 rounded-xl bg-white px-[19px] py-6 outline outline-1 outline-offset-[-1px] overflow-hidden">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.ingredient')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">Lettuce</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">Lettuce</span>
                 <ChevronDown size={18} className="text-[#686868]" />
               </div>
             </div>
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.quantityWasted')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.exampleQty')}</span>
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">KG</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.exampleQty')}</span>
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">KG</span>
               </div>
             </div>
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.reasonForWaste')}</span>
-              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.chooseReason')}</span>
+              <div className="flex h-16 w-full items-center justify-between rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseReason')}</span>
                 <ChevronDown size={18} className="text-[#686868]" />
               </div>
             </div>
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.responsible')}</span>
-              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-white px-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.chooseResponsible')}</span>
+              <div className="flex h-16 w-full items-center rounded-[87.84px] bg-zinc-100 px-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.chooseResponsible')}</span>
               </div>
             </div>
-            <div className="flex w-full max-w-[400px] flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <span className="text-base font-medium leading-5 text-zinc-800">{t('wasteForm.notesOptional')}</span>
-              <div className="flex h-28 w-full items-start rounded-xl bg-white px-4 py-4 outline outline-1 outline-zinc-200">
-                <span className="font-satoshi text-base font-medium leading-6 text-[#2D2F33]">{t('wasteForm.addContext')}</span>
+              <div className="flex h-28 w-full items-start rounded-xl bg-zinc-100 px-4 py-4">
+                <span className="font-satoshi text-base font-medium leading-6 text-[#686868]">{t('wasteForm.addContext')}</span>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Submit pinned to bottom (Bug-2) */}

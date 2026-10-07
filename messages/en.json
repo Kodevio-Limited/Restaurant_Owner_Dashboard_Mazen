@@ -351,8 +351,8 @@
       "address": "Address"
     },
     "editBranch": {
-      "back": "Back",
       "title": "Edit Branch",
+      "back": "Back",
       "branchName": "Branch Name",
       "branchNamePlaceholder": "e.g. Downtown (Main)",
       "address": "Address",
@@ -422,21 +422,7 @@
     "saveChanges": "Save Changes",
     "tabsSettings": "{tab} Settings",
     "backToTop": "Back to top",
-    "quickScroll": "Quick scroll to bottom",
-    "editBranch": {
-      "title": "Edit Branch",
-      "back": "Back",
-      "branchName": "Branch Name",
-      "branchNamePlaceholder": "e.g. Downtown (Main)",
-      "address": "Address",
-      "addressPlaceholder": "Full branch address...",
-      "email": "Email",
-      "emailPlaceholder": "Enter your Email",
-      "phone": "Contact Phone",
-      "phonePlaceholder": "(555) 000000",
-      "cancel": "Cancel",
-      "saveBranch": "Save Branch"
-    }
+    "quickScroll": "Quick scroll to bottom"
   },
   "billing": {
     "title": "Subscription & Billing",
@@ -519,7 +505,7 @@
     },
     "forgotPassword": {
       "title": "Forgot Password",
-      "subtitle": "Enter your email to receive a reset code",
+      "subtitle": "Provide email address which you used to create account",
       "emailLabel": "Email",
       "emailPlaceholder": "Enter your email...",
       "getCode": "Get Code",
@@ -527,7 +513,7 @@
     },
     "createPassword": {
       "title": "Create New Password",
-      "subtitle": "Create a new password for your account",
+      "subtitle": "You have to create a new password after forget",
       "newPasswordLabel": "New Password",
       "newPasswordPlaceholder": "Enter new password",
       "retypePasswordLabel": "Retype Password",
@@ -542,9 +528,11 @@
       "back": "Back"
     },
     "chooseBranch": {
-      "title": "Choose Branch",
-      "subtitle": "Select the branch you are working at today",
-      "confirm": "Confirm"
+      "title": "Welcome back, Owner",
+      "subtitle": "Please select a branch to manage its operations.",
+      "confirm": "Confirm",
+      "todayRevenue": "Today's Revenue",
+      "reportsAnalytics": "Reports & Analytics"
     }
   },
   "inventory": {

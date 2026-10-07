@@ -74,7 +74,7 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
   return (
     <div
       onClick={() => onOpen?.(order)}
-      className="flex h-full w-full cursor-pointer flex-col gap-4 rounded-[20px] bg-white p-5 shadow-[0px_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md"
+      className="@container flex h-full w-full cursor-pointer flex-col gap-4 rounded-[20px] bg-white p-5 shadow-[0px_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md"
     >
       {/* Header: customer + status badge + order no */}
       <div className="flex items-start justify-between gap-3">
@@ -94,8 +94,8 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
       </div>
 
       {/* Meta + View Details */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="flex min-w-[140px] grow flex-col gap-2">
           <div className="flex items-center gap-2">
             <Clock size={18} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
             <span className="truncate text-[14px] leading-[19px] text-[#989898]">{timeText}</span>
@@ -108,10 +108,19 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
         <button
           onClick={(e) => { e.stopPropagation(); onOpen?.(order); }}
           aria-label={isAr ? `عرض تفاصيل الطلب ${order.orderNo}` : `View details of order ${order.orderNo}`}
-          className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#E6F1ED] px-3.5 py-2.5 text-[12px] font-semibold leading-[16px] text-[#026F4F] transition-colors hover:bg-[#D6E9E2]"
+          className="ms-auto flex shrink-0 items-center justify-center rounded-xl bg-[#E6F1ED] px-3 py-2 text-[12px] font-semibold text-[#026F4F] transition-colors hover:bg-[#D6E9E2]"
         >
-          <span>{isAr ? 'عرض التفاصيل' : 'View Details'}</span>
-          <ArrowRight size={14} strokeWidth={2.4} className="rtl:rotate-180" />
+          {/* Wide: one line "View Details →" */}
+          <span className="flex items-center gap-1.5 leading-[16px] @max-[300px]:hidden">
+            <span>{isAr ? 'عرض التفاصيل' : 'View Details'}</span>
+            <ArrowRight size={14} strokeWidth={2.4} className="rtl:rotate-180" />
+          </span>
+          {/* Narrow: stacked View / → / Details so long dates always fit */}
+          <span className="hidden flex-col items-center gap-0.5 leading-[13px] @max-[300px]:flex">
+            <span>{isAr ? 'عرض' : 'View'}</span>
+            <ArrowRight size={13} strokeWidth={2.4} className="rtl:rotate-180" />
+            <span>{isAr ? 'التفاصيل' : 'Details'}</span>
+          </span>
         </button>
       </div>
 
