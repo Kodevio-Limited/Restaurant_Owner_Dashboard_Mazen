@@ -163,6 +163,13 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
           <NavItems showLabels={!collapsed} />
         </div>
 
+        {/* Language toggle (desktop) */}
+        {!collapsed && (
+          <div className="flex justify-center px-3 pb-2.5">
+            <LanguageToggle />
+          </div>
+        )}
+
         {/* Logout */}
         <div className={cn('border-t border-[#F2F2F2] py-2.5', collapsed ? 'flex justify-center' : 'px-3')}>
           <button
