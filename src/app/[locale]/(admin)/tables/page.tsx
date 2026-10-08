@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { Plus, Trash2 } from 'lucide-react';
-import Image from 'next/image';
+import { Plus } from 'lucide-react';
 import { TableCard, TableStatus } from '@/components/shared/TableCard';
 import { SeatGuestsModal } from '@/components/shared/SeatGuestsModal';
 import { AddEditTableModal } from '@/components/shared/AddEditTableModal';
@@ -13,7 +12,6 @@ import { TableInfoModal } from '@/components/shared/TableInfoModal';
 import { AddTableCategoryModal } from '@/components/shared/AddTableCategoryModal';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { cn } from '@/lib/utils';
-import { lockPageScroll } from '@/lib/utils';
 import { useQueryModal, readQueryParam, writeQueryParam } from '@/lib/use-query-modal';
 
 interface TableDef {
@@ -66,14 +64,6 @@ export default function TablesPage() {
   const [categoryOpen, setCategoryOpen] = useQueryModal('add-table-category');
   const [deleteOpen, setDeleteOpen] = useQueryModal('delete-table');
   const [deleteTarget, setDeleteTarget] = useState<TableDef | null>(null);
-  // Click-to-open action popup: shows Edit / Delete for a tapped table and
-  // locks the page until dismissed (tap the backdrop or the card again).
-  const [actionTab, setActionTab] = useState<TableDef | null>(null);
-
-  useEffect(() => {
-    lockPageScroll(!!actionTab);
-    return () => lockPageScroll(false);
-  }, [actionTab]);
 
   const findTable = (id: string | null, list: TableDef[]) =>
     id ? (list.find((t) => t.id === id) ?? null) : null;
@@ -210,8 +200,8 @@ export default function TablesPage() {
         {filtered.map((tab) => (
           <div key={tab.id} className="relative mx-auto w-full max-w-[301px]">
             <button
-              onClick={() => setActionTab((prev) => (prev?.id === tab.id ? null : tab))}
-              aria-label={isAr ? `خيارات ${tab.name_ar ?? tab.name}` : `Options ${tab.name}`}
+              onClick={() => openTable(tab)}
+              aria-label={isAr ? `تعديل ${tab.name_ar ?? tab.name}` : `Edit ${tab.name}`}
               className="w-full cursor-pointer text-start transition-transform hover:-translate-y-0.5 focus:outline-none"
             >
               <TableCard
@@ -226,52 +216,9 @@ export default function TablesPage() {
                 orderNumbers={tab.orderNumbers}
               />
             </button>
-
-            {/* Action popup — anchored INSIDE this table card */}
-            {actionTab?.id === tab.id && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center rounded-lg bg-black/45 p-2 backdrop-blur-xs">
-                <div
-                  className="flex max-w-full flex-wrap items-center justify-center gap-1.5 sm:gap-3"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const target = tab;
-                      setActionTab(null);
-                      openTable(target);
-                    }}
-                    className="flex h-9 min-w-0 items-center gap-1.5 rounded-[30px] bg-[#026F4F] px-3 text-[13px] font-medium text-white shadow-[0px_2.7px_5.4px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#015c42] sm:h-12 sm:gap-2 sm:px-5 sm:text-base"
-                  >
-                    <Image src="/images/figma/pencil.svg" alt="" width={18} height={18} className="size-4 shrink-0 brightness-0 invert sm:size-[18px]" />
-                    <span className="truncate">{isAr ? 'تعديل' : 'Edit'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const target = tab;
-                      setActionTab(null);
-                      openDelete(target);
-                    }}
-                    className="flex h-9 min-w-0 items-center gap-1.5 rounded-[30px] bg-[#E85E5E] px-3 text-[13px] font-medium text-white shadow-[0px_2.7px_5.4px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#d94a4a] sm:h-12 sm:gap-2 sm:px-5 sm:text-base"
-                  >
-                    <Trash2 size={16} strokeWidth={2} className="shrink-0 sm:size-[18px]" />
-                    <span className="truncate">{isAr ? 'حذف' : 'Delete'}</span>
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>
-
-      {/* Full-screen backdrop — dims + locks the page and collapses on click */}
-      {actionTab && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30"
-          onClick={() => setActionTab(null)}
-        />
-      )}
 
       {/* ── Modals ── */}
       <AddEditTableModal
@@ -282,6 +229,11 @@ export default function TablesPage() {
           const current = editing;
           closeTable();
           openMarkReserved(current);
+        }}
+        onDelete={() => {
+          const current = editing;
+          closeTable();
+          if (current) openDelete(current);
         }}
       />
 

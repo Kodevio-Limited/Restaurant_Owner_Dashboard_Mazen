@@ -67,7 +67,8 @@ export function AddTeamMemberModal({
   const isEdit = !!member;
 
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 

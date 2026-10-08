@@ -47,7 +47,8 @@ export function OrderDetailsModal({
   const isAr = locale === 'ar';
 
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 

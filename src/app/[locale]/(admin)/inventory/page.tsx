@@ -251,6 +251,13 @@ type TabId = (typeof TABS)[number]['id'];
 function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
+
+  useEffect(() => {
+    if (!open) return;
+    lockPageScroll(true);
+    return () => lockPageScroll(false);
+  }, [open]);
+
   return (
     <>
       <div
@@ -361,7 +368,8 @@ function RecipeMappingModal({
   }, [open, recipe]);
 
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 
@@ -519,7 +527,8 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
   return (
@@ -610,7 +619,8 @@ function TransferStockModal({ open, onClose }: { open: boolean; onClose: () => v
   const tc = useTranslations('common');
   // Lock background scroll while the drawer is open (incl. admin scroll container).
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
   return (
@@ -707,7 +717,8 @@ function LogPhysicalCount({ open, onClose }: { open: boolean; onClose: () => voi
   const tc = useTranslations('common');
   // Lock background scroll while the drawer is open (incl. admin scroll container).
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
   return (
@@ -774,7 +785,8 @@ function LogWastedItem({ open, onClose }: { open: boolean; onClose: () => void }
   const tc = useTranslations('common');
   // Lock background scroll while the drawer is open (incl. admin scroll container).
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
   return (

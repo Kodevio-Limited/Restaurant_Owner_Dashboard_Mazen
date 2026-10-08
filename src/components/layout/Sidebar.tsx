@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn, lockPageScroll } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import {
   Receipt,
@@ -100,12 +100,9 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
   const t = useTranslations('nav');
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    if (!open) return;
+    lockPageScroll(true);
+    return () => lockPageScroll(false);
   }, [open]);
 
   return (

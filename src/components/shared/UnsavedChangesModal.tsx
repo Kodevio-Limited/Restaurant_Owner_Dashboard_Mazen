@@ -25,7 +25,8 @@ export function UnsavedChangesModal({
   confirmLabel?: string;
 }) {
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 

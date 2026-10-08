@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Download, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Download, ChevronDown, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
 import { cn, lockPageScroll } from '@/lib/utils';
@@ -25,11 +25,13 @@ export function AddEditTableModal({
   table,
   onClose,
   onMarkReserved,
+  onDelete,
 }: {
   open: boolean;
   table?: AddEditTableData | null;
   onClose: () => void;
   onMarkReserved?: () => void;
+  onDelete?: () => void;
 }) {
   const locale = useLocale();
   const isAr = locale === 'ar';
@@ -45,7 +47,8 @@ export function AddEditTableModal({
 
   useEffect(() => {
     if (!open) setOpenDropdown(false);
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 
@@ -204,6 +207,15 @@ export function AddEditTableModal({
 
         {/* Footer */}
         <div className="mt-auto shrink-0 border-t border-[#E2E2E2] px-4 pt-3 pb-2.5 sm:px-5 sm:pt-3.5 sm:pb-3">
+          {editMode && onDelete && (
+            <button
+              onClick={onDelete}
+              className="mb-3 flex h-12 w-full items-center justify-center gap-2 rounded-[30px] bg-[#FDECEC] text-base font-medium text-[#E85E5E] outline outline-1 outline-offset-[-1px] outline-[#E85E5E] transition-colors hover:bg-[#FBDCDC] sm:h-14 sm:text-lg"
+            >
+              <Trash2 size={20} strokeWidth={2} />
+              {isAr ? 'حذف الطاولة' : 'Delete Table'}
+            </button>
+          )}
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={() => { editMode ? onMarkReserved?.() : onClose(); }}

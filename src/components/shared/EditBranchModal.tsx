@@ -22,7 +22,8 @@ export function EditBranchModal({
   const displayAddress = branch?.address ? (isAr ? (branch.address_ar ?? branch.address) : branch.address) : null;
 
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 

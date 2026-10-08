@@ -422,7 +422,11 @@
     "saveChanges": "Save Changes",
     "tabsSettings": "{tab} Settings",
     "backToTop": "Back to top",
-    "quickScroll": "Quick scroll to bottom"
+    "quickScroll": "Quick scroll to bottom",
+    "unsavedTitle": "Unsaved Changes",
+    "unsavedMessage": "You have unsaved changes in General & Brand settings. Are you sure you want to leave? Your changes will be lost.",
+    "keepEditing": "Keep Editing",
+    "discardChanges": "Discard Changes"
   },
   "billing": {
     "title": "Subscription & Billing",

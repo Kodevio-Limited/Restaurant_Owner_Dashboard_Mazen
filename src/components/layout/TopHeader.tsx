@@ -49,20 +49,25 @@ export function TopHeader() {
         </span>
       </button>
 
-      {/* Center: Last Cashier | Shift Ended — shown on tablet (md+) so the info
-          stays visible in tablet portrait/vertical view too */}
+      {/* Center: Current Cashier | Shift Started (open) or Last Cashier |
+          Shift Ended (closed) — shown on tablet (md+) so the info stays
+          visible in tablet portrait/vertical view too */}
       <div className="hidden min-w-0 flex-1 items-center justify-center gap-2.5 md:flex lg:gap-4">
         <div className="flex min-w-0 flex-col leading-tight">
-          <span className="whitespace-nowrap text-[10px] leading-tight text-[#989898] lg:text-[11px]">{t('lastCashier')}</span>
+          <span className="whitespace-nowrap text-[10px] leading-tight text-[#989898] lg:text-[11px]">
+            {isOpen ? t('currentCashier') : t('lastCashier')}
+          </span>
           <span className="truncate text-[12px] font-medium leading-tight text-[#2D2F33] lg:text-sm">
-            &ldquo;{t('lastCashierName')}&rdquo;
+            {isOpen ? t('cashierName') : t('lastCashierName')}
           </span>
         </div>
         <span className="h-6 w-px shrink-0 bg-[#E0E0E0]" />
         <div className="flex min-w-0 flex-col leading-tight">
-          <span className="whitespace-nowrap text-[10px] leading-tight text-[#989898] lg:text-[11px]">{t('shiftEnded')}</span>
+          <span className="whitespace-nowrap text-[10px] leading-tight text-[#989898] lg:text-[11px]">
+            {isOpen ? t('shiftStarted') : t('shiftEnded')}
+          </span>
           <span className="truncate text-[12px] font-medium leading-tight text-[#2D2F33] lg:text-sm">
-            &ldquo;{t('shiftEndedTime')}&rdquo;
+            {isOpen ? t('shiftTime') : t('shiftEndedTime')}
           </span>
         </div>
       </div>

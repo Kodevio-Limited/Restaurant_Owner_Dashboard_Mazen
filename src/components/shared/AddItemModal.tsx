@@ -339,7 +339,8 @@ export function AddItemModal({
   const [available, setAvailable] = useState(true);
 
   useEffect(() => {
-    lockPageScroll(open);
+    if (!open) return;
+    lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
 

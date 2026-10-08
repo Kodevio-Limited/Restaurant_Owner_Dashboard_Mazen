@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Fragment } from 'react';
 import Image from 'next/image';
+import { useRouter } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   ChevronRight, ChevronDown, MapPin, Phone, Mail, Globe,
@@ -9,7 +10,9 @@ import {
   FileText, Plus, User, Package, Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { readQueryParam, writeQueryParam } from '@/lib/use-query-modal';
 import { EditBranchModal } from '@/components/shared/EditBranchModal';
+import { UnsavedChangesModal } from '@/components/shared/UnsavedChangesModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -64,7 +67,7 @@ function NumberInput({ value, min = 0, max = 100, placeholder }: { value?: strin
   );
 }
 
-function SelectInput({ value, valueAr, options = [], optionsAr = [] }: { value: string; valueAr?: string; options?: string[]; optionsAr?: string[] }) {
+function SelectInput({ value, valueAr, options = [], optionsAr = [], onChange }: { value: string; valueAr?: string; options?: string[]; optionsAr?: string[]; onChange?: (value: string) => void }) {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const [open, setOpen] = useState(false);
@@ -95,7 +98,7 @@ function SelectInput({ value, valueAr, options = [], optionsAr = [] }: { value: 
               <button
                 key={options[idx] ?? option}
                 type="button"
-                onClick={() => { setSelectedIdx(idx); setOpen(false); }}
+                onClick={() => { setSelectedIdx(idx); setOpen(false); onChange?.(options[idx]); }}
                 className={cn(
                   'block w-full truncate px-5 py-2.5 text-start text-sm transition-colors hover:bg-[#F2F2F2] sm:text-base',
                   selectedIdx === idx ? 'font-medium text-[#026F4F]' : 'text-[#2D2F33]',
@@ -183,8 +186,9 @@ function SaveButton() {
 
 // ─── Tab content ──────────────────────────────────────────────────────────────
 
-function GeneralBrandTab() {
+function GeneralBrandTab({ onDirtyChange }: { onDirtyChange?: () => void }) {
   const t = useTranslations('settings.general');
+  const markDirty = () => onDirtyChange?.();
   const [expandMenu, setExpandMenu] = useState(true);
   const [requireCustomer, setRequireCustomer] = useState(true);
   const [customerFields, setCustomerFields] = useState<Record<'phone' | 'name' | 'email', Requirement>>(() => {
@@ -221,7 +225,7 @@ function GeneralBrandTab() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" onInputCapture={markDirty}>
 
       {/* Business Details */}
       <SectionCard title={t('businessDetails')}>
@@ -238,11 +242,11 @@ function GeneralBrandTab() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <FieldLabel>{t('currency')}</FieldLabel>
-            <SelectInput value="EGP" options={['EGP', 'USD', 'EUR', 'GBP', 'SAR', 'AED']} />
+            <SelectInput value="EGP" options={['EGP', 'USD', 'EUR', 'GBP', 'SAR', 'AED']} onChange={markDirty} />
           </div>
           <div className="flex flex-col gap-2">
             <FieldLabel>{t('timezone')}</FieldLabel>
-            <SelectInput value="Egypt Standard Time (EET)" valueAr="توقيت مصر القياسي (EET)" options={['Egypt Standard Time (EET)', 'Eastern Time (ET)', 'Central Time (CT)', 'Mountain Time (MT)', 'Pacific Time (PT)', 'UTC']} optionsAr={['توقيت مصر القياسي (EET)', 'التوقيت الشرقي (ET)', 'التوقيت المركزي (CT)', 'التوقيت الجبلي (MT)', 'توقيت المحيط الهادئ (PT)', 'UTC']} />
+            <SelectInput value="Egypt Standard Time (EET)" valueAr="توقيت مصر القياسي (EET)" options={['Egypt Standard Time (EET)', 'Eastern Time (ET)', 'Central Time (CT)', 'Mountain Time (MT)', 'Pacific Time (PT)', 'UTC']} optionsAr={['توقيت مصر القياسي (EET)', 'التوقيت الشرقي (ET)', 'التوقيت المركزي (CT)', 'التوقيت الجبلي (MT)', 'توقيت المحيط الهادئ (PT)', 'UTC']} onChange={markDirty} />
           </div>
         </div>
       </SectionCard>
@@ -308,7 +312,7 @@ function GeneralBrandTab() {
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <FieldLabel>{t('language')}</FieldLabel>
-              <SelectInput value="English" valueAr="الإنجليزية" options={['English', 'Arabic', 'Spanish', 'French']} optionsAr={['الإنجليزية', 'العربية', 'الإسبانية', 'الفرنسية']} />
+              <SelectInput value="English" valueAr="الإنجليزية" options={['English', 'Arabic', 'Spanish', 'French']} optionsAr={['الإنجليزية', 'العربية', 'الإسبانية', 'الفرنسية']} onChange={markDirty} />
             </div>
           </div>
         </div>
@@ -340,7 +344,7 @@ function GeneralBrandTab() {
                 <RequirementSegment
                   value={customerFields[field.key]}
                   disabled={!requireCustomer}
-                  onChange={(v) => setCustomerFields((prev) => ({ ...prev, [field.key]: v }))}
+                  onChange={(v) => { setCustomerFields((prev) => ({ ...prev, [field.key]: v })); markDirty(); }}
                 />
               </div>
             );
@@ -907,9 +911,53 @@ const BRANCHES = [
 
 export default function SettingsPage() {
   const t = useTranslations('settings');
+  const router = useRouter();
   const [active, setActive] = useState<TabId | null>('general');
   const [editBranch, setEditBranch] = useState<typeof BRANCHES[0] | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [generalDirty, setGeneralDirty] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  // Query-driven centered dialog: ?modal=unsaved-changes. Uses replaceState
+  // (never history.back) so leaving can't race the navigation.
+  const [unsavedOpen, setUnsavedOpen] = useState(false);
+
+  useEffect(() => {
+    if (readQueryParam('modal') === 'unsaved-changes') setUnsavedOpen(true);
+  }, []);
+
+  // Warn before leaving General/Brand with unsaved changes (in-app links only).
+  useEffect(() => {
+    if (!generalDirty) return;
+    const onClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement | null)?.closest('a');
+      if (!anchor || anchor.target === '_blank') return;
+      const href = anchor.getAttribute('href');
+      if (!href || href.startsWith('#')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setPendingHref(href);
+      writeQueryParam('modal', 'unsaved-changes', false);
+      setUnsavedOpen(true);
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, [generalDirty]);
+
+  const closeUnsaved = () => {
+    writeQueryParam('modal', null, false);
+    setUnsavedOpen(false);
+  };
+  const discardAndLeave = () => {
+    const href = pendingHref;
+    setPendingHref(null);
+    setGeneralDirty(false);
+    closeUnsaved();
+    if (href) router.push(href);
+  };
+  const keepEditing = () => {
+    setPendingHref(null);
+    closeUnsaved();
+  };
 
   const TABS: { id: TabId; labelKey: string; icon: React.ElementType }[] = [
     { id: 'general',       labelKey: 'tabs.general',       icon: Globe      },
@@ -1029,7 +1077,7 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {active === 'general'      && <GeneralBrandTab />}
+        {active === 'general'      && <GeneralBrandTab onDirtyChange={() => setGeneralDirty(true)} />}
         {active === 'branches'     && (
           <BranchManagementTab
             onEdit={(b) => setEditBranch(b)}
@@ -1050,6 +1098,16 @@ export default function SettingsPage() {
         open={!!editBranch}
         branch={editBranch}
         onClose={() => setEditBranch(null)}
+      />
+
+      <UnsavedChangesModal
+        open={unsavedOpen}
+        onCancel={keepEditing}
+        onLeave={discardAndLeave}
+        title={t('unsavedTitle')}
+        message={t('unsavedMessage')}
+        cancelLabel={t('keepEditing')}
+        confirmLabel={t('discardChanges')}
       />
     </main>
   );

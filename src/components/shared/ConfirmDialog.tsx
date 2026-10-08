@@ -1,6 +1,7 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
+import { cn, lockPageScroll } from '@/lib/utils';
 
 export function ConfirmDialog({
   open,
@@ -21,6 +22,12 @@ export function ConfirmDialog({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  useEffect(() => {
+    if (!open) return;
+    lockPageScroll(true);
+    return () => lockPageScroll(false);
+  }, [open]);
+
   return (
     <>
       <div
