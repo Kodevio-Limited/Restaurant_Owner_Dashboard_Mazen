@@ -196,8 +196,8 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Status filter bar */}
-      <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 lg:gap-4">
+      {/* Status filter bar — pill styling matches Menu Management's category filters */}
+      <div className="flex flex-wrap items-center gap-2.5">
         {FILTER_IDS.map((id) => {
           const match = FILTER_MATCH[id];
           const count = ORDERS.filter(match).length;
@@ -208,20 +208,20 @@ export default function OrdersPage() {
               onClick={() => setActive(id)}
               aria-pressed={isActive}
               className={cn(
-                'flex h-[44px] shrink-0 items-center gap-2.5 rounded-[33px] ps-[18px] pe-[6px] transition-colors xl:h-[50px]',
-                isActive ? 'bg-[#026F4F]' : 'bg-white hover:bg-[#F7F7F7]',
+                'inline-flex shrink-0 items-center gap-2 rounded-[51.28px] py-1.5 ps-1.5 pe-3.5 transition-colors',
+                isActive ? 'bg-[#026F4F] text-white' : 'bg-white text-[#686868] hover:bg-[#F2F2F2]',
               )}
             >
-              <span className={cn('whitespace-nowrap text-[15px] leading-none sm:text-[17px] xl:text-[24px]', isActive ? 'text-white' : 'text-[#686868]')}>
-                {t(`filters.${id}`)}
-              </span>
               <span
                 className={cn(
-                  'flex size-8 items-center justify-center rounded-full text-[13px] font-medium leading-none xl:size-[40px] xl:text-[13.5px]',
+                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] font-medium leading-none',
                   isActive ? 'bg-white text-black' : 'bg-[#E6F1ED] text-[#026F4F]',
                 )}
               >
                 {count}
+              </span>
+              <span className="whitespace-nowrap text-sm font-normal leading-5">
+                {t(`filters.${id}`)}
               </span>
             </button>
           );

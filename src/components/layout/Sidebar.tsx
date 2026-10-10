@@ -35,6 +35,8 @@ const NAV_KEYS = [
 interface SidebarProps {
   collapsed: boolean;
   onToggleCollapsed: () => void;
+  /** Called when a nav item is picked — used to auto-collapse the rail to icons only. */
+  onNavigate?: () => void;
 }
 
 function NavItems({
@@ -95,7 +97,7 @@ function NavItems({
   );
 }
 
-export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
+export function Sidebar({ collapsed, onToggleCollapsed, onNavigate }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
 
@@ -157,7 +159,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
 
         {/* Nav */}
         <div className={cn('flex-1 overflow-y-auto', collapsed ? 'mt-1' : 'mt-2')}>
-          <NavItems showLabels={!collapsed} />
+          <NavItems showLabels={!collapsed} onNavigate={onNavigate} />
         </div>
 
         {/* Language toggle (desktop) */}

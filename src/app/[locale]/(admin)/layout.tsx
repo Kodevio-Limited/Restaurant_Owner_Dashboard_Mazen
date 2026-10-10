@@ -10,7 +10,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="h-screen overflow-hidden bg-[#F2F2F2]">
-      <Sidebar collapsed={collapsed} onToggleCollapsed={() => setCollapsed((c) => !c)} />
+      <Sidebar
+        collapsed={collapsed}
+        onToggleCollapsed={() => setCollapsed((c) => !c)}
+        onNavigate={() => setCollapsed(true)}
+      />
       <div
         className={cn(
           'flex h-full flex-col gap-4 px-3 transition-[margin-inline-start] duration-300 sm:px-4',
