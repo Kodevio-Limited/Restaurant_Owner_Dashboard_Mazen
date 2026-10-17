@@ -37,6 +37,10 @@ interface AuthInputProps {
   placeholder?: string;
   toggle?: boolean;
   autoComplete?: string;
+  name?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
 export function AuthInput({
@@ -45,6 +49,10 @@ export function AuthInput({
   placeholder,
   toggle,
   autoComplete,
+  name,
+  value,
+  onChange,
+  required,
 }: AuthInputProps) {
   const [show, setShow] = useState(false);
   const inputType = toggle ? (show ? 'text' : 'password') : type;
@@ -61,6 +69,10 @@ export function AuthInput({
       />
       <input
         type={inputType}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
         className="min-w-0 flex-1 bg-transparent font-['Satoshi'] text-[clamp(15px,1.26vw,24.179px)] font-medium leading-[1.4] text-[#2D2F33] outline-none placeholder:text-[#989898]"

@@ -1,23 +1,35 @@
-import { Link } from '@/i18n/routing';
-import { setRequestLocale, getTranslations } from 'next-intl/server';
+'use client';
+
+import { useState } from 'react';
+import { Link, useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import AuthShell from '@/components/auth/AuthShell';
 import { AuthHeader, AuthField, AuthInput, AuthButton } from '@/components/auth/AuthFields';
+import { setAuthSession } from '@/lib/auth-session';
 
-export default async function LoginPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations('auth.login');
+export default function LoginPage() {
+  const t = useTranslations('auth.login');
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // Mock auth: any non-empty credentials sign the owner in.
+    setAuthSession(email.trim());
+    // Default landing page after login is the Orders tab.
+    router.push('/orders');
+  }
 
   return (
     <AuthShell
       photo="/images/figma/auth/signin.webp"
       photoAlt="Waiter taking an order at a restaurant table"
     >
-      <div className="flex w-full flex-col gap-[clamp(32px,3.13vw,60.34px)]">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full flex-col gap-[clamp(32px,3.13vw,60.34px)]"
+      >
         <div className="flex w-full flex-col items-center gap-[clamp(36px,3.49vw,67px)]">
           <AuthHeader title={t('title')} subtitle={t('subtitle')} />
 
@@ -25,6 +37,11 @@ export default async function LoginPage({
             <AuthField label={t('emailLabel')}>
               <AuthInput
                 icon="/images/figma/auth/mail.svg"
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder={t('emailPlaceholder')}
                 autoComplete="email"
               />
@@ -35,6 +52,10 @@ export default async function LoginPage({
                 <AuthInput
                   icon="/images/figma/auth/lock.svg"
                   type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   placeholder={t('passwordPlaceholder')}
                   toggle
                   autoComplete="current-password"
@@ -50,10 +71,10 @@ export default async function LoginPage({
           </div>
         </div>
 
-        <Link href="/choose-branch" className="group flex w-full">
+        <button type="submit" className="group flex w-full">
           <AuthButton>{t('signIn')}</AuthButton>
-        </Link>
-      </div>
+        </button>
+      </form>
     </AuthShell>
   );
 }
