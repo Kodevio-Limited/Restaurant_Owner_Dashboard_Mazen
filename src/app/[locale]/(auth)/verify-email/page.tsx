@@ -2,6 +2,7 @@ import { Link } from '@/i18n/routing';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import AuthShell from '@/components/auth/AuthShell';
 import { AuthHeader, AuthButton } from '@/components/auth/AuthFields';
+import { OtpInputs } from '@/components/auth/OtpInputs';
 
 export default async function VerifyEmailPage({
   params,
@@ -27,24 +28,14 @@ export default async function VerifyEmailPage({
               <span className="font-['Satoshi'] text-[clamp(17px,1.5vw,28.712px)] font-medium leading-[1.4] text-[#026F4F]">
                 {t('otpLabel')}
               </span>
-              <div className="flex w-full items-center gap-[clamp(10px,0.92vw,17.7px)]" dir="ltr">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    aria-label={`Digit ${i + 1}`}
-                    className="h-[clamp(56px,5.02vw,96.342px)] min-w-0 flex-1 rounded-[clamp(10px,0.625vw,12px)] bg-[#E9E9E9] text-center font-['Satoshi'] text-[clamp(20px,1.88vw,36px)] font-bold text-[#2D2F33] outline-none transition-colors focus:bg-[#BDBDBD]"
-                  />
-                ))}
-              </div>
+              <OtpInputs />
             </div>
 
-            {/* Send again — right-aligned under the boxes (#026F4F) */}
+            {/* Send again — end-aligned under the boxes (#026F4F), i.e. right in
+                English and left in Arabic (logical alignment). */}
             <button
               type="button"
-              className="w-full text-right font-['Satoshi'] text-[clamp(13px,0.94vw,18.134px)] font-semibold leading-[1.4] text-[#026F4F] hover:underline"
+              className="w-full text-end font-['Satoshi'] text-[clamp(13px,0.94vw,18.134px)] font-semibold leading-[1.4] text-[#026F4F] hover:underline"
             >
               {t('sendAgain')}
             </button>

@@ -1,9 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
+import { useEffect, useState } from 'react';
+import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { BranchCards, type Branch } from '@/components/auth/BranchCards';
+import { getAuthSession, subscribeAuthSession } from '@/lib/auth-session';
 
 const BRANCHES: Branch[] = [
   {
@@ -42,6 +44,23 @@ export default function ChooseBranchPage() {
   const t = useTranslations('auth.chooseBranch');
   const locale = useLocale();
   const isArabic = locale === 'ar';
+  const router = useRouter();
+  // Same gate as the dashboard: branch picking only happens after signing in.
+  const [authReady, setAuthReady] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      if (!getAuthSession()) {
+        router.replace('/login');
+        return;
+      }
+      setAuthReady(true);
+    };
+    check();
+    return subscribeAuthSession(check);
+  }, [router]);
+
+  if (!authReady) return <div className="min-h-screen w-full bg-[#F2F2F2]" />;
 
   return (
     <div className="min-h-screen w-full bg-[#F2F2F2] p-[clamp(24px,2.76vw,53px)]">

@@ -17,8 +17,8 @@ export default function LoginPage() {
     e.preventDefault();
     // Mock auth: any non-empty credentials sign the owner in.
     setAuthSession(email.trim());
-    // Default landing page after login is the Orders tab.
-    router.push('/orders');
+    // After signing in the owner picks which restaurant/branch to manage first.
+    router.push('/choose-branch');
   }
 
   return (

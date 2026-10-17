@@ -26,11 +26,9 @@ export function BranchCards({ branches, isArabic, revenueLabel }: BranchCardsPro
   const router = useRouter();
 
   function handleSelect(id: number) {
-    if (id === selected) {
-      router.push('/reports/analytics');
-    } else {
-      setSelected(id);
-    }
+    if (id !== selected) setSelected(id);
+    // Picking a branch drops the owner straight on the default tab (Orders).
+    router.push('/orders');
   }
 
   return (
