@@ -25,7 +25,7 @@ export default async function VerifyEmailPage({
           <div className="flex w-full flex-col gap-[clamp(12px,1.57vw,30.17px)]">
             {/* Verify OTP — Figma 1999:2651: green label + 6 boxes (86.41/88.41×96.342) */}
             <div className="flex w-full flex-col gap-[clamp(7px,0.63vw,12.089px)]">
-              <span className="font-['Satoshi'] text-[clamp(17px,1.5vw,28.712px)] font-medium leading-[1.4] text-[#026F4F]">
+              <span className="font-satoshi text-[clamp(17px,1.5vw,28.712px)] font-medium leading-[1.4] text-[#026F4F]">
                 {t('otpLabel')}
               </span>
               <OtpInputs />
@@ -35,7 +35,7 @@ export default async function VerifyEmailPage({
                 English and left in Arabic (logical alignment). */}
             <button
               type="button"
-              className="w-full text-end font-['Satoshi'] text-[clamp(13px,0.94vw,18.134px)] font-semibold leading-[1.4] text-[#026F4F] hover:underline"
+              className="w-full text-end font-satoshi text-[clamp(13px,0.94vw,18.134px)] font-semibold leading-[1.4] text-[#026F4F] hover:underline"
             >
               {t('sendAgain')}
             </button>

@@ -88,15 +88,17 @@ export default function ChooseBranchPage() {
               className="size-[20.25px]"
             />
           </span>
-          <span className="whitespace-nowrap font-['Satoshi'] text-[16px] font-medium leading-[1.4] text-black">
+          <span className="whitespace-nowrap font-satoshi text-[16px] font-medium leading-[1.4] text-black">
             {t('reportsAnalytics')}
           </span>
         </Link>
       </div>
 
-      {/* Welcome — Figma 1594:1627 (title top 133 = header 100 + 33) */}
-      <div className="mt-[clamp(20px,1.72vw,33px)] flex w-full max-w-[541px] flex-col gap-[21px]">
-        <h1 className="w-full whitespace-nowrap text-center text-[clamp(32px,2.6vw,50px)] font-semibold leading-[1.4] text-[#2D2F33]">
+      {/* Welcome — Figma 1594:1627 (block top 133 = header ends 102 + 31) */}
+      <div className="mt-[clamp(20px,1.615vw,31px)] flex w-full max-w-[541px] flex-col gap-[21px]">
+        {/* Left-aligned like the subtitle: the 541px box is the design width of
+            the title, so centering would indent it once the clamp shrinks it. */}
+        <h1 className="w-full whitespace-nowrap text-start text-[clamp(32px,2.6vw,50px)] font-semibold leading-[1.4] text-[#2D2F33]">
           {t('title')}
         </h1>
         <p className="w-full text-[clamp(16px,1.2vw,23px)] font-normal leading-[1.4] text-[#989898]">

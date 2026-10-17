@@ -10,10 +10,10 @@ import Image from 'next/image';
 export function AuthHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="flex w-full flex-col items-center gap-[clamp(8px,0.79vw,15.112px)] text-center">
-      <h1 className="w-full font-['Satoshi'] text-[clamp(30px,2.6vw,49.869px)] font-bold leading-[1.4] text-[#2D2F33]">
+      <h1 className="w-full font-satoshi text-[clamp(30px,2.6vw,49.869px)] font-bold leading-[1.4] text-[#2D2F33]">
         {title}
       </h1>
-      <p className="w-full max-w-[545px] font-['Satoshi'] text-[clamp(15px,1.26vw,24.179px)] font-normal leading-[1.4] text-[#888888]">
+      <p className="w-full max-w-[545px] font-satoshi text-[clamp(15px,1.26vw,24.179px)] font-normal leading-[1.4] text-[#888888]">
         {subtitle}
       </p>
     </div>
@@ -23,7 +23,7 @@ export function AuthHeader({ title, subtitle }: { title: string; subtitle: strin
 export function AuthField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex w-full flex-col gap-[clamp(7px,0.63vw,12.089px)]">
-      <span className="font-['Satoshi'] text-[clamp(17px,1.5vw,28.712px)] font-medium leading-[1.4] text-[#2D2F33]">
+      <span className="font-satoshi text-[clamp(17px,1.5vw,28.712px)] font-medium leading-[1.4] text-[#2D2F33]">
         {label}
       </span>
       {children}
@@ -75,7 +75,7 @@ export function AuthInput({
         required={required}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="min-w-0 flex-1 bg-transparent font-['Satoshi'] text-[clamp(15px,1.26vw,24.179px)] font-medium leading-[1.4] text-[#2D2F33] outline-none placeholder:text-[#989898]"
+        className="min-w-0 flex-1 bg-transparent font-satoshi text-[clamp(15px,1.26vw,24.179px)] font-medium leading-[1.4] text-[#2D2F33] outline-none placeholder:text-[#989898]"
       />
       {toggle && (
         <button
@@ -102,7 +102,7 @@ export function AuthInput({
 // drop-shadow 0 6.034 12.295 rgba(0,0,0,0.12).
 export function AuthButton({ children }: { children: React.ReactNode }) {
   return (
-    <span className="flex h-[clamp(56px,4.64vw,89.005px)] w-full items-center justify-center rounded-[30px] bg-[#026F4F] px-6 font-['Satoshi'] text-[clamp(18px,1.49vw,28.66px)] font-medium leading-[1.4] text-white drop-shadow-[0px_6.034px_12.295px_rgba(0,0,0,0.12)] transition-colors group-hover:bg-[#025E43]">
+    <span className="flex h-[clamp(56px,4.64vw,89.005px)] w-full items-center justify-center rounded-[30px] bg-[#026F4F] px-6 font-satoshi text-[clamp(18px,1.49vw,28.66px)] font-medium leading-[1.4] text-white drop-shadow-[0px_6.034px_12.295px_rgba(0,0,0,0.12)] transition-colors group-hover:bg-[#025E43]">
       {children}
     </span>
   );

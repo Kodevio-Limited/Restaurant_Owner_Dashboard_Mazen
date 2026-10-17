@@ -73,7 +73,7 @@ export function OtpInputs({ length = 6 }: { length?: number }) {
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={(e) => handlePaste(i, e)}
           onFocus={(e) => e.currentTarget.select()}
-          className="h-[clamp(56px,5.02vw,96.342px)] min-w-0 flex-1 rounded-[clamp(10px,0.625vw,12px)] bg-[#E9E9E9] text-center font-['Satoshi'] text-[clamp(20px,1.88vw,36px)] font-bold text-[#2D2F33] outline-none transition-colors focus:bg-[#BDBDBD]"
+          className="h-[clamp(56px,5.02vw,96.342px)] min-w-0 flex-1 rounded-[clamp(10px,0.625vw,12px)] bg-[#E9E9E9] text-center font-satoshi text-[clamp(20px,1.88vw,36px)] font-bold text-[#2D2F33] outline-none transition-colors focus:bg-[#BDBDBD]"
         />
       ))}
     </div>
