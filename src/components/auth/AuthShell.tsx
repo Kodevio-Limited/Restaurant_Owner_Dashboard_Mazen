@@ -28,8 +28,8 @@ export default function AuthShell({ photo, photoAlt, children }: AuthShellProps)
             className="object-cover"
           />
         </div>
-        <div className="flex min-h-screen flex-1 items-center justify-center bg-white lg:min-h-0">
-          <div className="w-full max-w-[617px] px-6 py-20 sm:px-10 lg:px-0 lg:py-0">
+        <div className="flex min-h-screen min-w-0 flex-1 items-center justify-center bg-white lg:min-h-0">
+          <div className="w-full min-w-0 max-w-[617px] px-6 py-20 sm:px-10 lg:px-0 lg:py-0">
             {children}
           </div>
         </div>

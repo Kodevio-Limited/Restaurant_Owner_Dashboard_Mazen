@@ -519,15 +519,16 @@
       "title": "إنشاء كلمة مرور جديدة",
       "subtitle": "يجب إنشاء كلمة مرور جديدة بعد الاسترجاع",
       "newPasswordLabel": "كلمة المرور الجديدة",
-      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "********",
       "retypePasswordLabel": "إعادة كتابة كلمة المرور",
-      "retypePasswordPlaceholder": "أعد إدخال كلمة المرور الجديدة",
+      "retypePasswordPlaceholder": "********",
       "update": "تحديث"
     },
     "verifyEmail": {
       "title": "التحقق من البريد الإلكتروني",
-      "subtitle": "لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى بريدك الإلكتروني",
-      "verify": "تحقق",
+    "subtitle": "لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى بريدك الإلكتروني",
+    "otpLabel": "تحقق من رمز OTP",
+    "verify": "تحقق",
       "sendAgain": "إرسال مرة أخرى",
       "back": "رجوع"
     },

@@ -519,15 +519,16 @@
       "title": "Create New Password",
       "subtitle": "You have to create a new password after forget",
       "newPasswordLabel": "New Password",
-      "newPasswordPlaceholder": "Enter new password",
+      "newPasswordPlaceholder": "********",
       "retypePasswordLabel": "Retype Password",
-      "retypePasswordPlaceholder": "Re-enter new password",
+      "retypePasswordPlaceholder": "********",
       "update": "Update"
     },
     "verifyEmail": {
       "title": "Verify Email",
-      "subtitle": "We've sent a 6-digit code to your email",
-      "verify": "Verify",
+    "subtitle": "We’ve sent 6 digits code on your email",
+    "otpLabel": "Verify OTP",
+    "verify": "Verify",
       "sendAgain": "Send again",
       "back": "Back"
     },

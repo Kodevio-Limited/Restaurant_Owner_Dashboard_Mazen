@@ -115,7 +115,7 @@ export function BranchCards({ branches, isArabic, revenueLabel }: BranchCardsPro
 
             <div className="absolute bottom-[22.01px] left-[28.51px] flex w-[377px] items-center justify-between">
               <span className="flex w-[166px] flex-col gap-[16px]">
-                <span className="text-[21px] font-normal leading-[1.4] text-[#989898]">
+                <span className="whitespace-nowrap text-[21px] font-normal leading-[1.4] text-[#989898]">
                   {revenueLabel}
                 </span>
                 <span className="text-[30px] font-semibold leading-[1.4] text-[#026F4F]">
