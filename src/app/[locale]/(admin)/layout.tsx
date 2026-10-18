@@ -1,31 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from '@/i18n/routing';
+import { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { TopHeader } from '@/components/layout/TopHeader';
 import { cn } from '@/lib/utils';
-import { getAuthSession, subscribeAuthSession } from '@/lib/auth-session';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
-  const router = useRouter();
-  // Auth gate: without a session every dashboard route sends you to /login.
-  const [authReady, setAuthReady] = useState(false);
-
-  useEffect(() => {
-    const check = () => {
-      if (!getAuthSession()) {
-        router.replace('/login');
-        return;
-      }
-      setAuthReady(true);
-    };
-    check();
-    return subscribeAuthSession(check);
-  }, [router]);
-
-  if (!authReady) return <div className="h-screen bg-[#F2F2F2]" />;
 
   return (
     <div className="h-screen overflow-hidden bg-[#F2F2F2]">

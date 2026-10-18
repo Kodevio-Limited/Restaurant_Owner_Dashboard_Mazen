@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
-import { clearAuthSession } from '@/lib/auth-session';
 import Image from 'next/image';
 import { cn, lockPageScroll } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -101,12 +100,6 @@ function NavItems({
 export function Sidebar({ collapsed, onToggleCollapsed, onNavigate }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
-  const router = useRouter();
-
-  function logout() {
-    clearAuthSession();
-    router.replace('/login');
-  }
 
   useEffect(() => {
     if (!open) return;
@@ -180,7 +173,6 @@ export function Sidebar({ collapsed, onToggleCollapsed, onNavigate }: SidebarPro
         <div className={cn('border-t border-[#F2F2F2] py-2.5', collapsed ? 'flex justify-center' : 'px-3')}>
           <button
             title={t('logout')}
-            onClick={logout}
             className={cn(
               'flex items-center transition-colors',
               collapsed
@@ -228,13 +220,7 @@ export function Sidebar({ collapsed, onToggleCollapsed, onNavigate }: SidebarPro
                 <NavItems showLabels onNavigate={() => setOpen(false)} />
               </div>
               <div className="border-t border-[#F2F2F2] px-3 py-2.5">
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    logout();
-                  }}
-                  className="flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E22A2A] hover:bg-[#FDECEC]"
-                >
+                <button className="flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4 text-[14px] text-[#E22A2A] hover:bg-[#FDECEC]">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full">
                     <LogOut size={20} strokeWidth={1.8} />
                   </span>
