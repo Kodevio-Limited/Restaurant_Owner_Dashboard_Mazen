@@ -587,6 +587,11 @@
       "searchPurchases": "ابحث عن المشتريات...",
       "allTime": "كل الأوقات",
       "logPurchase": "تسجيل المشتريات",
+      "logExpense": "تسجيل مصروف",
+      "expenses": "المصروفات",
+      "colExpenseDate": "التاريخ",
+      "colExpenseName": "المصروف",
+      "colAmount": "المبلغ",
       "colOrderIdDate": "رقم الطلب/ التاريخ",
       "colIngredient": "المكوّن",
       "colQuantityBought": "الكمية المشتراة",
@@ -662,6 +667,19 @@
         "supplierPlaceholder": "مثال: شركة ميترو ميتس",
         "hint": "سيؤدي تسجيل هذه المشتريات إلى تحديث مخزونك الحالي تلقائيًا وإعادة حساب متوسط التكلفة للوحدة الواحدة لتتبع هامش الربح.",
         "submit": "تسجيل الشراء"
+      },
+      "logExpense": {
+        "title": "تسجيل مصروف",
+        "expenseName": "اسم المصروف",
+        "expensePlaceholder": "مثال: فاتورة الكهرباء",
+        "amount": "المبلغ ($)",
+        "amountPlaceholder": "0.00",
+        "date": "التاريخ",
+        "datePlaceholder": "مثال: 2026-08-27",
+        "notesOptional": "ملاحظات (اختياري)",
+        "notesPlaceholder": "إضافة سياق...",
+        "hint": "مصروفات أعمال عامة (إيجار، فواتير...). هذا لا يؤثر على كميات المخزون.",
+        "submit": "تسجيل مصروف"
       },
       "transferStock": {
         "title": "تحويل مخزون",

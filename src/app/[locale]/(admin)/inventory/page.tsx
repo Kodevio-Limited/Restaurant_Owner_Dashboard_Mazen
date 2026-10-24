@@ -48,6 +48,14 @@ interface Purchase {
   supplier: string;
 }
 
+interface Expense {
+  id: string;
+  date: string;
+  name: string;
+  amount: number;
+  notes?: string;
+}
+
 interface Transfer {
   id: string;
   transferId: string;
@@ -208,6 +216,11 @@ const PURCHASES: Purchase[] = [
   { id: 'p2', orderId: 'PO-887', date: 'Jul 28, 2026', ingredient: 'Buns', quantity: 200, unit: 'pcs', avgCost: 0.45, total: 90.0, supplier: 'Baker’s Co.' },
   { id: 'p3', orderId: 'PO-888', date: 'Jul 27, 2026', ingredient: 'Lettuce', quantity: 25, unit: 'kg', avgCost: 2.2, total: 55.0, supplier: 'Fresh Farms' },
   { id: 'p4', orderId: 'PO-889', date: 'Jul 27, 2026', ingredient: 'Cheese Slices', quantity: 150, unit: 'pcs', avgCost: 0.8, total: 120.0, supplier: 'Dairy Goods Inc.' },
+];
+
+const EXPENSES: Expense[] = [
+  { id: 'EX-101', date: 'Jul 28, 2026', name: 'Electricity Bill', amount: 240.0 },
+  { id: 'EX-100', date: 'Jul 27, 2026', name: 'Rent', amount: 1500.0 },
 ];
 
 const TRANSFERS: Transfer[] = [
@@ -606,6 +619,121 @@ function LogPurchaseModal({ open, onClose }: { open: boolean; onClose: () => voi
             </button>
             <button className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
               {t('modals.logPurchase.submit')}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function LogExpenseModal({ open, onClose, onSave }: { open: boolean; onClose: () => void; onSave?: (exp: Expense) => void }) {
+  const t = useTranslations('inventory');
+  const tc = useTranslations('common');
+  const [expenseName, setExpenseName] = useState('');
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState('2026-08-27');
+  const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    lockPageScroll(true);
+    return () => lockPageScroll(false);
+  }, [open]);
+
+  const handleSubmit = () => {
+    if (!expenseName.trim() || !amount) return;
+    onSave?.({
+      id: `EX-${Math.floor(100 + Math.random() * 900)}`,
+      name: expenseName.trim(),
+      amount: parseFloat(amount) || 0,
+      date: date || 'Jul 28, 2026',
+      notes: notes.trim() || undefined,
+    });
+    setExpenseName('');
+    setAmount('');
+    setNotes('');
+    onClose();
+  };
+
+  return (
+    <>
+      <div
+        className={cn(
+          'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          'fixed end-0 top-0 z-50 flex h-full w-[619px] flex-col bg-[#F2F2F2] shadow-[-2px_0px_12px_rgba(0,0,0,0.10)] transition-transform duration-300',
+          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full',
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex shrink-0 items-center justify-between px-[30px] pt-[50px]">
+          <button onClick={onClose} aria-label={tc('actions.back')} className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300">
+            <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
+          </button>
+          <h2 className="absolute start-[152px] top-[52px] text-center text-3xl font-medium text-black leading-10">{t('modals.logExpense.title')}</h2>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[30px] pb-5 pt-8">
+          <section className="relative flex w-full flex-col gap-3.5 rounded-xl bg-white px-[19px] py-[25px] outline outline-1 outline-offset-[-1px]">
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logExpense.expenseName')}</span>
+              <input
+                value={expenseName}
+                onChange={(e) => setExpenseName(e.target.value)}
+                placeholder={t('modals.logExpense.expensePlaceholder')}
+                className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4 font-satoshi text-base font-medium leading-6 text-black outline-none focus:ring-2 focus:ring-[#026F4F]"
+              />
+            </div>
+
+            <div className="flex items-start gap-6">
+              <div className="flex w-60 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logExpense.amount')}</span>
+                <input
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  inputMode="decimal"
+                  placeholder={t('modals.logExpense.amountPlaceholder')}
+                  className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4 font-satoshi text-base font-medium leading-6 text-black outline-none focus:ring-2 focus:ring-[#026F4F]"
+                />
+              </div>
+              <div className="flex w-60 flex-col gap-2">
+                <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logExpense.date')}</span>
+                <input
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  placeholder={t('modals.logExpense.datePlaceholder')}
+                  className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4 font-satoshi text-base font-medium leading-6 text-black outline-none focus:ring-2 focus:ring-[#026F4F]"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-base font-medium leading-5 text-zinc-800">{t('modals.logExpense.notesOptional')}</span>
+              <input
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={t('modals.logExpense.notesPlaceholder')}
+                className="flex h-14 w-full items-center rounded-[87px] bg-zinc-100 px-4 font-satoshi text-base font-medium leading-6 text-black outline-none focus:ring-2 focus:ring-[#026F4F]"
+              />
+            </div>
+
+            <p className="text-xs font-normal leading-5 text-green-600">{t('modals.logExpense.hint')}</p>
+          </section>
+        </div>
+
+        <div className="shrink-0 border-t border-zinc-200 px-[30px] py-4">
+          <div className="flex items-center justify-between gap-5">
+            <button onClick={onClose} className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-gray-200 text-lg font-medium text-zinc-800 shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] outline outline-1 outline-offset-[-1px] outline-zinc-400 transition-colors hover:bg-gray-300">
+              {tc('actions.cancel')}
+            </button>
+            <button onClick={handleSubmit} className="flex h-14 w-72 items-center justify-center rounded-[30px] bg-emerald-700 text-lg font-medium text-white shadow-[0px_4px_16.3px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-emerald-800">
+              {t('modals.logExpense.submit')}
             </button>
           </div>
         </div>
@@ -1133,6 +1261,8 @@ function RecipeTab() {
 function PurchasesTab() {
   const t = useTranslations('inventory');
   const [showLog, setShowLog] = useQueryModal('log-purchase');
+  const [showExpense, setShowExpense] = useQueryModal('log-expense');
+  const [expenses, setExpenses] = useState<Expense[]>(EXPENSES);
 
   return (
     <div className="flex flex-col gap-6">
@@ -1151,13 +1281,22 @@ function PurchasesTab() {
             <ChevronDown size={16} />
           </div>
         </div>
-        <button
-          onClick={() => setShowLog(true)}
-          className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
-        >
-          <Plus size={20} />
-          <span className="text-lg font-medium leading-7">{t('purchases.logPurchase')}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => setShowExpense(true)}
+            className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
+          >
+            <Plus size={20} />
+            <span className="text-lg font-medium leading-7">{t('purchases.logExpense')}</span>
+          </button>
+          <button
+            onClick={() => setShowLog(true)}
+            className="flex h-12 items-center gap-2 rounded-[30px] bg-emerald-700 px-6 text-white transition-colors hover:bg-emerald-800"
+          >
+            <Plus size={20} />
+            <span className="text-lg font-medium leading-7">{t('purchases.logPurchase')}</span>
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
@@ -1206,7 +1345,48 @@ function PurchasesTab() {
         </table>
       </div>
 
+      {/* Expenses (free-text, no stock effect — feeds reports/margins) */}
+      <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
+        <div className="px-4 pt-4">
+          <p className="text-base font-medium leading-6 text-black">{t('purchases.expenses')}</p>
+        </div>
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col className="w-[30%]" />
+            <col className="w-[45%]" />
+            <col className="w-[25%]" />
+          </colgroup>
+          <thead>
+            <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colExpenseDate')}</th>
+              <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colExpenseName')}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('purchases.colAmount')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {expenses.map((ex) => (
+              <tr key={ex.id} className="divide-x divide-[#F0F0F0] border-b border-neutral-50 transition-colors hover:bg-neutral-50">
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-sm font-medium leading-6 text-zinc-800 sm:text-base">{ex.id}</span>
+                    <span className="text-xs leading-5 text-neutral-400 sm:text-sm">{ex.date}</span>
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <span className="block truncate text-sm font-medium leading-6 text-zinc-800 sm:text-base">{ex.name}</span>
+                  {ex.notes && <span className="block truncate text-xs leading-5 text-neutral-400 sm:text-sm">{ex.notes}</span>}
+                </td>
+                <td className="whitespace-nowrap px-3 py-3 text-center align-middle sm:px-4 sm:py-4 lg:px-6 lg:py-5">
+                  <span className="text-sm font-semibold leading-6 text-emerald-700 sm:text-base"><bdi dir="ltr">${ex.amount.toFixed(2)}</bdi></span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <LogPurchaseModal open={showLog} onClose={() => setShowLog(false)} />
+      <LogExpenseModal open={showExpense} onClose={() => setShowExpense(false)} onSave={(newEx) => setExpenses((prev) => [newEx, ...prev])} />
     </div>
   );
 }

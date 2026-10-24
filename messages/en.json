@@ -588,6 +588,11 @@
       "searchPurchases": "Search purchases...",
       "allTime": "All Time",
       "logPurchase": "Log Purchase",
+      "logExpense": "Log Expense",
+      "expenses": "Expenses",
+      "colExpenseDate": "Date",
+      "colExpenseName": "Expense",
+      "colAmount": "Amount",
       "colOrderIdDate": "Order ID/ Date",
       "colIngredient": "Ingredient",
       "colQuantityBought": "Quantity Bought",
@@ -665,6 +670,19 @@
         "supplierPlaceholder": "e.g. Metro Meats Co.",
         "hint": "Logging this purchase will automatically update your current stock and recalculate the Average Cost per unit for profit margin tracking.",
         "submit": "Log Purchase"
+      },
+      "logExpense": {
+        "title": "Log Expense",
+        "expenseName": "Expense Name",
+        "expensePlaceholder": "e.g. Electricity Bill",
+        "amount": "Amount ($)",
+        "amountPlaceholder": "0.00",
+        "date": "Date",
+        "datePlaceholder": "e.g. 2026-08-27",
+        "notesOptional": "Notes (Optional)",
+        "notesPlaceholder": "Add context...",
+        "hint": "Free-text business expense (rent, utilities, etc.). This will not affect stock quantities.",
+        "submit": "Log Expense"
       },
       "transferStock": {
         "title": "Transfer Stock",
