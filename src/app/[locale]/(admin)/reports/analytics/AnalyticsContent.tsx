@@ -15,26 +15,27 @@ import { ItemsTable } from '@/components/shared/ItemsTable';
 import { SalesPerHour } from '@/components/shared/SalesPerHour';
 import { TipsCollection } from '@/components/shared/TipsCollection';
 import { ShiftReportTable } from '@/components/shared/ShiftReportTable';
+import { MenuItemAnalyticsTable } from '@/components/shared/MenuItemAnalyticsTable';
 import { StatDetailsDrawer } from '@/components/shared/StatDetailsDrawer';
 import { useQueryModal } from '@/lib/use-query-modal';
 
 // Recent orders shown in the Total Orders drawer. TODO(api): GET /orders?date=today.
 const RECENT_ORDERS = [
-  { id: '#0044', type: 'Dine In',  party: 'Table 03', amount: '$45.99', status: 'Paid' },
-  { id: '#0043', type: 'Takeaway', party: 'Walk-in',  amount: '$24.50', status: 'Unpaid' },
-  { id: '#0045', type: 'Dine In',  party: 'Table 09', amount: '$32.40', status: 'Unpaid' },
-  { id: '#0042', type: 'Delivery', party: 'Gulshan',  amount: '$41.80', status: 'Paid' },
-  { id: '#0041', type: 'Dine In',  party: 'Table 02', amount: '$28.40', status: 'Paid' },
-  { id: '#0040', type: 'Takeaway', party: 'Walk-in',  amount: '$19.75', status: 'Unpaid' },
+  { id: '#0044', type: 'Dine In',  party: 'Table 03', amount: 'EGP 45.99', status: 'Paid' },
+  { id: '#0043', type: 'Takeaway', party: 'Walk-in',  amount: 'EGP 24.50', status: 'Unpaid' },
+  { id: '#0045', type: 'Dine In',  party: 'Table 09', amount: 'EGP 32.40', status: 'Unpaid' },
+  { id: '#0042', type: 'Delivery', party: 'Gulshan',  amount: 'EGP 41.80', status: 'Paid' },
+  { id: '#0041', type: 'Dine In',  party: 'Table 02', amount: 'EGP 28.40', status: 'Paid' },
+  { id: '#0040', type: 'Takeaway', party: 'Walk-in',  amount: 'EGP 19.75', status: 'Unpaid' },
 ];
 
 // Cancelled orders shown in the Cancelled Order drawer. TODO(api): GET /orders?status=cancelled.
 const CANCELLED_ORDERS = [
-  { id: '#0038', party: 'Table 07', amount: '$18.20', reason: 'Customer left' },
-  { id: '#0035', party: 'Delivery', amount: '$42.10', reason: 'Address unreachable' },
-  { id: '#0031', party: 'Table 01', amount: '$27.50', reason: 'Duplicate order' },
-  { id: '#0029', party: 'Walk-in',  amount: '$11.99', reason: 'Payment failed' },
-  { id: '#0026', party: 'Table 12', amount: '$63.40', reason: 'Item unavailable' },
+  { id: '#0038', party: 'Table 07', amount: 'EGP 18.20', reason: 'Customer left' },
+  { id: '#0035', party: 'Delivery', amount: 'EGP 42.10', reason: 'Address unreachable' },
+  { id: '#0031', party: 'Table 01', amount: 'EGP 27.50', reason: 'Duplicate order' },
+  { id: '#0029', party: 'Walk-in',  amount: 'EGP 11.99', reason: 'Payment failed' },
+  { id: '#0026', party: 'Table 12', amount: 'EGP 63.40', reason: 'Item unavailable' },
 ];
 
 function StatusPill({ status }: { status: string }) {
@@ -48,23 +49,23 @@ function StatusPill({ status }: { status: string }) {
 }
 
 const TOP_ITEMS = [
-  { id: 't1', name: 'Shoyu Ramen',     name_ar: 'شويو رامن',     qty: 145, revenue: '$15.99' },
-  { id: 't2', name: 'Chicken Biryani', name_ar: 'برياني دجاج',   qty: 132, revenue: '$12.50' },
-  { id: 't3', name: 'Beef Burger',     name_ar: 'برجر لحم',      qty: 118, revenue: '$11.20' },
+  { id: 't1', name: 'Shoyu Ramen',     name_ar: 'شويو رامن',     qty: 145, revenue: 'EGP 15.99' },
+  { id: 't2', name: 'Chicken Biryani', name_ar: 'برياني دجاج',   qty: 132, revenue: 'EGP 12.50' },
+  { id: 't3', name: 'Beef Burger',     name_ar: 'برجر لحم',      qty: 118, revenue: 'EGP 11.20' },
 ];
 
 const LEAST_ITEMS = [
-  { id: 'l1', name: 'Mushroom Soup', name_ar: 'شوربة فطر',   qty: 23, revenue: '$6.99' },
-  { id: 'l2', name: 'Greek Salad',   name_ar: 'سلطة يونانية', qty: 18, revenue: '$8.40' },
-  { id: 'l3', name: 'Iced Latte',    name_ar: 'لاتيه مثلج',  qty: 11, revenue: '$4.80' },
+  { id: 'l1', name: 'Mushroom Soup', name_ar: 'شوربة فطر',   qty: 23, revenue: 'EGP 6.99' },
+  { id: 'l2', name: 'Greek Salad',   name_ar: 'سلطة يونانية', qty: 18, revenue: 'EGP 8.40' },
+  { id: 'l3', name: 'Iced Latte',    name_ar: 'لاتيه مثلج',  qty: 11, revenue: 'EGP 4.80' },
 ];
 
 // Orders by channel breakdown (Bug-11). Counts sum to Total Orders (48).
 // TODO(api): replace with GET /analytics/orders-by-channel {dineIn,takeaway,delivery}x{count,revenue}.
 const CHANNEL_DATA = [
-  { key: 'dineIn',   label: 'Dine-in',  count: 20, revenue: '$520.00', color: '#026F4F', pct: (20 / 48) * 100 },
-  { key: 'takeaway', label: 'Takeaway', count: 15, revenue: '$410.00', color: '#5B9BF5', pct: (15 / 48) * 100 },
-  { key: 'delivery', label: 'Delivery', count: 13, revenue: '$320.00', color: '#F5A623', pct: (13 / 48) * 100 },
+  { key: 'dineIn',   label: 'Dine-in',  count: 20, revenue: 'EGP 520.00', color: '#026F4F', pct: (20 / 48) * 100 },
+  { key: 'takeaway', label: 'Takeaway', count: 15, revenue: 'EGP 410.00', color: '#5B9BF5', pct: (15 / 48) * 100 },
+  { key: 'delivery', label: 'Delivery', count: 13, revenue: 'EGP 320.00', color: '#F5A623', pct: (13 / 48) * 100 },
 ];
 
 function OrdersByChannel() {
@@ -147,7 +148,7 @@ export function AnalyticsContent() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3 xl:gap-4">
         <StatCard
           label={tc('totalRevenue')}
-          value={<span className="flex items-end gap-1">$<span>1,250</span></span>}
+          value={<span className="flex items-end gap-1"><span className="text-sm font-semibold">EGP</span><span>1,250</span></span>}
           sub={{ text: tc('fromYesterday', { value: '12.5%' }), positive: true }}
           icon={<DollarSign size={22} />}
         />
@@ -156,7 +157,7 @@ export function AnalyticsContent() {
         <StatCard label={tc('activeTables')} value="8" sub={tc('outOfTables', { total: 20 })} icon={<Armchair size={22} />} />
         <StatCard
           label={tc('pendingPay')}
-          value={<span className="flex items-end gap-1">$<span>250</span></span>}
+          value={<span className="flex items-end gap-1"><span className="text-sm font-semibold">EGP</span><span>250</span></span>}
           sub={tc('actionRequired')}
           icon={<CreditCard size={22} />}
         />
@@ -169,7 +170,7 @@ export function AnalyticsContent() {
         <StatCard label={tc('orderFulfillmentRate')} value="18" unit="min" icon={<Timer size={22} />} />
         <StatCard
           label={tc('avgSpendPerTable')}
-          value="$45.50"
+          value="EGP 45.50"
           sub={{ text: tc('fromYesterday', { value: '5.2%' }), positive: true }}
           icon={<UserCheck size={22} />}
         />
@@ -198,6 +199,9 @@ export function AnalyticsContent() {
       <div className="min-h-[260px]"><OrdersByChannel /></div>
 
       <BranchPerformance />
+
+      {/* Menu Item Unit Economics & Performance Analytics (Bug-8) */}
+      <MenuItemAnalyticsTable />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="min-h-[280px]">

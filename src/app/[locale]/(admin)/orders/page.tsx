@@ -21,7 +21,7 @@ const ORDERS: Order[] = [
     table: 'Table 03',
     table_ar: 'طاولة 03',
     extraItems: 2,
-    total: '$45.99',
+    total: 'EGP 45.99',
     items: [
       {
         id: 'a',
@@ -31,7 +31,7 @@ const ORDERS: Order[] = [
         modifiers_ar: ['مايونيز', 'فلفل إضافي'],
         note: 'Cut in Half',
         note_ar: 'مقطوع إلى نصفين',
-        price: '$15.99',
+        price: 'EGP 15.99',
         qty: 1,
       },
       {
@@ -42,7 +42,7 @@ const ORDERS: Order[] = [
         modifiers_ar: ['مايونيز'],
         note: 'Cut in Half',
         note_ar: 'مقطوع إلى نصفين',
-        price: '$15.99',
+        price: 'EGP 15.99',
         qty: 1,
       },
     ],
@@ -59,10 +59,10 @@ const ORDERS: Order[] = [
     table: 'Table 07',
     table_ar: 'طاولة 07',
     extraItems: 1,
-    total: '$24.50',
+    total: 'EGP 24.50',
     items: [
-      { id: 'c', name: 'Beef Burger', name_ar: 'برجر لحم بقري', note: 'Extra Cheese', note_ar: 'جبن إضافي', price: '$11.20', qty: 2 },
-      { id: 'd', name: 'Fries', name_ar: 'بطاطس مقلية', note: '', price: '$4.50', qty: 1 },
+      { id: 'c', name: 'Beef Burger', name_ar: 'برجر لحم بقري', note: 'Extra Cheese', note_ar: 'جبن إضافي', price: 'EGP 11.20', qty: 2 },
+      { id: 'd', name: 'Fries', name_ar: 'بطاطس مقلية', note: '', price: 'EGP 4.50', qty: 1 },
     ],
   },
   {
@@ -77,10 +77,10 @@ const ORDERS: Order[] = [
     table: 'Table 09',
     table_ar: 'طاولة 09',
     extraItems: 1,
-    total: '$32.40',
+    total: 'EGP 32.40',
     items: [
-      { id: 'm', name: 'Shoyu Ramen', name_ar: 'شويو رامين', note: 'Extra Spicy', note_ar: 'حار جداً', price: '$15.99', qty: 1 },
-      { id: 'n', name: 'Gyoza', name_ar: 'غيوزا', note: '', price: '$6.50', qty: 2 },
+      { id: 'm', name: 'Shoyu Ramen', name_ar: 'شويو رامين', note: 'Extra Spicy', note_ar: 'حار جداً', price: 'EGP 15.99', qty: 1 },
+      { id: 'n', name: 'Gyoza', name_ar: 'غيوزا', note: '', price: 'EGP 6.50', qty: 2 },
     ],
   },
   {
@@ -95,10 +95,10 @@ const ORDERS: Order[] = [
     table: 'Table 11',
     table_ar: 'طاولة 11',
     extraItems: 3,
-    total: '$41.80',
+    total: 'EGP 41.80',
     items: [
-      { id: 'e', name: 'Chicken Biryani', name_ar: 'برياني دجاج', note: 'Mild', note_ar: 'معتدل', price: '$12.50', qty: 2 },
-      { id: 'f', name: 'Mango Lassi', name_ar: 'مانجو لاسي', note: '', price: '$6.20', qty: 1 },
+      { id: 'e', name: 'Chicken Biryani', name_ar: 'برياني دجاج', note: 'Mild', note_ar: 'معتدل', price: 'EGP 12.50', qty: 2 },
+      { id: 'f', name: 'Mango Lassi', name_ar: 'مانجو لاسي', note: '', price: 'EGP 6.20', qty: 1 },
     ],
   },
   {
@@ -113,10 +113,10 @@ const ORDERS: Order[] = [
     table: 'Table 02',
     table_ar: 'طاولة 02',
     extraItems: 2,
-    total: '$28.40',
+    total: 'EGP 28.40',
     items: [
-      { id: 'g', name: 'Pasta Alfredo', name_ar: 'باستا ألفريدو', note: 'No Garlic', note_ar: 'بدون ثوم', price: '$13.40', qty: 1 },
-      { id: 'h', name: 'Garlic Bread', name_ar: 'خبز بالثوم', note: '', price: '$5.00', qty: 1 },
+      { id: 'g', name: 'Pasta Alfredo', name_ar: 'باستا ألفريدو', note: 'No Garlic', note_ar: 'بدون ثوم', price: 'EGP 13.40', qty: 1 },
+      { id: 'h', name: 'Garlic Bread', name_ar: 'خبز بالثوم', note: '', price: 'EGP 5.00', qty: 1 },
     ],
   },
   {
@@ -131,10 +131,10 @@ const ORDERS: Order[] = [
     table: 'Table 05',
     table_ar: 'طاولة 05',
     extraItems: 1,
-    total: '$19.75',
+    total: 'EGP 19.75',
     items: [
-      { id: 'i', name: 'Greek Salad', name_ar: 'سلطة يونانية', note: 'No Onion', note_ar: 'بدون بصل', price: '$8.40', qty: 1 },
-      { id: 'j', name: 'Lemonade', name_ar: 'عصير ليمون', note: '', price: '$4.30', qty: 1 },
+      { id: 'i', name: 'Greek Salad', name_ar: 'سلطة يونانية', note: 'No Onion', note_ar: 'بدون بصل', price: 'EGP 8.40', qty: 1 },
+      { id: 'j', name: 'Lemonade', name_ar: 'عصير ليمون', note: '', price: 'EGP 4.30', qty: 1 },
     ],
   },
   {
@@ -149,10 +149,10 @@ const ORDERS: Order[] = [
     table: 'Table 14',
     table_ar: 'طاولة 14',
     extraItems: 2,
-    total: '$35.20',
+    total: 'EGP 35.20',
     items: [
-      { id: 'k', name: 'Beef Steak', name_ar: 'ستيك لحم بقري', note: 'Medium', note_ar: 'متوسط النضج', price: '$18.90', qty: 1 },
-      { id: 'l', name: 'Mushroom Soup', name_ar: 'شوربة فطر', note: '', price: '$6.99', qty: 1 },
+      { id: 'k', name: 'Beef Steak', name_ar: 'ستيك لحم بقري', note: 'Medium', note_ar: 'متوسط النضج', price: 'EGP 18.90', qty: 1 },
+      { id: 'l', name: 'Mushroom Soup', name_ar: 'شوربة فطر', note: '', price: 'EGP 6.99', qty: 1 },
     ],
   },
 ];
@@ -228,15 +228,13 @@ export default function OrdersPage() {
         })}
       </div>
 
-      {/* Order cards */}
+      {/* Order cards — compact multi-column grid so more orders fit per row */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 items-stretch justify-items-center gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
           {filtered.map((order) => (
-            <div key={order.id} className="h-full w-full max-w-[417px] rounded-2xl transition-transform hover:-translate-y-0.5">
+            <div key={order.id} className="h-full w-full transition-transform hover:-translate-y-0.5">
               <OrderCard
                 order={{ ...order, status: isPaid(order) ? 'paid' : 'unpaid' }}
-                step={getStep(order.id)}
-                onStepChange={(s) => setStep(order.id, s)}
                 onOpen={setSelected}
               />
             </div>

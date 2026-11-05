@@ -75,6 +75,7 @@ interface CountRecord {
   theo: number;
   phys: number;
   variance: number;
+  loggedBy: string;
 }
 
 interface WasteRecord {
@@ -84,6 +85,7 @@ interface WasteRecord {
   qtyWasted: string;
   notes: string;
   reason: string;
+  responsible: string;
   loggedBy: string;
 }
 
@@ -231,19 +233,19 @@ const TRANSFERS: Transfer[] = [
 ];
 
 const COUNTS: CountRecord[] = [
-  { id: 'c1', date: '2023-10-25', ingredient: 'Beef Patties', theo: 125, phys: 120, variance: -5 },
-  { id: 'c2', date: '2023-10-25', ingredient: 'Buns', theo: 80, phys: 78, variance: -2 },
-  { id: 'c3', date: '2023-10-25', ingredient: 'Cheese Slices', theo: 95, phys: 95, variance: 0 },
-  { id: 'c4', date: '2023-10-25', ingredient: 'Lettuce', theo: 12, phys: 10, variance: -2 },
-  { id: 'c5', date: '2023-10-25', ingredient: 'Tomato', theo: 8, phys: 7, variance: -1 },
-  { id: 'c6', date: '2023-10-25', ingredient: 'French Fries', theo: 50, phys: 45, variance: -5 },
+  { id: 'c1', date: '2023-10-25', ingredient: 'Beef Patties', theo: 125, phys: 120, variance: -5, loggedBy: 'John. D' },
+  { id: 'c2', date: '2023-10-25', ingredient: 'Buns', theo: 80, phys: 78, variance: -2, loggedBy: 'Sarah. M' },
+  { id: 'c3', date: '2023-10-25', ingredient: 'Cheese Slices', theo: 95, phys: 95, variance: 0, loggedBy: 'John. D' },
+  { id: 'c4', date: '2023-10-25', ingredient: 'Lettuce', theo: 12, phys: 10, variance: -2, loggedBy: 'Sarah. M' },
+  { id: 'c5', date: '2023-10-25', ingredient: 'Tomato', theo: 8, phys: 7, variance: -1, loggedBy: 'Chef Marco' },
+  { id: 'c6', date: '2023-10-25', ingredient: 'French Fries', theo: 50, phys: 45, variance: -5, loggedBy: 'John. D' },
 ];
 
 const WASTE_RECORDS: WasteRecord[] = [
-  { id: 'w1', date: '2023-10-25', item: 'Beef Patties', qtyWasted: '3 pcs', notes: 'Grill was too hot', reason: 'Burned', loggedBy: 'John. D' },
-  { id: 'w2', date: '2023-10-25', item: 'Lettuce', qtyWasted: '1 kg', notes: 'Shelf life expired', reason: 'Spoiled', loggedBy: 'Sarah. M' },
-  { id: 'w3', date: '2023-10-25', item: 'Buns', qtyWasted: '5 pcs', notes: 'Damaged during delivery', reason: 'Damaged', loggedBy: 'John. D' },
-  { id: 'w4', date: '2023-10-25', item: 'Tomato', qtyWasted: '0.5 kg', notes: 'Overripe', reason: 'Spoiled', loggedBy: 'Sarah. M' },
+  { id: 'w1', date: '2023-10-25', item: 'Beef Patties', qtyWasted: '3 pcs', notes: 'Grill was too hot', reason: 'Burned', responsible: 'Chef Marco', loggedBy: 'John. D' },
+  { id: 'w2', date: '2023-10-25', item: 'Lettuce', qtyWasted: '1 kg', notes: 'Shelf life expired', reason: 'Spoiled', responsible: 'Sous Chef Alex', loggedBy: 'Sarah. M' },
+  { id: 'w3', date: '2023-10-25', item: 'Buns', qtyWasted: '5 pcs', notes: 'Damaged during delivery', reason: 'Damaged', responsible: 'Supplier Rep', loggedBy: 'John. D' },
+  { id: 'w4', date: '2023-10-25', item: 'Tomato', qtyWasted: '0.5 kg', notes: 'Overripe', reason: 'Spoiled', responsible: 'Prep Team', loggedBy: 'Sarah. M' },
 ];
 
 const TABS = [
@@ -354,6 +356,21 @@ function AddIngredientModal({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
+const MENU_ITEM_OPTIONS = [
+  'Classic Burger',
+  'Double Cheese Burger',
+  'Chicken Sandwich',
+  'Veggie Wrap',
+  'Shoyu Ramen',
+  'Chicken Biryani',
+  'Truffle Fries',
+  'Mushroom Soup',
+  'Greek Salad',
+  'Iced Green Tea',
+  'Iced Latte',
+  'French Fries',
+];
+
 function RecipeMappingModal({
   open,
   onClose,
@@ -362,23 +379,26 @@ function RecipeMappingModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (rows: RecipeIngredient[]) => void;
+  onSave: (data: { name: string; ingredients: RecipeIngredient[] }) => void;
   recipe: Recipe | null;
 }) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
+  const [recipeName, setRecipeName] = useState('');
   const [rows, setRows] = useState<RecipeIngredient[]>([]);
   const [dirty, setDirty] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  // Seed the rows from the recipe each time it opens.
+  // Seed the rows and menu item from the recipe each time it opens.
   useEffect(() => {
     if (open) {
+      const initialName = recipe?.name && recipe.name !== t('recipe.newRecipe') ? recipe.name : '';
+      setRecipeName(initialName);
       setRows(recipe?.ingredients ? [...recipe.ingredients] : []);
       setDirty(false);
       setConfirmOpen(false);
     }
-  }, [open, recipe]);
+  }, [open, recipe, t]);
 
   useEffect(() => {
     if (!open) return;
@@ -404,7 +424,8 @@ function RecipeMappingModal({
     else onClose();
   };
   const save = () => {
-    onSave(rows);
+    const finalName = recipeName.trim() || recipe?.name || t('recipe.newRecipe');
+    onSave({ name: finalName, ingredients: rows });
     onClose();
   };
 
@@ -432,12 +453,34 @@ function RecipeMappingModal({
           <h2 className="text-center text-[33px] font-medium leading-[1.4] text-black">{t('modals.recipeMapping.title')}</h2>
           <span className="w-[50px]" />
         </div>
-        <p className="mt-[11px] shrink-0 text-center font-satoshi text-[21.4px] font-medium leading-[1.4] text-[#2D2F33]">
-          {recipe?.name ?? ''}
-        </p>
+
+        {/* Menu item selection field (Bug-9: ask which menu item this recipe is for) */}
+        <div className="mt-6 px-[30px]">
+          <div className="rounded-[13px] bg-white p-[18px]">
+            <label className="block text-[15px] font-semibold text-[#2D2F33] mb-2">
+              {t('recipe.menuItem')}
+            </label>
+            <div className="relative">
+              <select
+                value={recipeName}
+                onChange={(e) => {
+                  setRecipeName(e.target.value);
+                  setDirty(true);
+                }}
+                className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-[#F8F9FA] px-4 pe-10 font-satoshi text-base text-[#2D2F33] outline-none transition-colors focus:border-emerald-500"
+              >
+                <option value="">{t('recipe.chooseMenuItem')}</option>
+                {MENU_ITEM_OPTIONS.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+              <ChevronDown size={18} className="pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-[#686868]" />
+            </div>
+          </div>
+        </div>
 
         {/* Ingredients card */}
-        <div className="mt-8 min-h-0 flex-1 overflow-y-auto overscroll-contain px-[30px]">
+        <div className="mt-5 min-h-0 flex-1 overflow-y-auto overscroll-contain px-[30px]">
           <section className="rounded-[13px] bg-white p-[18px]">
             <div className="flex items-center justify-between">
               <h3 className="text-[19px] font-medium leading-[1.4] text-[#2D2F33]">{t('recipe.ingredients')}</h3>
@@ -1107,11 +1150,11 @@ function RecipeTab() {
   const [editing, setEditing] = useState<Recipe | null>(null);
   const [subTab, setSubTab] = useState<'main' | 'addon'>('main');
 
-  const saveMapping = (rows: RecipeIngredient[]) => {
+  const saveMapping = ({ name, ingredients }: { name: string; ingredients: RecipeIngredient[] }) => {
     if (!editing) return;
     setRecipes((prev) => {
       const exists = prev.some((r) => r.id === editing.id);
-      const updated: Recipe = { ...editing, ingredients: rows };
+      const updated: Recipe = { ...editing, name, ingredients };
       return exists ? prev.map((r) => (r.id === editing.id ? updated : r)) : [...prev, updated];
     });
   };
@@ -1591,11 +1634,12 @@ function PhysicalCountTab() {
 
           <table className="w-full table-fixed">
             <colgroup>
-              <col className="w-[22%]" />
-              <col className="w-[30%]" />
-              <col className="w-[16%]" />
-              <col className="w-[16%]" />
-              <col className="w-[16%]" />
+              <col className="w-[18%]" />
+              <col className="w-[26%]" />
+              <col className="w-[14%]" />
+              <col className="w-[14%]" />
+              <col className="w-[14%]" />
+              <col className="w-[14%]" />
             </colgroup>
             <thead>
               <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
@@ -1604,6 +1648,7 @@ function PhysicalCountTab() {
                 <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colTheo')}</th>
                 <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colPhys')}</th>
                 <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colVariance')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('physicalCount.colLoggedBy')}</th>
               </tr>
             </thead>
             <tbody>
@@ -1619,6 +1664,7 @@ function PhysicalCountTab() {
                   )}>
                     {c.variance > 0 ? `+${c.variance}` : c.variance}
                   </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{c.loggedBy}</td>
                 </tr>
               ))}
             </tbody>
@@ -1667,11 +1713,12 @@ function WasteLogTab() {
 
           <table className="w-full table-fixed">
             <colgroup>
-              <col className="w-[16%]" />
-              <col className="w-[28%]" />
-              <col className="w-[16%]" />
-              <col className="w-[16%]" />
+              <col className="w-[14%]" />
               <col className="w-[24%]" />
+              <col className="w-[14%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
+              <col className="w-[16%]" />
             </colgroup>
             <thead>
               <tr className="divide-x divide-[#E0E0E0] bg-gray-200">
@@ -1679,6 +1726,7 @@ function WasteLogTab() {
                 <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colItem')}</th>
                 <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colQtyWasted')}</th>
                 <th className="px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colReason')}</th>
+                <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colResponsible')}</th>
                 <th className="whitespace-nowrap px-3 py-3 text-center text-sm font-medium leading-6 text-stone-500 sm:px-4 sm:text-base lg:px-6 lg:py-4">{t('wasteLog.colLoggedBy')}</th>
               </tr>
             </thead>
@@ -1694,6 +1742,7 @@ function WasteLogTab() {
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-red-500 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.qtyWasted}</td>
                   <td className="max-w-[120px] truncate px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{w.reason}</td>
+                  <td className="max-w-[120px] truncate px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-black sm:max-w-[160px] sm:px-4 sm:py-4 sm:text-base lg:max-w-none lg:px-6 lg:py-5">{w.responsible}</td>
                   <td className="whitespace-nowrap px-3 py-3 text-center align-middle text-sm font-medium leading-6 text-zinc-800 sm:px-4 sm:py-4 sm:text-base lg:px-6 lg:py-5">{w.loggedBy}</td>
                 </tr>
               ))}

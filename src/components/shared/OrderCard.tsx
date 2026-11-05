@@ -55,7 +55,48 @@ interface OrderCardProps {
   onOpen?: (order: Order) => void;
 }
 
-export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCardProps) {
+function getStatusBadge(state: OrderState, isAr: boolean) {
+  switch (state) {
+    case 'pending':
+      return {
+        label: isAr ? 'قيد الانتظار' : 'Pending',
+        className: 'bg-amber-50 text-amber-700 border-amber-200',
+      };
+    case 'preparing':
+    case 'in_progress':
+      return {
+        label: isAr ? 'قيد التحضير' : 'Preparing',
+        className: 'bg-blue-50 text-blue-700 border-blue-200',
+      };
+    case 'ready':
+      return {
+        label: isAr ? 'جاهز' : 'Ready',
+        className: 'bg-orange-50 text-orange-700 border-orange-200',
+      };
+    case 'completed':
+      return {
+        label: isAr ? 'مكتمل' : 'Completed',
+        className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      };
+    case 'canceled':
+      return {
+        label: isAr ? 'ملغى' : 'Canceled',
+        className: 'bg-rose-50 text-rose-700 border-rose-200',
+      };
+    case 'refunded':
+      return {
+        label: isAr ? 'مسترد' : 'Refunded',
+        className: 'bg-purple-50 text-purple-700 border-purple-200',
+      };
+    default:
+      return {
+        label: isAr ? 'نشط' : 'Active',
+        className: 'bg-gray-50 text-gray-700 border-gray-200',
+      };
+  }
+}
+
+export function OrderCard({ order, onOpen }: OrderCardProps) {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const paid = order.status === 'paid';
@@ -69,83 +110,74 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
   const customerName = isAr ? (order.customer_ar ?? order.customer) : order.customer;
   const timeText = isAr ? (order.time_ar ?? order.time) : order.time;
   const tableText = isAr ? (order.table_ar ?? order.table) : order.table;
-  const terminal = order.state === 'canceled' || order.state === 'refunded';
+  const statusInfo = getStatusBadge(order.state, isAr);
 
   return (
     <div
       onClick={() => onOpen?.(order)}
-      className="@container flex h-full w-full cursor-pointer flex-col gap-4 rounded-[20px] bg-white p-5 shadow-[0px_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md"
+      className="flex h-full w-full cursor-pointer flex-col gap-2.5 rounded-[16px] bg-white p-3.5 shadow-[0px_1px_3px_rgba(0,0,0,0.05)] transition-all hover:shadow-md"
     >
       {/* Header: customer + status badge + order no */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="truncate text-[20px] font-medium leading-[28px] text-black">{customerName}</span>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="truncate text-base font-semibold leading-5 text-[#2D2F33]">{customerName}</span>
           <span
             className={cn(
-              'inline-flex shrink-0 items-center gap-1 rounded-full py-[5px] text-[13px] leading-[18px] text-white',
-              paid ? 'bg-[#16C722] px-2' : 'bg-[#E85E5E] px-2.5',
+              'inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium leading-4 text-white',
+              paid ? 'bg-[#16C722]' : 'bg-[#E85E5E]',
             )}
           >
-            {paid && <CardGlyph className="size-[15px] text-white" />}
+            {paid && <CardGlyph className="size-3 text-white" />}
             {paid ? (isAr ? 'مدفوع' : 'Paid') : (isAr ? 'غير مدفوع' : 'Unpaid')}
           </span>
         </div>
-        <span className="shrink-0 text-[15px] leading-[21px] text-[#989898]">{order.orderNo}</span>
+        <span className="shrink-0 font-satoshi text-xs font-medium text-[#989898]">{order.orderNo}</span>
       </div>
 
-      {/* Meta + View Details */}
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <div className="flex min-w-[140px] grow flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <Clock size={18} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
-            <span className="truncate text-[14px] leading-[19px] text-[#989898]">{timeText}</span>
+      {/* Meta info + View Details */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-3 text-xs text-[#989898]">
+          <div className="flex items-center gap-1 truncate">
+            <Clock size={13} strokeWidth={1.8} className="shrink-0 text-[#989898]" />
+            <span className="truncate">{timeText}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <UtensilsCrossed size={18} strokeWidth={1.6} className="shrink-0 text-[#989898]" />
-            <span className="truncate text-[14px] leading-[19px] text-[#989898]">{tableText}</span>
+          <div className="flex items-center gap-1 truncate">
+            <UtensilsCrossed size={13} strokeWidth={1.8} className="shrink-0 text-[#989898]" />
+            <span className="truncate">{tableText}</span>
           </div>
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); onOpen?.(order); }}
           aria-label={isAr ? `عرض تفاصيل الطلب ${order.orderNo}` : `View details of order ${order.orderNo}`}
-          className="ms-auto flex shrink-0 items-center justify-center rounded-xl bg-[#E6F1ED] px-3 py-2 text-[12px] font-semibold text-[#026F4F] transition-colors hover:bg-[#D6E9E2]"
+          className="ms-auto flex shrink-0 items-center gap-1 rounded-lg bg-[#E6F1ED] px-2 py-1 text-[11px] font-semibold text-[#026F4F] transition-colors hover:bg-[#D6E9E2]"
         >
-          {/* Wide: one line "View Details →" */}
-          <span className="flex items-center gap-1.5 leading-[16px] @max-[300px]:hidden">
-            <span>{isAr ? 'عرض التفاصيل' : 'View Details'}</span>
-            <ArrowRight size={14} strokeWidth={2.4} className="rtl:rotate-180" />
-          </span>
-          {/* Narrow: stacked View / → / Details so long dates always fit */}
-          <span className="hidden flex-col items-center gap-0.5 leading-[13px] @max-[300px]:flex">
-            <span>{isAr ? 'عرض' : 'View'}</span>
-            <ArrowRight size={13} strokeWidth={2.4} className="rtl:rotate-180" />
-            <span>{isAr ? 'التفاصيل' : 'Details'}</span>
-          </span>
+          <span>{isAr ? 'عرض' : 'View'}</span>
+          <ArrowRight size={11} strokeWidth={2.4} className="rtl:rotate-180" />
         </button>
       </div>
 
-      {/* Items — fixed two-row block so every card is the same size */}
-      <div className="flex flex-col">
+      {/* Items — compact two-row display */}
+      <div className="flex flex-col border-t border-dashed border-[#EAEAEA] pt-1">
         {visibleItems.map((item, idx) => {
           const itemName = isAr ? (item.name_ar ?? item.name) : item.name;
           const itemNote = isAr ? (item.note_ar ?? item.note) : item.note;
           return (
             <div key={item.id}>
-              {idx > 0 && <div className="border-t border-dashed border-[#E0E0E0]" />}
-              <div className="flex items-center justify-between gap-3 py-3">
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <div className="relative h-[78px] w-[72px] shrink-0 overflow-hidden rounded-[8px] bg-[#F2F2F2]">
-                    <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="72px" className="object-contain p-[10px]" />
+              {idx > 0 && <div className="border-t border-dashed border-[#F0F0F0]" />}
+              <div className="flex items-center justify-between gap-2 py-1.5">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-[#F4F4F4]">
+                    <Image src="/images/food-41e5d7.png" alt={itemName} fill sizes="44px" className="object-contain p-1" />
                   </div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="truncate text-[15px] font-medium leading-[21px] text-[#2D2F33]">{itemName}</span>
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-xs font-semibold leading-tight text-[#2D2F33]">{itemName}</span>
                     {itemNote && (
-                      <span className="truncate text-[12px] leading-[17px] text-[#989898]">&ldquo;{itemNote}&rdquo;</span>
+                      <span className="truncate text-[10px] leading-tight text-[#989898]">&ldquo;{itemNote}&rdquo;</span>
                     )}
-                    <span className="text-[15px] font-semibold leading-[21px] text-[#026F4F]">{item.price}</span>
+                    <span className="font-satoshi text-xs font-semibold text-[#026F4F]">{item.price}</span>
                   </div>
                 </div>
-                <span className="shrink-0 self-end text-[12px] font-medium leading-[17px] text-[#686868]">
+                <span className="shrink-0 self-end text-[11px] font-medium text-[#686868]">
                   {isAr ? `الكمية: ${item.qty}` : `Qty: ${item.qty}`}
                 </span>
               </div>
@@ -154,66 +186,17 @@ export function OrderCard({ order, step = 'new', onStepChange, onOpen }: OrderCa
         })}
       </div>
 
-      {/* Footer */}
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-dashed border-[#E0E0E0] pt-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-[13px] leading-[18px] text-[#686868]">
+      {/* Footer: View-only (No editing/accepting/rejecting) */}
+      <div className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-[#E0E0E0] pt-2">
+        <div className="flex flex-col">
+          <span className="text-[11px] text-[#888]">
             {hiddenCount > 0 ? (isAr ? `+${hiddenCount} أصناف` : `+${hiddenCount} Items`) : '\u00A0'}
           </span>
-          <span className="text-[19px] font-semibold leading-[27px] text-[#026F4F]">{order.total}</span>
+          <span className="font-satoshi text-sm font-bold text-[#026F4F]">{order.total}</span>
         </div>
-        <div className="flex items-center gap-1.5">
-            {!terminal && step === 'new' && (
-              <>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onStepChange?.('new'); }}
-                  aria-label={isAr ? 'رفض الطلب' : 'Reject order'}
-                  className="flex h-9 shrink-0 items-center justify-center gap-1 rounded-[10px] bg-[#E85E5E] px-2.5 text-[12px] font-medium text-white transition-colors hover:bg-[#d94a4a]"
-                >
-                  <X size={14} strokeWidth={2.5} />
-                  <span>{isAr ? 'رفض' : 'Reject'}</span>
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onStepChange?.('accepted'); }}
-                  aria-label={isAr ? 'قبول الطلب' : 'Accept order'}
-                  className="flex h-9 shrink-0 items-center justify-center gap-1 rounded-[10px] bg-[#64C864] px-2.5 text-[12px] font-medium text-white transition-colors hover:bg-[#4fb84f]"
-                >
-                  <Check size={14} strokeWidth={2.8} />
-                  <span>{isAr ? 'قبول' : 'Accept'}</span>
-                </button>
-              </>
-            )}
-            {!terminal && step === 'accepted' && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onStepChange?.('ready'); }}
-                className="flex h-[42px] shrink-0 items-center justify-center rounded-full bg-[#F97316] px-5 text-[15px] font-medium text-white transition-colors hover:bg-[#ea690b]"
-              >
-                {isAr ? 'تحديد كجاهز' : 'Mark Ready'}
-              </button>
-            )}
-            {!terminal && step === 'ready' && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onStepChange?.('served'); }}
-                className="flex h-[42px] shrink-0 items-center justify-center rounded-full bg-[#16A34A] px-6 text-[15px] font-medium text-white transition-colors hover:bg-[#128a3e]"
-              >
-                {isAr ? 'إكمال' : 'Complete'}
-              </button>
-            )}
-            {!terminal && step === 'served' && (
-              <button
-                disabled
-                aria-disabled="true"
-                className="flex h-[42px] shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-[#9CA3AF] px-6 text-[15px] font-medium text-white"
-              >
-                {isAr ? 'مكتمل' : 'Completed'}
-              </button>
-            )}
-            {terminal && (
-              <span className="inline-flex h-[30px] items-center rounded-full bg-[#E9E9E9] px-3 text-[12px] font-medium text-[#686868]">
-                {isAr ? (order.state === 'canceled' ? 'ملغى' : 'مسترد') : order.state === 'canceled' ? 'Canceled' : 'Refunded'}
-              </span>
-            )}
-        </div>
+        <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold', statusInfo.className)}>
+          {statusInfo.label}
+        </span>
       </div>
     </div>
   );

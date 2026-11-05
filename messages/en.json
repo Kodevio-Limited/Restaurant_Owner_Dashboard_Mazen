@@ -581,6 +581,8 @@
       "noIngredientsMapped": "No Ingredients mapped",
       "editRecipe": "Edit Recipe",
       "newRecipe": "New Recipe",
+      "menuItem": "Menu Item",
+      "chooseMenuItem": "Select a menu item for this recipe...",
       "ingredients": "Ingredients",
       "addRow": "Add Row"
     },
@@ -620,6 +622,7 @@
       "colTheo": "Theo",
       "colPhys": "Phys",
       "colVariance": "Variance",
+      "colLoggedBy": "Logged By",
       "logPhysicalCount": "Log Physical Count"
     },
     "wasteForm": {
@@ -643,6 +646,7 @@
       "colItem": "ITEM",
       "colQtyWasted": "QTY WASTED",
       "colReason": "REASON",
+      "colResponsible": "RESPONSIBLE",
       "colLoggedBy": "LOGGED BY"
     },
     "modals": {

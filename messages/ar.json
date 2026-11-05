@@ -580,6 +580,9 @@
       "searchRecipes": "ابحث عن الوصفات...",
       "noIngredientsMapped": "لم يتم ربط أي مكوّنات",
       "editRecipe": "تعديل الوصفة",
+      "newRecipe": "وصفة جديدة",
+      "menuItem": "عنصر القائمة",
+      "chooseMenuItem": "اختر عنصر قائمة لهذه الوصفة...",
       "ingredients": "المكوّنات",
       "addRow": "إضافة صف"
     },
@@ -619,6 +622,7 @@
       "colTheo": "النظري",
       "colPhys": "الفعلي",
       "colVariance": "الانحراف",
+      "colLoggedBy": "سجّله",
       "logPhysicalCount": "تسجيل الجرد الفعلي"
     },
     "wasteForm": {
@@ -642,6 +646,7 @@
       "colItem": "العنصر",
       "colQtyWasted": "الكمية المهلكة",
       "colReason": "السبب",
+      "colResponsible": "المسؤول",
       "colLoggedBy": "سجّله"
     },
     "modals": {

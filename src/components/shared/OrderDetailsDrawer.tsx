@@ -23,7 +23,7 @@ const STEP_PROGRESS: Record<OrderFlowStep, number> = {
 };
 
 function parsePrice(p: string): number {
-  return parseFloat(p.replace(/[$,\s]/g, ''));
+  return parseFloat(p.replace(/[^0-9.]/g, '')) || 0;
 }
 
 export function OrderDetailsModal({
@@ -31,8 +31,6 @@ export function OrderDetailsModal({
   order,
   step = 'new',
   paid,
-  onStepChange,
-  onMarkPaid,
   onClose,
 }: {
   open: boolean;
@@ -60,7 +58,7 @@ export function OrderDetailsModal({
   const subtotal = order.items.reduce((s, i) => s + parsePrice(i.price) * i.qty, 0);
   const service = subtotal * 0.1;
   const total = subtotal + service;
-  const money = (n: number) => `$${n.toFixed(2)}`;
+  const money = (n: number) => `EGP ${n.toFixed(2)}`;
 
   const progress = STEP_PROGRESS[step];
 
@@ -248,20 +246,12 @@ export function OrderDetailsModal({
         </div>
 
         <div className="shrink-0 px-5 pb-5 pt-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onStepChange?.('ready')}
-              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#F97316] text-[19px] font-medium text-white transition-colors hover:bg-[#ea690b]"
-            >
-              {isAr ? 'تحديد كجاهز' : 'Mark Ready'}
-            </button>
-            <button
-              onClick={onMarkPaid}
-              className="flex h-[59px] flex-1 items-center justify-center rounded-[30px] bg-[#026F4F] text-[19px] font-medium text-white shadow-[0px_4px_11px_rgba(0,0,0,0.12)] transition-colors hover:bg-[#025c42]"
-            >
-              {isAr ? 'تحديد كمدفوع' : 'Mark Paid'}
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="flex h-12 w-full items-center justify-center rounded-[30px] border border-[#B9B9B9] bg-[#E9E9E9] text-base font-medium text-[#2D2F33] transition-colors hover:bg-[#DCDCDC]"
+          >
+            {isAr ? 'إغلاق' : 'Close'}
+          </button>
         </div>
       </div>
     </>
