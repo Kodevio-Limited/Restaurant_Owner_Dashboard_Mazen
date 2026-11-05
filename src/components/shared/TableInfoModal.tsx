@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { cn, lockPageScroll } from '@/lib/utils';
+import { TableQrCode } from '@/components/shared/TableQrCode';
 
 export interface TableInfoData {
   id: string;
@@ -51,6 +52,27 @@ export function TableInfoModal({
 }) {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  // "Customize & Download Printable QR" — exports the QR as a vector SVG so it
+  // prints clean at any size (sticker on the table, menu header, etc.).
+  const handleDownloadQr = () => {
+    const svg = qrRef.current?.querySelector('svg');
+    if (!svg) return;
+    const clone = svg.cloneNode(true) as SVGElement;
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const blob = new Blob([new XMLSerializer().serializeToString(clone)], {
+      type: 'image/svg+xml;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `table-qr-${(table?.name ?? 'table').toLowerCase().replace(/\s+/g, '-')}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -111,10 +133,16 @@ export function TableInfoModal({
           </button>
         </div>
 
-        {/* QR Code */}
+        {/* QR Code — real scannable QR (Figma 467:1241), white plate for contrast */}
         <div className="flex shrink-0 flex-col items-center gap-[19px] px-4 pt-[18px]">
-          <Image src="/images/figma/table-qr.png" alt="Table QR code" width={154} height={154} className="size-[154px]" />
-          <button className="inline-flex items-center gap-[7px] rounded-[44px] bg-[rgba(242,211,255,0.54)] px-[10px] py-[7px] text-[16px] font-medium leading-[1.4] text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)]">
+          <div ref={qrRef} className="flex size-[154px] items-center justify-center rounded-xl bg-white p-2 shadow-[0px_2px_8px_rgba(0,0,0,0.06)]">
+            <TableQrCode tableName={table.name} size={138} />
+          </div>
+          <button
+            type="button"
+            onClick={handleDownloadQr}
+            className="inline-flex items-center gap-[7px] rounded-[44px] bg-[rgba(242,211,255,0.54)] px-[10px] py-[7px] text-[16px] font-medium leading-[1.4] text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)]"
+          >
             <Image src="/images/figma/download.svg" alt="" width={24} height={24} className="size-6" />
             {isAr ? 'تخصيص وتنزيل رمز QR' : 'Customize & Download Printable QR'}
           </button>

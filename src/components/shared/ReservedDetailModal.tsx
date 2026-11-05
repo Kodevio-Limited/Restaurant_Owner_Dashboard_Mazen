@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { ArrowLeft, Download, ChevronDown, QrCode } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
+import { TableQrCode } from '@/components/shared/TableQrCode';
 import { cn, lockPageScroll } from '@/lib/utils';
 
 interface ReservedDetailData {
@@ -78,7 +78,7 @@ export function ReservedDetailModal({
         {/* QR Code */}
         <div className="flex flex-col items-center gap-4 px-4 pt-4 sm:px-5 sm:pt-6">
           <div className="flex h-[120px] w-[120px] items-center justify-center rounded-xl bg-white outline outline-1 outline-[#E9E9E9] sm:h-[154px] sm:w-[154px]">
-            <QrCodePlaceholder size={110} />
+            <TableQrCode tableName={table.name} size={110} />
           </div>
           <div className="flex items-center gap-3">
             <button className="inline-flex items-center gap-1.5 rounded-[44px] bg-[rgba(242,211,255,0.54)] px-2.5 py-1.5 text-sm font-medium leading-6 text-[#961D6E] transition-colors hover:bg-[rgba(242,211,255,0.8)] sm:text-base">

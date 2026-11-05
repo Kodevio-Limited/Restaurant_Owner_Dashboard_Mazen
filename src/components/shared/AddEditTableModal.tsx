@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Download, ChevronDown, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { QrCodePlaceholder } from '@/components/shared/QrCodePlaceholder';
+import { TableQrCode } from '@/components/shared/TableQrCode';
 import { cn, lockPageScroll } from '@/lib/utils';
 
 interface AddEditTableData {
@@ -143,7 +143,7 @@ export function AddEditTableModal({
               ref={qrRef}
               className="flex h-[160px] w-[160px] items-center justify-center rounded-2xl bg-white p-3 shadow-[0px_2px_8px_rgba(0,0,0,0.06)] outline outline-1 outline-[#E9E9E9]"
             >
-              <QrCodePlaceholder size={138} />
+              <TableQrCode tableName={tableName || (editMode ? table?.name : '') || 'new-table'} size={138} />
             </div>
             <button
               type="button"
