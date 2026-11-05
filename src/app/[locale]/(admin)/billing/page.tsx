@@ -38,10 +38,10 @@ const PLANS = [
 ];
 
 const BILLING_HISTORY = [
-  { date: 'Jul 25, 2026', date_ar: '25 يوليو 2026', amount: '$45.00', statusKey: 'paid' as const },
-  { date: 'Jun 25, 2026', date_ar: '25 يونيو 2026', amount: '$45.00', statusKey: 'paid' as const },
-  { date: 'May 25, 2026', date_ar: '25 مايو 2026', amount: '$45.00', statusKey: 'paid' as const },
-  { date: 'Apr 25, 2026', date_ar: '25 أبريل 2026', amount: '$45.00', statusKey: 'paid' as const },
+  { date: 'Jul 25, 2026', date_ar: '25 يوليو 2026', amount: 'EGP 45.00', statusKey: 'paid' as const },
+  { date: 'Jun 25, 2026', date_ar: '25 يونيو 2026', amount: 'EGP 45.00', statusKey: 'paid' as const },
+  { date: 'May 25, 2026', date_ar: '25 مايو 2026', amount: 'EGP 45.00', statusKey: 'paid' as const },
+  { date: 'Apr 25, 2026', date_ar: '25 أبريل 2026', amount: 'EGP 45.00', statusKey: 'paid' as const },
 ];
 
 // Figma 1939:989 — 18px icon box (icon offset 2px from top) + 8px gap + 13px/17.875px text.
@@ -120,8 +120,8 @@ function PlanCard({ plan, billing }: { plan: typeof PLANS[0]; billing: 'monthly'
         </p>
 
         <div className="py-4">
-          <span className="text-[28px] font-bold text-[#2D2F33]">${price}</span>
-          <span className="text-[13px] text-[#989898]">{t('mo')}</span>
+          <span className="text-[28px] font-bold text-[#2D2F33]" dir="ltr">EGP {price}</span>
+          <span className="text-[13px] text-[#989898]"> {t('mo')}</span>
         </div>
       </div>
 
@@ -214,8 +214,8 @@ export default function BillingPage() {
             </div>
 
             <p>
-              <span className="text-[24px] font-semibold text-white sm:text-[30px]">$49</span>
-              <span className="text-[13px] text-white sm:text-[15px]">{t('perMonth')}</span>
+              <span className="text-[24px] font-semibold text-white sm:text-[30px]" dir="ltr">EGP 49</span>
+              <span className="text-[13px] text-white sm:text-[15px]"> {t('perMonth')}</span>
             </p>
 
             <div className="border-t border-white/20" />

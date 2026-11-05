@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useLocale } from 'next-intl';
+import { Clock } from 'lucide-react';
 
 export type TableStatus = 'available' | 'occupied' | 'reserved';
 
@@ -11,7 +11,7 @@ const STATUS_CONFIG: Record<TableStatus, { label: string; label_ar: string; pill
   reserved:  { label: 'RESERVED',  label_ar: 'محجوز', pillBg: '#0DADE8', bodyBg: '#C5F0FB' },
 };
 
-interface TableCardProps {
+export interface TableCardProps {
   name: string;
   name_ar?: string;
   zone: string;
@@ -21,85 +21,107 @@ interface TableCardProps {
   time?: string;
   time_ar?: string;
   orderNumbers?: string[];
+  capacity?: number;
+  itemsCount?: number;
+  reservedFor?: string;
+  onClick?: () => void;
 }
 
-export function TableCard({ name, name_ar, zone, zone_ar, status, bill, time, time_ar }: TableCardProps) {
+/**
+ * Table card matching Cashier POS floor plan card:
+ * - Fluid aspect ratio [256/160] with container query (cqw units).
+ * - Table body fills the entire card (rail capsules removed).
+ * - Same hover animation (hover:-translate-y-1 duration-200).
+ * - Same typography, badge pills, spacing, and colors.
+ */
+export function TableCard({
+  name,
+  name_ar,
+  zone,
+  zone_ar,
+  status,
+  bill,
+  time,
+  time_ar,
+  orderNumbers,
+  itemsCount,
+  reservedFor,
+  onClick,
+}: TableCardProps) {
   const locale = useLocale();
   const isAr = locale === 'ar';
   const cfg = STATUS_CONFIG[status];
-
-  const railStyle: React.CSSProperties = {
-    backgroundColor: cfg.bodyBg,
-    borderColor: '#B9B9B9',
-  };
 
   const displayName = isAr ? (name_ar ?? name) : name;
   const displayZone = isAr ? (zone_ar ?? zone) : zone;
   const displayTime = isAr ? (time_ar ?? time) : time;
   const displayLabel = isAr ? cfg.label_ar : cfg.label;
 
+  const count = typeof itemsCount === 'number' ? itemsCount : orderNumbers ? orderNumbers.length : undefined;
+
   return (
-    <div className="relative h-[186px] w-full max-w-[301px]">
-
-      {/* Start vertical rail */}
+    <div
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') onClick?.();
+      }}
+      style={{ containerType: 'inline-size' }}
+      className="relative aspect-[256/160] w-full cursor-pointer transition-transform duration-200 hover:-translate-y-1 focus:outline-none"
+    >
+      {/* Table body fills the whole card box — rail capsules removed */}
       <div
-        className="absolute start-0 top-[32px] h-[calc(100%-64px)] w-[13px] rounded-[48px] border"
-        style={railStyle}
-      />
-
-      {/* End vertical rail */}
-      <div
-        className="absolute end-0 top-[32px] h-[calc(100%-64px)] w-[13px] rounded-[48px] border"
-        style={railStyle}
-      />
-
-      {/* Top horizontal rail */}
-      <div
-        className="absolute inset-x-0 mx-auto top-0 h-[13px] w-[52%] rounded-[48px] border"
-        style={railStyle}
-      />
-
-      {/* Bottom horizontal rail */}
-      <div
-        className="absolute inset-x-0 mx-auto bottom-0 h-[13px] w-[52%] rounded-[48px] border"
-        style={railStyle}
-      />
-
-      {/* Main table body (Figma 421:2110) */}
-      <div
-        className="absolute inset-x-[21px] inset-y-[21px] overflow-hidden rounded-[9px] border border-[#B9B9B9]"
+        className="absolute inset-0 overflow-hidden rounded-[3.125cqw] border border-[#B9B9B9]"
         style={{ backgroundColor: cfg.bodyBg }}
       >
-        <div className="absolute inset-x-[12px] top-[12px] flex flex-wrap items-start gap-x-2 gap-y-1">
-          <div className="flex min-w-0 grow flex-col">
-            <span className="truncate font-satoshi text-[23px] font-medium leading-[1.4] text-black">
-              {displayName}
-            </span>
-            <span className="mt-[7px] text-[16px] font-medium leading-[1.4] text-[#989898]">
-              {displayZone}
-            </span>
-          </div>
-
+        {/* Name + badge */}
+        <div className="absolute inset-x-[4.297cqw] top-[4.297cqw] flex items-center justify-between gap-2">
+          <span className="font-satoshi truncate text-[7.617cqw] font-medium leading-[1.4] text-black">
+            {displayName}
+          </span>
           <span
-            className="ms-auto inline-flex h-[30px] shrink-0 items-center justify-center rounded-[37px] px-[12px] py-[6px] text-[13px] font-medium leading-[1.4] text-white"
+            className="flex h-[10.156cqw] shrink-0 items-center justify-center whitespace-nowrap rounded-full px-[3.906cqw] text-[4.297cqw] font-medium leading-[1.4] text-white"
             style={{ backgroundColor: cfg.pillBg }}
           >
             {displayLabel}
           </span>
         </div>
 
-        {(bill || time) && (
-          <div className="absolute inset-x-[12px] bottom-[12px] flex items-center justify-between gap-2">
+        {/* Zone */}
+        <p className="absolute inset-x-[4.297cqw] top-[17.188cqw] truncate text-[5.273cqw] font-medium leading-[1.4] text-[#989898]">
+          {displayZone}
+        </p>
+
+        {/* Reserved info */}
+        {status === 'reserved' && reservedFor && (
+          <p className="absolute inset-x-[4.297cqw] top-[26.953cqw] truncate text-[5.078cqw] font-medium leading-[1.4] text-[#0D7EA8]">
+            {reservedFor}
+          </p>
+        )}
+
+        {/* Items count on occupied table */}
+        {status === 'occupied' && typeof count === 'number' && count > 0 && (
+          <p className="absolute inset-x-[4.297cqw] top-[26.953cqw] truncate text-[5.078cqw] font-medium leading-[1.4] text-[#2D2F33]">
+            {isAr ? `${count} عناصر` : `${count} ${count === 1 ? 'Item' : 'Items'}`}
+          </p>
+        )}
+
+        {/* Bill + time (occupied) */}
+        {status === 'occupied' && (bill || displayTime) && (
+          <div className="absolute inset-x-[4.297cqw] bottom-[4.297cqw] flex items-center justify-between gap-[2cqw]">
             {bill && (
-              <span dir="ltr" className="text-[25px] font-semibold leading-[1.4] text-[#026F4F]">
-                {bill}
+              <span className="shrink-0 whitespace-nowrap text-[7.383cqw] font-semibold leading-[1.4] text-[#026F4F]">
+                <bdi dir="ltr">{bill}</bdi>
               </span>
             )}
             {displayTime && (
-              <div className="flex shrink-0 items-center gap-[5px]">
-                <Image src="/images/figma/clock-light.svg" alt="" width={25} height={25} className="size-[25px]" />
-                <span className="whitespace-nowrap text-[18px] leading-[1.4] text-[#989898]">{displayTime}</span>
-              </div>
+              <span className="flex min-w-0 items-center gap-1">
+                <Clock size={18} strokeWidth={1.5} className="shrink-0 text-[#989898]" />
+                <span className="truncate whitespace-nowrap text-[6.055cqw] font-normal leading-[1.4] text-[#989898]">
+                  {displayTime}
+                </span>
+              </span>
             )}
           </div>
         )}

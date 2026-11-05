@@ -29,12 +29,12 @@ interface TableDef {
 }
 
 const INITIAL_TABLES: TableDef[] = [
-  { id: 't1', name: 'Table A08', name_ar: 'طاولة A08', zone: 'Indoor',  zone_ar: 'داخلي', status: 'occupied',  bill: '$65.00', time: '35 mins', time_ar: '35 دقيقة', capacity: 4, orderNumbers: ['#0044', '#0048'] },
+  { id: 't1', name: 'Table A08', name_ar: 'طاولة A08', zone: 'Indoor',  zone_ar: 'داخلي', status: 'occupied',  bill: 'EGP 65.00', time: '35 mins', time_ar: '35 دقيقة', capacity: 4, orderNumbers: ['#0044', '#0048'] },
   { id: 't2', name: 'Table A09', name_ar: 'طاولة A09', zone: 'Indoor',  zone_ar: 'داخلي', status: 'available',                                          capacity: 4 },
   { id: 't3', name: 'Table B02', name_ar: 'طاولة B02', zone: 'Indoor',  zone_ar: 'داخلي', status: 'reserved',                                           capacity: 6 },
-  { id: 't4', name: 'Table B03', name_ar: 'طاولة B03', zone: 'Indoor',  zone_ar: 'داخلي', status: 'occupied',  bill: '$24.50', time: '12 mins', time_ar: '12 دقيقة', capacity: 4, orderNumbers: ['#0043'] },
+  { id: 't4', name: 'Table B03', name_ar: 'طاولة B03', zone: 'Indoor',  zone_ar: 'داخلي', status: 'occupied',  bill: 'EGP 24.50', time: '12 mins', time_ar: '12 دقيقة', capacity: 4, orderNumbers: ['#0043'] },
   { id: 't5', name: 'Table C01', name_ar: 'طاولة C01', zone: 'Outdoor', zone_ar: 'خارجي', status: 'available',                                          capacity: 2 },
-  { id: 't6', name: 'Table C02', name_ar: 'طاولة C02', zone: 'Outdoor', zone_ar: 'خارجي', status: 'occupied',  bill: '$81.20', time: '48 mins', time_ar: '48 دقيقة', capacity: 6, orderNumbers: ['#0039', '#0041', '#0045'] },
+  { id: 't6', name: 'Table C02', name_ar: 'طاولة C02', zone: 'Outdoor', zone_ar: 'خارجي', status: 'occupied',  bill: 'EGP 81.20', time: '48 mins', time_ar: '48 دقيقة', capacity: 6, orderNumbers: ['#0039', '#0041', '#0045'] },
   { id: 't7', name: 'Table D01', name_ar: 'طاولة D01', zone: 'Patio',   zone_ar: 'فناء',  status: 'reserved',                                           capacity: 4 },
   { id: 't8', name: 'Table D02', name_ar: 'طاولة D02', zone: 'Patio',   zone_ar: 'فناء',  status: 'available',                                          capacity: 4 },
 ];
@@ -195,28 +195,23 @@ export default function TablesPage() {
         </div>
       </div>
 
-      {/* ── Table grid ── */}
-      <div className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      {/* ── Table grid (matching Cashier POS floor plan layout & auto-fill grid) ── */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-4 gap-y-8 pb-10 lg:grid-cols-4 xl:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
         {filtered.map((tab) => (
-          <div key={tab.id} className="relative mx-auto w-full max-w-[301px]">
-            <button
-              onClick={() => openTable(tab)}
-              aria-label={isAr ? `تعديل ${tab.name_ar ?? tab.name}` : `Edit ${tab.name}`}
-              className="w-full cursor-pointer text-start transition-transform hover:-translate-y-0.5 focus:outline-none"
-            >
-              <TableCard
-                name={tab.name}
-                name_ar={tab.name_ar}
-                zone={tab.zone}
-                zone_ar={tab.zone_ar}
-                status={tab.status}
-                bill={tab.bill}
-                time={tab.time}
-                time_ar={tab.time_ar}
-                orderNumbers={tab.orderNumbers}
-              />
-            </button>
-          </div>
+          <TableCard
+            key={tab.id}
+            name={tab.name}
+            name_ar={tab.name_ar}
+            zone={tab.zone}
+            zone_ar={tab.zone_ar}
+            status={tab.status}
+            bill={tab.bill}
+            time={tab.time}
+            time_ar={tab.time_ar}
+            capacity={tab.capacity}
+            orderNumbers={tab.orderNumbers}
+            onClick={() => openTable(tab)}
+          />
         ))}
       </div>
 
