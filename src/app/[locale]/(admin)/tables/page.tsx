@@ -220,6 +220,27 @@ export default function TablesPage() {
         open={tableOpen}
         table={editing}
         onClose={closeTable}
+        onSave={(data) => {
+          if (editing) {
+            setTables((prev) =>
+              prev.map((t) =>
+                t.id === editing.id
+                  ? { ...t, name: data.name, capacity: data.capacity, zone: data.zone as any }
+                  : t
+              )
+            );
+          } else {
+            const newTable: TableDef = {
+              id: `t-${Date.now()}`,
+              name: data.name,
+              zone: data.zone as any,
+              status: 'available',
+              capacity: data.capacity,
+            };
+            setTables((prev) => [...prev, newTable]);
+          }
+          closeTable();
+        }}
         onMarkReserved={() => {
           const current = editing;
           closeTable();
