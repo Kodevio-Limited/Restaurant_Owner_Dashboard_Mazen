@@ -24,6 +24,7 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
   const name = isAr ? (item.name_ar ?? item.name) : item.name;
   const category = isAr ? (item.category_ar ?? item.category) : item.category;
   const description = isAr ? (item.description_ar ?? item.description) : item.description;
+  const formattedPrice = item.price.startsWith('$') ? item.price.replace('$', 'EGP ') : item.price;
 
   return (
     <div className="flex w-full max-w-[324px] flex-col items-start gap-[21px] overflow-clip rounded-[22.517px] bg-white p-[14.64px]">
@@ -53,7 +54,7 @@ export function MenuItemCard({ item }: { item: MenuItem }) {
             <h3 className="w-full truncate font-satoshi text-[21.391px] font-medium leading-[1.4] text-[#2D2F33]">{name}</h3>
             <p className="text-xs font-medium leading-4 text-[#686868]">{category}</p>
           </div>
-          <span className="shrink-0 text-base font-semibold leading-5 text-[#026F4F]">{item.price}</span>
+          <span className="shrink-0 text-base font-semibold leading-5 text-[#026F4F]">{formattedPrice}</span>
         </div>
         <p className="line-clamp-2 text-xs font-normal leading-4 text-[#989898]">{description}</p>
       </div>

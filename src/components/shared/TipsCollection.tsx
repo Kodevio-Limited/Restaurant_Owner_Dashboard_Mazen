@@ -68,12 +68,12 @@ export function TipsCollection() {
               tickLine={false}
               domain={[0, 100]}
               ticks={[0, 20, 40, 60, 80, 100]}
-              tickFormatter={(v) => `$${v}`}
-              tick={{ fontSize: 12, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
-              width={40}
+              tickFormatter={(v) => `EGP ${v}`}
+              tick={{ fontSize: 11, fill: 'rgba(0,0,0,0.7)', fontWeight: 500 }}
+              width={56}
             />
             <Tooltip
-              formatter={(v: number) => [`$${v}`, isArabic ? 'إكراميات' : 'Tips']}
+              formatter={(v: number) => [`EGP ${v}`, isArabic ? 'إكراميات' : 'Tips']}
               cursor={{ fill: 'rgba(249,115,22,0.08)' }}
               contentStyle={{ borderRadius: 10, border: '1px solid #E9E9E9', fontSize: 13 }}
               labelStyle={{ fontWeight: 600 }}

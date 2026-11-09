@@ -18,18 +18,22 @@ import {
   Menu,
   X,
   Package,
+  Contact,
+  TicketPercent,
 } from 'lucide-react';
 import { LanguageToggle } from './LanguageToggle';
 
 const NAV_KEYS = [
-  { id: 'orders',   icon: Receipt,   href: '/orders' },
-  { id: 'menu',     icon: Utensils,  href: '/menu' },
-  { id: 'inventory',icon: Package,   href: '/inventory' },
-  { id: 'tables',   icon: LayoutGrid,href: '/tables' },
-  { id: 'staff',    icon: Users,     href: '/staff' },
-  { id: 'reports',  icon: BarChart3, href: '/reports/analytics' },
-  { id: 'settings', icon: Settings,  href: '/settings' },
-  { id: 'billing',  icon: DollarSign,href: '/billing' },
+  { id: 'orders',     icon: Receipt,       href: '/orders' },
+  { id: 'menu',       icon: Utensils,      href: '/menu' },
+  { id: 'inventory',  icon: Package,       href: '/inventory' },
+  { id: 'customers',  icon: Contact,       href: '/customers' },
+  { id: 'promotions', icon: TicketPercent, href: '/promotions' },
+  { id: 'tables',     icon: LayoutGrid,    href: '/tables' },
+  { id: 'staff',      icon: Users,         href: '/staff' },
+  { id: 'reports',    icon: BarChart3,     href: '/reports/analytics' },
+  { id: 'settings',   icon: Settings,      href: '/settings' },
+  { id: 'billing',    icon: DollarSign,    href: '/billing' },
 ] as const;
 
 interface SidebarProps {

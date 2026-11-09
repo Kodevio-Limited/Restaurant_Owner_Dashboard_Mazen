@@ -4,8 +4,10 @@ import { useTranslations, useLocale } from 'next-intl';
 import { ChevronDown } from 'lucide-react';
 import {
   DollarSign, Receipt, Flame, Armchair, CreditCard,
-  Clock3, Timer, UserCheck, XCircle, Table2,
+  Clock3, Timer, UserCheck, XCircle, Table2, Download,
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import { downloadWorkbook } from '@/lib/exportExcel';
 import { cn } from '@/lib/utils';
 import { StatCard } from '@/components/shared/StatCard';
 import { RevenueOverTime } from '@/components/shared/RevenueOverTime';
@@ -128,6 +130,67 @@ export function AnalyticsContent() {
   const [totalOrdersOpen, setTotalOrdersOpen] = useQueryModal('total-orders');
   const [cancelledOpen, setCancelledOpen] = useQueryModal('cancelled-orders');
 
+  const handleExportFullAnalytics = () => {
+    const wb = XLSX.utils.book_new();
+
+    // 1. KPI Sheet
+    const kpiData = [
+      { Metric: 'Total Revenue', Value: 'EGP 1,250', Note: '+12.5% from yesterday' },
+      { Metric: 'Total Orders', Value: '48', Note: 'Today' },
+      { Metric: 'Active Orders', Value: '12', Note: 'Kitchen is busy' },
+      { Metric: 'Active Tables', Value: '8', Note: 'Out of 20 tables' },
+      { Metric: 'Pending Pay', Value: 'EGP 250', Note: 'Action required' },
+      { Metric: 'Table Turnover Rate', Value: '48 min', Note: '+3min from yesterday' },
+      { Metric: 'Order Fulfillment Rate', Value: '18 min', Note: 'Average duration' },
+      { Metric: 'Avg Spend per Table', Value: 'EGP 45.50', Note: '+5.2% from yesterday' },
+      { Metric: 'Cancelled Orders', Value: '32', Note: '-5.2% from yesterday' },
+      { Metric: 'Table Utilization', Value: '40%', Note: '+5.2% from yesterday' },
+    ];
+    const wsKpi = XLSX.utils.json_to_sheet(kpiData);
+    XLSX.utils.book_append_sheet(wb, wsKpi, 'KPI Summary');
+
+    // 2. Channel Sheet
+    const channelRows = CHANNEL_DATA.map((c) => ({
+      Channel: c.label,
+      Orders: c.count,
+      'Share %': `${c.pct.toFixed(1)}%`,
+      Revenue: c.revenue,
+    }));
+    const wsChannel = XLSX.utils.json_to_sheet(channelRows);
+    XLSX.utils.book_append_sheet(wb, wsChannel, 'Orders by Channel');
+
+    // 3. Top & Least Items Sheet
+    const performanceRows = [
+      ...TOP_ITEMS.map((item) => ({
+        Type: 'Top Performing',
+        Item: item.name,
+        'Qty Sold': item.qty,
+        Revenue: item.revenue,
+      })),
+      ...LEAST_ITEMS.map((item) => ({
+        Type: 'Least Performing',
+        Item: item.name,
+        'Qty Sold': item.qty,
+        Revenue: item.revenue,
+      })),
+    ];
+    const wsPerf = XLSX.utils.json_to_sheet(performanceRows);
+    XLSX.utils.book_append_sheet(wb, wsPerf, 'Item Performance');
+
+    // 4. Shift Reports Sheet
+    const shiftData = [
+      { Date: '06-12-2025', Started: '08:00 AM', Ended: 'Ongoing', Cashier: 'Sarah Jessie', Revenue: 'Accumulating...' },
+      { Date: '06-11-2025', Started: '09:00 AM', Ended: '05:00 PM', Cashier: 'Sarah Jessie', Revenue: 'EGP 2,190.00' },
+      { Date: '06-10-2025', Started: '08:30 AM', Ended: '06:00 PM', Cashier: 'John Carter', Revenue: 'EGP 1,860.00' },
+      { Date: '06-09-2025', Started: '10:00 AM', Ended: '07:30 PM', Cashier: 'Sarah Jessie', Revenue: 'EGP 2,420.00' },
+      { Date: '06-08-2025', Started: '08:00 AM', Ended: '04:30 PM', Cashier: 'Emily Reed', Revenue: 'EGP 1,540.00' },
+    ];
+    const wsShift = XLSX.utils.json_to_sheet(shiftData);
+    XLSX.utils.book_append_sheet(wb, wsShift, 'Shift Reports');
+
+    downloadWorkbook(wb, `Restaurant_Analytics_Report_${new Date().toISOString().split('T')[0]}`);
+  };
+
   return (
     <main className="flex flex-col gap-5">
       {/* Page header */}
@@ -141,6 +204,15 @@ export function AnalyticsContent() {
         <div className="flex flex-wrap items-center gap-2.5">
           <SelectPill>{t('branch')}</SelectPill>
           <SelectPill>{t('perMonth')}</SelectPill>
+          {/* Export button (Bug-11) */}
+          <button
+            onClick={handleExportFullAnalytics}
+            className="flex items-center gap-2 rounded-[59px] bg-[#026F4F] px-4 py-2.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-emerald-800 sm:text-sm"
+            title={isArabic ? 'تصدير كملف إكسل' : 'Export complete analytics as Excel spreadsheet'}
+          >
+            <Download size={15} />
+            <span>{isArabic ? 'تصدير إكسل' : 'Export Excel'}</span>
+          </button>
         </div>
       </div>
 

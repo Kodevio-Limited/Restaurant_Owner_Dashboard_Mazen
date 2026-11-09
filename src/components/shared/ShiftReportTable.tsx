@@ -17,10 +17,10 @@ interface SessionRow {
 
 const ROWS: SessionRow[] = [
   { id: '1', date: '06-12-2025', started: '08:00 AM', started_ar: '08:00 ص', ended: null, ended_ar: null, cashier: 'Sarah Jessie', cashier_ar: 'سارة جيسي', revenue: 'Accumulating....', revenue_ar: 'جاري التجميع...' },
-  { id: '2', date: '06-11-2025', started: '09:00 AM', started_ar: '09:00 ص', ended: '05:00 PM', ended_ar: '05:00 م', cashier: 'Sarah Jessie', cashier_ar: 'سارة جيسي', revenue: '$2,190.00', revenue_ar: '$2,190.00' },
-  { id: '3', date: '06-10-2025', started: '08:30 AM', started_ar: '08:30 ص', ended: '06:00 PM', ended_ar: '06:00 م', cashier: 'John Carter', cashier_ar: 'جون كارتر', revenue: '$1,860.00', revenue_ar: '$1,860.00' },
-  { id: '4', date: '06-09-2025', started: '10:00 AM', started_ar: '10:00 ص', ended: '07:30 PM', ended_ar: '07:30 م', cashier: 'Sarah Jessie', cashier_ar: 'سارة جيسي', revenue: '$2,420.00', revenue_ar: '$2,420.00' },
-  { id: '5', date: '06-08-2025', started: '08:00 AM', started_ar: '08:00 ص', ended: '04:30 PM', ended_ar: '04:30 م', cashier: 'Emily Reed', cashier_ar: 'إميلي ريد', revenue: '$1,540.00', revenue_ar: '$1,540.00' },
+  { id: '2', date: '06-11-2025', started: '09:00 AM', started_ar: '09:00 ص', ended: '05:00 PM', ended_ar: '05:00 م', cashier: 'Sarah Jessie', cashier_ar: 'سارة جيسي', revenue: 'EGP 2,190.00', revenue_ar: '2,190.00 ج.م' },
+  { id: '3', date: '06-10-2025', started: '08:30 AM', started_ar: '08:30 ص', ended: '06:00 PM', ended_ar: '06:00 م', cashier: 'John Carter', cashier_ar: 'جون كارتر', revenue: 'EGP 1,860.00', revenue_ar: '1,860.00 ج.م' },
+  { id: '4', date: '06-09-2025', started: '10:00 AM', started_ar: '10:00 ص', ended: '07:30 PM', ended_ar: '07:30 م', cashier: 'Sarah Jessie', cashier_ar: 'سارة جيسي', revenue: 'EGP 2,420.00', revenue_ar: '2,420.00 ج.م' },
+  { id: '5', date: '06-08-2025', started: '08:00 AM', started_ar: '08:00 ص', ended: '04:30 PM', ended_ar: '04:30 م', cashier: 'Emily Reed', cashier_ar: 'إميلي ريد', revenue: 'EGP 1,540.00', revenue_ar: '1,540.00 ج.م' },
 ];
 
 const GRID = 'grid grid-cols-[1.3fr_1.1fr_1.2fr_1.5fr_1.3fr_56px] lg:grid-cols-[1.5fr_1.2fr_1.4fr_1.4fr_1.2fr_72px]';

@@ -371,16 +371,34 @@ const MENU_ITEM_OPTIONS = [
   'French Fries',
 ];
 
+const ADDON_OPTIONS = [
+  'Extra Cheese (Cheddar)',
+  'Extra Patty',
+  'Avocado Add-on',
+  'Bacon Strips',
+  'Extra Sauce',
+  'Crispy Onions',
+  'Jalapeno Slices',
+  'Truffle Mayo',
+  'Soft Boiled Egg',
+  'Extra Ramen Noodles',
+  'Chili Garlic Oil',
+  'Extra Rice',
+  'Mushrooms',
+];
+
 function RecipeMappingModal({
   open,
   onClose,
   onSave,
   recipe,
+  isAddon,
 }: {
   open: boolean;
   onClose: () => void;
   onSave: (data: { name: string; ingredients: RecipeIngredient[] }) => void;
   recipe: Recipe | null;
+  isAddon?: boolean;
 }) {
   const t = useTranslations('inventory');
   const tc = useTranslations('common');
@@ -388,6 +406,9 @@ function RecipeMappingModal({
   const [rows, setRows] = useState<RecipeIngredient[]>([]);
   const [dirty, setDirty] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const isAddonRecipe = isAddon ?? (recipe?.kind === 'addon');
+  const currentOptions = isAddonRecipe ? ADDON_OPTIONS : MENU_ITEM_OPTIONS;
 
   // Seed the rows and menu item from the recipe each time it opens.
   useEffect(() => {
@@ -454,11 +475,11 @@ function RecipeMappingModal({
           <span className="w-[50px]" />
         </div>
 
-        {/* Menu item selection field (Bug-9: ask which menu item this recipe is for) */}
+        {/* Item selection field (Bug-9 & Bug-15: choose menu item or add-on depending on tab) */}
         <div className="mt-6 px-[30px]">
           <div className="rounded-[13px] bg-white p-[18px]">
             <label className="block text-[15px] font-semibold text-[#2D2F33] mb-2">
-              {t('recipe.menuItem')}
+              {isAddonRecipe ? t('recipe.addonItem') : t('recipe.menuItem')}
             </label>
             <div className="relative">
               <select
@@ -469,8 +490,12 @@ function RecipeMappingModal({
                 }}
                 className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-[#F8F9FA] px-4 pe-10 font-satoshi text-base text-[#2D2F33] outline-none transition-colors focus:border-emerald-500"
               >
-                <option value="">{t('recipe.chooseMenuItem')}</option>
-                {MENU_ITEM_OPTIONS.map((item) => (
+                <option value="">{isAddonRecipe ? t('recipe.chooseAddonItem') : t('recipe.chooseMenuItem')}</option>
+                {/* Ensure existing recipeName is present if customized */}
+                {recipeName && !currentOptions.includes(recipeName) && (
+                  <option value={recipeName}>{recipeName}</option>
+                )}
+                {currentOptions.map((item) => (
                   <option key={item} value={item}>{item}</option>
                 ))}
               </select>
@@ -1296,6 +1321,7 @@ function RecipeTab() {
         onClose={() => setEditing(null)}
         onSave={saveMapping}
         recipe={editing}
+        isAddon={editing?.kind === 'addon' || subTab === 'addon'}
       />
     </div>
   );

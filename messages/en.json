@@ -36,6 +36,14 @@
       "title": "Inventory",
       "description": "Track stock and inventory"
     },
+    "customers": {
+      "title": "Customer Management",
+      "description": "View saved customer profiles, delivery addresses, and blacklist controls"
+    },
+    "promotions": {
+      "title": "Promotions & Discounts",
+      "description": "Create and manage promo codes, usage reports, and discount rules"
+    },
     "login": {
       "title": "Sign In",
       "description": "Access your account"
@@ -110,6 +118,8 @@
     "orders": "Orders",
     "menu": "Menu",
     "inventory": "Inventory",
+    "customers": "Customers",
+    "promotions": "Promotions",
     "tables": "Tables",
     "staff": "Staff",
     "reports": "Reports",
@@ -583,6 +593,8 @@
       "newRecipe": "New Recipe",
       "menuItem": "Menu Item",
       "chooseMenuItem": "Select a menu item for this recipe...",
+      "addonItem": "Add-on / Extra",
+      "chooseAddonItem": "Select an add-on for this recipe...",
       "ingredients": "Ingredients",
       "addRow": "Add Row"
     },

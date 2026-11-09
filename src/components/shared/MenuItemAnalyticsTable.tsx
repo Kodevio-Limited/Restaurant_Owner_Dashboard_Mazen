@@ -12,8 +12,25 @@ import {
   Percent,
   Coins,
   ChevronDown,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  Download,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { exportTableToExcel } from '@/lib/exportExcel';
+
+export type SortField =
+  | 'name'
+  | 'category'
+  | 'cogs'
+  | 'fcp'
+  | 'contributionMargin'
+  | 'popularity'
+  | 'grossRevenue'
+  | 'grossProfit'
+  | 'addonRate'
+  | 'refundRate';
 
 export interface MenuItemMetric {
   id: string;
@@ -286,6 +303,8 @@ export function MenuItemAnalyticsTable() {
   const [showColumnPicker, setShowColumnPicker] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const categories = useMemo(() => {
     const set = new Set(MENU_ITEM_METRICS.map((m) => m.category));
@@ -311,15 +330,92 @@ export function MenuItemAnalyticsTable() {
     setVisibleColumns(DEFAULT_VISIBLE);
   };
 
-  const filteredItems = useMemo(() => {
-    return MENU_ITEM_METRICS.filter((item) => {
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
+    } else {
+      setSortField(field);
+      // Default to ascending for text, descending (highest first) for metrics
+      setSortDirection(field === 'name' || field === 'category' ? 'asc' : 'desc');
+    }
+  };
+
+  const sortedAndFilteredItems = useMemo(() => {
+    const list = MENU_ITEM_METRICS.filter((item) => {
       const matchesSearch =
         item.name.toLowerCase().includes(search.toLowerCase()) ||
         item.name_ar.includes(search);
       const matchesCat = selectedCategory === 'All' || item.category === selectedCategory;
       return matchesSearch && matchesCat;
     });
-  }, [search, selectedCategory]);
+
+    if (!sortField) return list;
+
+    return [...list].sort((a, b) => {
+      let cmp = 0;
+      switch (sortField) {
+        case 'name': {
+          const aVal = isAr ? a.name_ar : a.name;
+          const bVal = isAr ? b.name_ar : b.name;
+          cmp = aVal.localeCompare(bVal);
+          break;
+        }
+        case 'category': {
+          const aVal = isAr ? a.category_ar : a.category;
+          const bVal = isAr ? b.category_ar : b.category;
+          cmp = aVal.localeCompare(bVal);
+          break;
+        }
+        case 'cogs':
+          cmp = a.cogs - b.cogs;
+          break;
+        case 'fcp':
+          cmp = a.fcp - b.fcp;
+          break;
+        case 'contributionMargin':
+          cmp = a.contributionMargin - b.contributionMargin;
+          break;
+        case 'popularity':
+          cmp = a.popularityScore - b.popularityScore;
+          break;
+        case 'grossRevenue':
+          cmp = a.grossRevenue - b.grossRevenue;
+          break;
+        case 'grossProfit':
+          cmp = a.grossProfit - b.grossProfit;
+          break;
+        case 'addonRate':
+          cmp = a.addonRate - b.addonRate;
+          break;
+        case 'refundRate':
+          cmp = a.refundRate - b.refundRate;
+          break;
+      }
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [search, selectedCategory, sortField, sortDirection, isAr]);
+
+  const handleExportExcel = () => {
+    const exportRows = sortedAndFilteredItems.map((item) => ({
+      'Menu Item': isAr ? item.name_ar : item.name,
+      'Category': isAr ? item.category_ar : item.category,
+      'Selling Price (EGP)': item.sellingPrice,
+      'COGS (EGP)': item.cogs,
+      'Food Cost %': `${item.fcp}%`,
+      'Contribution Margin (EGP)': item.contributionMargin,
+      'Popularity Score': item.popularityScore,
+      'Popularity Rank': `#${item.popularityRank}`,
+      'Gross Revenue (EGP)': item.grossRevenue,
+      'Gross Profit (EGP)': item.grossProfit,
+      'Add-on Rate %': `${item.addonRate}%`,
+      'Refund Rate %': `${item.refundRate}%`,
+    }));
+    exportTableToExcel(
+      exportRows,
+      `Menu_Item_Analytics_${new Date().toISOString().split('T')[0]}`,
+      'Item Economics',
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-[0px_1px_2px_rgba(0,0,0,0.04)]">
@@ -355,6 +451,17 @@ export function MenuItemAnalyticsTable() {
               className="h-10 w-40 rounded-xl border border-neutral-200 bg-[#F8F9FA] ps-9 pe-3 text-xs text-[#2D2F33] outline-none transition-all focus:w-56 focus:border-emerald-600 sm:text-sm"
             />
           </div>
+
+          {/* Export to Excel (Bug-11) */}
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            className="flex h-10 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 text-xs font-medium text-[#2D2F33] transition-colors hover:bg-neutral-50 sm:text-sm"
+            title={isAr ? 'تصدير كملف إكسل' : 'Export as Excel spreadsheet'}
+          >
+            <Download size={15} />
+            <span>{isAr ? 'تصدير إكسل' : 'Export Excel'}</span>
+          </button>
 
           {/* Pick & Hide Analytics Dropdown */}
           <div className="relative">
@@ -457,67 +564,207 @@ export function MenuItemAnalyticsTable() {
           <thead>
             <tr className="border-b border-neutral-200 bg-[#F8F9FA] text-xs font-semibold uppercase tracking-wider text-[#686868]">
               {/* Fixed Item column */}
-              <th className="px-4 py-3.5 text-start">{isAr ? 'العنصر' : 'Menu Item'}</th>
+              <th
+                onClick={() => handleSort('name')}
+                className={cn(
+                  'group cursor-pointer select-none px-4 py-3.5 text-start transition-colors hover:bg-neutral-100',
+                  sortField === 'name' && 'bg-emerald-50 text-emerald-800',
+                )}
+                title={isAr ? 'اضغط للترتيب حسب اسم العنصر' : 'Click to sort by menu item'}
+              >
+                <div className="inline-flex items-center gap-1.5">
+                  <span>{isAr ? 'العنصر' : 'Menu Item'}</span>
+                  {sortField === 'name' ? (
+                    sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                  ) : (
+                    <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                  )}
+                </div>
+              </th>
 
               {visibleColumns.category && (
-                <th className="px-3 py-3.5 text-center">{isAr ? 'الفئة' : 'Category'}</th>
+                <th
+                  onClick={() => handleSort('category')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'category' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب الفئة' : 'Click to sort by category'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'الفئة' : 'Category'}</span>
+                    {sortField === 'category' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
+                </th>
               )}
 
               {visibleColumns.cogs && (
-                <th className="px-3 py-3.5 text-center">
-                  <span className="inline-flex items-center gap-1">
-                    {isAr ? 'تكلفة المبيعات (COGS)' : 'COGS'}
-                  </span>
+                <th
+                  onClick={() => handleSort('cogs')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'cogs' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب تكلفة المبيعات' : 'Click to sort by COGS'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'تكلفة المبيعات (COGS)' : 'COGS'}</span>
+                    {sortField === 'cogs' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.fcp && (
-                <th className="px-3 py-3.5 text-center">
-                  <span className="inline-flex items-center gap-1">
-                    {isAr ? 'نسبة تكلفة الطعام (FCP)' : 'Food Cost %'}
-                  </span>
+                <th
+                  onClick={() => handleSort('fcp')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'fcp' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب نسبة تكلفة الطعام' : 'Click to sort by Food Cost %'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'نسبة تكلفة الطعام (FCP)' : 'Food Cost %'}</span>
+                    {sortField === 'fcp' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.contributionMargin && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'هامش المساهمة' : 'Contrib. Margin'}
+                <th
+                  onClick={() => handleSort('contributionMargin')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'contributionMargin' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب هامش المساهمة' : 'Click to sort by Contribution Margin'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'هامش المساهمة' : 'Contrib. Margin'}</span>
+                    {sortField === 'contributionMargin' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.popularity && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'مؤشر الشعبية' : 'Popularity Index'}
+                <th
+                  onClick={() => handleSort('popularity')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'popularity' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب مؤشر الشعبية' : 'Click to sort by Popularity Index'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'مؤشر الشعبية' : 'Popularity Index'}</span>
+                    {sortField === 'popularity' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.grossRevenue && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'إجمالي الإيرادات' : 'Gross Revenue'}
+                <th
+                  onClick={() => handleSort('grossRevenue')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'grossRevenue' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب إجمالي الإيرادات' : 'Click to sort by Gross Revenue'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'إجمالي الإيرادات' : 'Gross Revenue'}</span>
+                    {sortField === 'grossRevenue' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.grossProfit && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'إجمالي الربح' : 'Gross Profit'}
+                <th
+                  onClick={() => handleSort('grossProfit')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'grossProfit' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب إجمالي الربح' : 'Click to sort by Gross Profit'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'إجمالي الربح' : 'Gross Profit'}</span>
+                    {sortField === 'grossProfit' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.addonRate && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'معدل الإضافات' : 'Add-on Rate'}
+                <th
+                  onClick={() => handleSort('addonRate')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'addonRate' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب معدل الإضافات' : 'Click to sort by Add-on Rate'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'معدل الإضافات' : 'Add-on Rate'}</span>
+                    {sortField === 'addonRate' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
 
               {visibleColumns.refundRate && (
-                <th className="px-3 py-3.5 text-center">
-                  {isAr ? 'معدل الاسترجاع' : 'Refund Rate'}
+                <th
+                  onClick={() => handleSort('refundRate')}
+                  className={cn(
+                    'group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-neutral-100',
+                    sortField === 'refundRate' && 'bg-emerald-50 text-emerald-800',
+                  )}
+                  title={isAr ? 'اضغط للترتيب حسب معدل الاسترجاع' : 'Click to sort by Refund Rate'}
+                >
+                  <div className="inline-flex items-center justify-center gap-1.5">
+                    <span>{isAr ? 'معدل الاسترجاع' : 'Refund Rate'}</span>
+                    {sortField === 'refundRate' ? (
+                      sortDirection === 'asc' ? <ArrowUp size={13} className="text-emerald-700" /> : <ArrowDown size={13} className="text-emerald-700" />
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-0 transition-opacity text-neutral-400 group-hover:opacity-60" />
+                    )}
+                  </div>
                 </th>
               )}
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-100 text-sm">
-            {filteredItems.map((item) => {
+            {sortedAndFilteredItems.map((item) => {
               const displayName = isAr ? item.name_ar : item.name;
               const displayCategory = isAr ? item.category_ar : item.category;
 

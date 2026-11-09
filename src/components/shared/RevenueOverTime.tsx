@@ -147,7 +147,7 @@ export function RevenueOverTime() {
               <p className="text-sm font-semibold text-[#2D2F33]">
                 {isArabic ? selected.month_ar : selected.month}
               </p>
-              <p className="text-sm text-[#026F4F]">${selected.revenue.toLocaleString()}</p>
+              <p className="text-sm font-semibold text-[#026F4F]">EGP {selected.revenue.toLocaleString()}</p>
             </div>
           </div>
         )}
