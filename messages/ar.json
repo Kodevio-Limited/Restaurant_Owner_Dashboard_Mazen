@@ -595,6 +595,9 @@
       "chooseMenuItem": "اختر عنصر قائمة لهذه الوصفة...",
       "addonItem": "الإضافة / إكسترا",
       "chooseAddonItem": "اختر إضافة لهذه الوصفة...",
+      "searchMenuItems": "ابحث في عناصر القائمة...",
+      "searchAddons": "ابحث في الإضافات...",
+      "noResults": "لا توجد عناصر مطابقة",
       "ingredients": "المكوّنات",
       "addRow": "إضافة صف"
     },

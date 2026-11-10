@@ -595,6 +595,9 @@
       "chooseMenuItem": "Select a menu item for this recipe...",
       "addonItem": "Add-on / Extra",
       "chooseAddonItem": "Select an add-on for this recipe...",
+      "searchMenuItems": "Search menu items...",
+      "searchAddons": "Search add-ons...",
+      "noResults": "No matching items found",
       "ingredients": "Ingredients",
       "addRow": "Add Row"
     },

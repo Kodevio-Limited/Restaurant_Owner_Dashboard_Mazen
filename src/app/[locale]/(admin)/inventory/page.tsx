@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Plus, Search, ArrowLeft, X, ChevronDown, Trash2, Warehouse, TrendingUp, ClipboardList, PackageOpen, FileWarning, ScrollText } from 'lucide-react';
 import { useQueryModal } from '@/lib/use-query-modal';
 import { cn, lockPageScroll } from '@/lib/utils';
@@ -406,9 +406,20 @@ function RecipeMappingModal({
   const [rows, setRows] = useState<RecipeIngredient[]>([]);
   const [dirty, setDirty] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [menuQuery, setMenuQuery] = useState('');
+  const menuSearchRef = useRef<HTMLInputElement>(null);
 
   const isAddonRecipe = isAddon ?? (recipe?.kind === 'addon');
   const currentOptions = isAddonRecipe ? ADDON_OPTIONS : MENU_ITEM_OPTIONS;
+
+  // Filter the item dropdown as the user types in the search bar.
+  const query = menuQuery.trim().toLowerCase();
+  const filteredOptions = query
+    ? currentOptions.filter((item) => item.toLowerCase().includes(query))
+    : currentOptions;
+  const placeholderLabel = isAddonRecipe ? t('recipe.chooseAddonItem') : t('recipe.chooseMenuItem');
+  const selectPlaceholder = filteredOptions.length === 0 ? t('recipe.noResults') : placeholderLabel;
 
   // Seed the rows and menu item from the recipe each time it opens.
   useEffect(() => {
@@ -418,6 +429,8 @@ function RecipeMappingModal({
       setRows(recipe?.ingredients ? [...recipe.ingredients] : []);
       setDirty(false);
       setConfirmOpen(false);
+      setSearchOpen(false);
+      setMenuQuery('');
     }
   }, [open, recipe, t]);
 
@@ -426,6 +439,11 @@ function RecipeMappingModal({
     lockPageScroll(true);
     return () => lockPageScroll(false);
   }, [open]);
+
+  // Move focus into the search bar when it expands.
+  useEffect(() => {
+    if (searchOpen) menuSearchRef.current?.focus();
+  }, [searchOpen]);
 
   const addRow = () => {
     setRows((prev) => [...prev, { name: INGREDIENTS[0]?.name ?? '', quantity: 1, unit: INGREDIENTS[0]?.unit ?? 'pcs' }]);
@@ -472,7 +490,38 @@ function RecipeMappingModal({
             <ArrowLeft size={22} className="rtl:scale-x-[-1]" />
           </button>
           <h2 className="text-center text-[33px] font-medium leading-[1.4] text-black">{t('modals.recipeMapping.title')}</h2>
-          <span className="w-[50px]" />
+          <button
+            onClick={() => setSearchOpen((v) => !v)}
+            aria-label={tc('actions.search')}
+            aria-expanded={searchOpen}
+            className={cn(
+              'flex h-[50px] w-[50px] items-center justify-center rounded-full transition-colors',
+              searchOpen ? 'bg-[#026F4F] text-white hover:bg-emerald-800' : 'bg-[#E9E9E9] hover:bg-[#DcDcDc]',
+            )}
+          >
+            {searchOpen ? <X size={22} /> : <Search size={22} />}
+          </button>
+        </div>
+
+        {/* Search bar — filters the item dropdown below (Bug: too many items to scroll) */}
+        <div
+          className={cn(
+            'overflow-hidden px-[30px] transition-all duration-300',
+            searchOpen ? 'mt-4 max-h-[76px] opacity-100' : 'mt-0 max-h-0 opacity-0',
+          )}
+        >
+          <div className="relative">
+            <Search size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <input
+              ref={menuSearchRef}
+              type="text"
+              value={menuQuery}
+              onChange={(e) => setMenuQuery(e.target.value)}
+              placeholder={isAddonRecipe ? t('recipe.searchAddons') : t('recipe.searchMenuItems')}
+              tabIndex={searchOpen ? 0 : -1}
+              className="h-12 w-full rounded-xl border border-neutral-200 bg-white ps-12 pe-4 font-satoshi text-base text-[#2D2F33] outline-none transition-colors focus:border-emerald-500"
+            />
+          </div>
         </div>
 
         {/* Item selection field (Bug-9 & Bug-15: choose menu item or add-on depending on tab) */}
@@ -490,12 +539,12 @@ function RecipeMappingModal({
                 }}
                 className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-[#F8F9FA] px-4 pe-10 font-satoshi text-base text-[#2D2F33] outline-none transition-colors focus:border-emerald-500"
               >
-                <option value="">{isAddonRecipe ? t('recipe.chooseAddonItem') : t('recipe.chooseMenuItem')}</option>
+                <option value="">{selectPlaceholder}</option>
                 {/* Ensure existing recipeName is present if customized */}
-                {recipeName && !currentOptions.includes(recipeName) && (
+                {recipeName && !filteredOptions.includes(recipeName) && (
                   <option value={recipeName}>{recipeName}</option>
                 )}
-                {currentOptions.map((item) => (
+                {filteredOptions.map((item) => (
                   <option key={item} value={item}>{item}</option>
                 ))}
               </select>
