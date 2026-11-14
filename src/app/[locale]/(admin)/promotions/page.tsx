@@ -41,8 +41,9 @@ import {
   loadPromotions,
   savePromotions,
   generateRandomCode,
-  bulkGenerateCodesCsv,
+  bulkGenerateCodes,
 } from '@/data/promotions';
+import { MENU_ITEMS } from '@/data/menu';
 
 const CATEGORY_CHOICES = ['Burgers', 'Ramen', 'Sides', 'Drinks', 'Mains', 'Desserts'];
 const BRANCH_CHOICES = ['All Branches', 'Dhanmondi (Main)', 'Downtown', 'New Cairo'];
@@ -139,9 +140,14 @@ export default function PromotionsPage() {
     if (viewingReport?.id === saved.id) setViewingReport(saved);
   };
 
+  // Persist codes created by the bulk generator
+  const handleBulkGenerate = (newPromos: PromoCode[]) => {
+    if (!newPromos.length) return;
+    persistPromotions([...newPromos, ...promotions]);
+  };
+
   // Export all promotions to Excel
-  const handleExportAll = () => {
-    const rows = filteredPromos.map((p) => ({
+  const handleExportAll = () => {    const rows = filteredPromos.map((p) => ({
       'Promo Code': p.code,
       'Internal Name': isAr ? p.name_ar || p.name : p.name,
       'Discount Type': p.discountType,
@@ -544,6 +550,7 @@ export default function PromotionsPage() {
         <BulkGeneratorModal
           isAr={isAr}
           onClose={() => setBulkModalOpen(false)}
+          onGenerate={handleBulkGenerate}
         />
       )}
     </main>
@@ -767,14 +774,29 @@ function PromoFormDrawer({
                 {data.discountType === 'free_item' && (
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#2D2F33] mb-1.5">{isAr ? 'اسم الصنف المجاني *' : 'Free Item Name *'}</label>
-                    <input
-                      type="text"
+                    <select
                       required
                       value={data.freeItemName || ''}
                       onChange={(e) => setData({ ...data, freeItemName: e.target.value })}
-                      placeholder="e.g. Truffle Fries / Iced Green Tea"
                       className="h-11 w-full rounded-xl border border-neutral-200 bg-[#F8F9FA] px-3.5 text-sm text-[#2D2F33] outline-none focus:border-emerald-600"
-                    />
+                    >
+                      <option value="" disabled>
+                        {isAr ? 'اختر الصنف المجاني...' : 'Select a free item...'}
+                      </option>
+                      {data.freeItemName && !MENU_ITEMS.some((i) => i.name === data.freeItemName) && (
+                        <option value={data.freeItemName}>{data.freeItemName}</option>
+                      )}
+                      {MENU_ITEMS.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {isAr ? `${item.name_ar || item.name} (${item.category_ar || item.category})` : `${item.name} (${item.category})`}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1.5 text-[11px] text-[#989898]">
+                      {isAr
+                        ? 'تظهر القائمة من إدارة القائمة (Menu Management)'
+                        : 'Options come from Menu Management'}
+                    </p>
                   </div>
                 )}
 
@@ -1190,92 +1212,508 @@ function PromoReportDrawer({
 
 /**
  * Bulk Code Generator & CSV Exporter Modal
+ *
+ * Lets the owner configure the full promo details once, then generates
+ * N single-use codes that share those details (saved to the Promotions
+ * list + exported as a CSV sheet).
  */
 function BulkGeneratorModal({
   isAr,
   onClose,
+  onGenerate,
 }: {
   isAr: boolean;
   onClose: () => void;
+  onGenerate: (promos: PromoCode[]) => void;
 }) {
+  const today = new Date().toISOString().split('T')[0];
+  const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
   const [prefix, setPrefix] = useState('VIP');
   const [count, setCount] = useState(50);
-  const [generatedCsv, setGeneratedCsv] = useState<string | null>(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [discountType, setDiscountType] = useState<DiscountType>('percent');
+  const [discountValue, setDiscountValue] = useState(10);
+  const [maxDiscountCap, setMaxDiscountCap] = useState<number | ''>('');
+  const [freeItemName, setFreeItemName] = useState('');
+  const [bogoBuyQty, setBogoBuyQty] = useState(1);
+  const [bogoGetQty, setBogoGetQty] = useState(1);
+  const [minOrderAmount, setMinOrderAmount] = useState(100);
+  const [orderTypes, setOrderTypes] = useState<OrderType[]>(['dine_in', 'takeaway', 'delivery', 'qr']);
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(in30Days);
+  const [usageLimit, setUsageLimit] = useState(1);
+  const [status, setStatus] = useState<PromoStatus>('active');
+  const [generatedCount, setGeneratedCount] = useState<number | null>(null);
 
-  const handleGenerateAndExport = () => {
-    const { codes, csvContent } = bulkGenerateCodesCsv(prefix, count);
-    setGeneratedCsv(csvContent);
+  useEffect(() => {
+    lockPageScroll(true);
+    return () => lockPageScroll(false);
+  }, []);
 
-    // Download CSV file directly
+  const toggleChannel = (channel: OrderType) => {
+    setOrderTypes((prev) => {
+      const exists = prev.includes(channel);
+      const updated = exists ? prev.filter((c) => c !== channel) : [...prev, channel];
+      return updated.length ? updated : ['dine_in'];
+    });
+  };
+
+  const handleGenerateAndExport = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!name.trim()) {
+      alert(isAr ? 'يرجى إدخال اسم العرض الداخلي' : 'Please provide an internal name for these codes');
+      return;
+    }
+    if (!count || count < 1 || count > 5000) {
+      alert(isAr ? 'عدد الأكواد يجب أن يكون بين 1 و 5000' : 'Number of codes must be between 1 and 5000');
+      return;
+    }
+    if (discountType === 'free_item' && !freeItemName) {
+      alert(isAr ? 'يرجى اختيار الصنف المجاني' : 'Please select the free item');
+      return;
+    }
+
+    const codes = bulkGenerateCodes(prefix, count);
+
+    // Build full promo records sharing the chosen details
+    const promos: PromoCode[] = codes.map((code, i) => ({
+      id: `pr-${Date.now()}-${i}`,
+      code,
+      name: name.trim(),
+      description: description.trim() || undefined,
+      discountType,
+      discountValue: discountType === 'free_item' ? 0 : discountValue,
+      maxDiscountCap: discountType === 'percent' && maxDiscountCap !== '' ? Number(maxDiscountCap) : undefined,
+      freeItemName: discountType === 'free_item' ? freeItemName : undefined,
+      bogoBuyQty: discountType === 'bogo' ? bogoBuyQty : undefined,
+      bogoGetQty: discountType === 'bogo' ? bogoGetQty : undefined,
+      appliesTo: 'whole_order',
+      orderTypes,
+      minOrderAmount,
+      validDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+      allDay: true,
+      startDate,
+      endDate,
+      timezone: 'Cairo Time (UTC+2)',
+      totalUsageLimit: Math.max(1, usageLimit),
+      currentUses: 0,
+      canCombineWithOtherOffers: false,
+      branches: 'all',
+      status,
+      totalDiscountGiven: 0,
+      revenueGenerated: 0,
+    }));
+
+    onGenerate(promos);
+
+    // CSV export including every chosen detail
+    const csvCell = (v: string | number) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const typeLabel =
+      discountType === 'percent'
+        ? `${discountValue}% Off`
+        : discountType === 'fixed'
+          ? `EGP ${discountValue} Off`
+          : discountType === 'free_item'
+            ? `Free Item: ${freeItemName}`
+            : `Buy ${bogoBuyQty} Get ${bogoGetQty} Free`;
+    const header = [
+      'Code',
+      'Internal Name',
+      'Description',
+      'Discount Rule',
+      'Max Cap (EGP)',
+      'Min Order (EGP)',
+      'Channels',
+      'Start Date',
+      'End Date',
+      'Uses Per Code',
+      'Status',
+      'Created Date',
+    ];
+    const rows = codes.map((code) =>
+      [
+        code,
+        name.trim(),
+        description.trim(),
+        typeLabel,
+        discountType === 'percent' && maxDiscountCap !== '' ? maxDiscountCap : '',
+        minOrderAmount,
+        orderTypes.join(' | '),
+        startDate,
+        endDate,
+        Math.max(1, usageLimit),
+        status.toUpperCase(),
+        today,
+      ]
+        .map(csvCell)
+        .join(','),
+    );
+    const csvContent = [header.join(','), ...rows].join('\n');
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Bulk_Promo_Codes_${prefix}_${count}.csv`;
+    link.download = `Bulk_Promo_Codes_${prefix || 'PROMO'}_${count}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    setGeneratedCount(codes.length);
   };
+
+  const inputCls =
+    'h-10 w-full rounded-xl border border-neutral-200 bg-[#F8F9FA] px-3 text-sm font-medium text-[#2D2F33] outline-none focus:border-emerald-600';
+  const labelCls = 'block text-xs font-semibold text-[#2D2F33] mb-1';
+
+  if (generatedCount !== null) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
+            <Check size={24} className="text-emerald-600" />
+          </div>
+          <h3 className="mt-3 text-base font-bold text-[#2D2F33]">
+            {isAr ? 'تم إنشاء الأكواد بنجاح' : 'Codes Created Successfully'}
+          </h3>
+          <p className="mt-2 text-xs text-[#686868]">
+            {isAr
+              ? `تم إنشاء ${generatedCount} كود استخدام فردي وحفظها في قائمة العروض، وتنزيل ملف CSV تلقائياً.`
+              : `${generatedCount} single-use codes were added to your Promotions list and the CSV was downloaded.`}
+          </p>
+          <div className="mt-5 flex items-center justify-center gap-3">
+            <button
+              onClick={() => setGeneratedCount(null)}
+              className="rounded-xl border border-neutral-300 px-4 py-2 text-xs font-medium text-[#2D2F33] hover:bg-neutral-50 sm:text-sm"
+            >
+              {isAr ? 'توليد المزيد' : 'Generate More'}
+            </button>
+            <button
+              onClick={onClose}
+              className="rounded-xl bg-[#026F4F] px-5 py-2 text-xs font-bold text-white shadow hover:bg-emerald-800 sm:text-sm"
+            >
+              {isAr ? 'تم' : 'Done'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+      <form
+        onSubmit={handleGenerateAndExport}
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 px-6 py-4">
           <div className="flex items-center gap-2">
             <Layers size={20} className="text-[#026F4F]" />
             <h3 className="text-base font-bold text-[#2D2F33]">{isAr ? 'توليد أكواد بالجملة (تصدير CSV)' : 'Bulk Single-Use Codes Generator'}</h3>
           </div>
-          <button onClick={onClose} className="text-[#989898] hover:text-[#2D2F33]"><X size={18} /></button>
+          <button type="button" onClick={onClose} className="text-[#989898] hover:text-[#2D2F33]"><X size={18} /></button>
         </div>
 
-        <p className="mt-3 text-xs text-[#686868]">
-          {isAr
-            ? 'توليد عدد X من أكواد الاستخدام الفردي المخصصة مع بادئة محددة، وتصديرها مباشرة في ملف CSV للطباعة أو الحملات التسويقية.'
-            : 'Generate multiple unique single-use promo codes with a custom prefix, and export them as a CSV sheet for flyers or SMS campaigns.'}
-        </p>
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-4">
+          <p className="text-xs text-[#686868]">
+            {isAr
+              ? 'اختر تفاصيل الخصم مرة واحدة، ثم ولّد عدد X من أكواد الاستخدام الفردي المخصصة. تُحفظ الأكواد في قائمة العروض وتصُدَّر في ملف CSV.'
+              : 'Set the discount details once, then generate X unique single-use codes. The codes are saved to your Promotions list and exported as a CSV.'}
+          </p>
 
-        <div className="mt-4 space-y-3.5">
-          <div>
-            <label className="block text-xs font-semibold text-[#2D2F33] mb-1">{isAr ? 'بادئة الكود (Prefix):' : 'Code Prefix:'}</label>
-            <input
-              type="text"
-              value={prefix}
-              onChange={(e) => setPrefix(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, ''))}
-              placeholder="e.g. VIP or EVENT"
-              className="h-10 w-full rounded-xl border border-neutral-200 bg-[#F8F9FA] px-3 font-mono text-sm font-bold text-[#2D2F33] outline-none uppercase"
-            />
+          {/* Code generation */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelCls}>{isAr ? 'بادئة الكود (Prefix):' : 'Code Prefix:'}</label>
+              <input
+                type="text"
+                value={prefix}
+                onChange={(e) => setPrefix(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, ''))}
+                placeholder="e.g. VIP or EVENT"
+                className={`${inputCls} font-mono font-bold uppercase`}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{isAr ? 'عدد الأكواد المطلوبة:' : 'Number of Codes to Generate:'}</label>
+              <input
+                type="number"
+                min="1"
+                max="5000"
+                required
+                value={count}
+                onChange={(e) => setCount(Number(e.target.value))}
+                className={inputCls}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#2D2F33] mb-1">{isAr ? 'عدد الأكواد المطلوبة:' : 'Number of Codes to Generate:'}</label>
-            <input
-              type="number"
-              min="1"
-              max="5000"
-              value={count}
-              onChange={(e) => setCount(Number(e.target.value))}
-              className="h-10 w-full rounded-xl border border-neutral-200 bg-[#F8F9FA] px-3 text-sm font-bold text-[#2D2F33] outline-none"
-            />
+          {/* Internal name & description */}
+          <div className="space-y-3">
+            <div>
+              <label className={labelCls}>{isAr ? 'اسم العرض الداخلي *' : 'Internal Name *'}</label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={isAr ? 'مثال: حملة الصيف 10%' : 'e.g. Summer Campaign 10% Off'}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{isAr ? 'وصف ترويجي' : 'Customer-Facing Description'}</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={isAr ? 'يظهر للعميل في التطبيق' : 'Shown to the customer in the QR app'}
+                rows={2}
+                className="w-full rounded-xl border border-neutral-200 bg-[#F8F9FA] p-3 text-xs text-[#2D2F33] outline-none focus:border-emerald-600"
+              />
+            </div>
+          </div>
+
+          {/* Discount rule */}
+          <div className="space-y-3">
+            <label className={labelCls}>{isAr ? 'قاعدة ونوع الخصم:' : 'Discount Rule & Type:'}</label>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {([
+                { id: 'percent' as const, label: isAr ? 'نسبة مئوية %' : '% Off', icon: Percent },
+                { id: 'fixed' as const, label: isAr ? 'خصم ثابت (ج.م)' : 'Fixed EGP Off', icon: Coins },
+                { id: 'free_item' as const, label: isAr ? 'صنف مجاني' : 'Free Item', icon: Gift },
+                { id: 'bogo' as const, label: isAr ? 'اشترِ X واحصل على Y' : 'Buy X Get Y', icon: Tag },
+              ]).map((type) => {
+                const Icon = type.icon;
+                const isSelected = discountType === type.id;
+                return (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => setDiscountType(type.id)}
+                    className={cn(
+                      'flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center transition-all',
+                      isSelected
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-800 font-bold'
+                        : 'border-neutral-200 bg-[#F8F9FA] text-[#686868] hover:bg-neutral-100',
+                    )}
+                  >
+                    <Icon size={18} />
+                    <span className="text-xs">{type.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {discountType === 'percent' && (
+                <>
+                  <div>
+                    <label className={labelCls}>{isAr ? 'نسبة الخصم (%) *' : 'Discount Percentage (%) *'}</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      required
+                      value={discountValue}
+                      onChange={(e) => setDiscountValue(Number(e.target.value))}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>{isAr ? 'الحد الأقصى للخصم (ج.م)' : 'Maximum Discount Cap (EGP)'}</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={maxDiscountCap}
+                      onChange={(e) => setMaxDiscountCap(e.target.value === '' ? '' : Number(e.target.value))}
+                      placeholder="e.g. 50 (optional)"
+                      className={inputCls}
+                    />
+                  </div>
+                </>
+              )}
+
+              {discountType === 'fixed' && (
+                <div>
+                  <label className={labelCls}>{isAr ? 'قيمة الخصم الثابت (ج.م) *' : 'Discount Value (EGP) *'}</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={discountValue}
+                    onChange={(e) => setDiscountValue(Number(e.target.value))}
+                    className={inputCls}
+                  />
+                </div>
+              )}
+
+              {discountType === 'free_item' && (
+                <div className="sm:col-span-2">
+                  <label className={labelCls}>{isAr ? 'اسم الصنف المجاني *' : 'Free Item Name *'}</label>
+                  <select
+                    required
+                    value={freeItemName}
+                    onChange={(e) => setFreeItemName(e.target.value)}
+                    className={inputCls}
+                  >
+                    <option value="" disabled>{isAr ? 'اختر الصنف المجاني...' : 'Select a free item...'}</option>
+                    {MENU_ITEMS.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {isAr ? `${item.name_ar || item.name} (${item.category_ar || item.category})` : `${item.name} (${item.category})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {discountType === 'bogo' && (
+                <>
+                  <div>
+                    <label className={labelCls}>{isAr ? 'كمية الشراء (Buy X)' : 'Buy Quantity (X)'}</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={bogoBuyQty}
+                      onChange={(e) => setBogoBuyQty(Number(e.target.value))}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>{isAr ? 'كمية المجاني (Get Y)' : 'Get Free Quantity (Y)'}</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={bogoGetQty}
+                      onChange={(e) => setBogoGetQty(Number(e.target.value))}
+                      className={inputCls}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Scope & channels */}
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label className={labelCls}>{isAr ? 'الحد الأدنى لقيمة الطلب (ج.م) *' : 'Minimum Order Amount (EGP) *'}</label>
+                <input
+                  type="number"
+                  min="0"
+                  required
+                  value={minOrderAmount}
+                  onChange={(e) => setMinOrderAmount(Number(e.target.value))}
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>{isAr ? 'مرات الاستخدام لكل كود:' : 'Uses Per Code:'}</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={usageLimit}
+                  onChange={(e) => setUsageLimit(Number(e.target.value))}
+                  className={inputCls}
+                />
+                <p className="mt-1 text-[11px] text-[#989898]">
+                  {isAr ? '1 = استخدام فردي (Single Use)' : '1 = single use (recommended)'}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className={labelCls}>{isAr ? 'قنوات الطلب المؤهلة:' : 'Eligible Order Channels:'}</label>
+              <div className="grid grid-cols-2 gap-2">
+                {([
+                  { id: 'dine_in' as const, label: isAr ? 'تناول بالمطعم' : 'Dine-In' },
+                  { id: 'takeaway' as const, label: isAr ? 'سفري / استلام' : 'Takeaway' },
+                  { id: 'delivery' as const, label: isAr ? 'توصيل' : 'Delivery' },
+                  { id: 'qr' as const, label: isAr ? 'تطبيق QR' : 'QR Ordering' },
+                ]).map((ch) => {
+                  const isChecked = orderTypes.includes(ch.id);
+                  return (
+                    <label
+                      key={ch.id}
+                      className={cn(
+                        'flex cursor-pointer items-center gap-2 rounded-xl border p-2.5 text-xs font-semibold transition-all',
+                        isChecked ? 'border-emerald-600 bg-emerald-50 text-emerald-900' : 'border-neutral-200 bg-neutral-50 text-[#686868]',
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleChannel(ch.id)}
+                        className="accent-emerald-700"
+                      />
+                      <span>{ch.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Validity & status */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <label className={labelCls}>{isAr ? 'تاريخ البدء:' : 'Start Date:'}</label>
+              <input
+                type="date"
+                required
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{isAr ? 'تاريخ الانتهاء:' : 'End Date:'}</label>
+              <input
+                type="date"
+                required
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>{isAr ? 'الحالة:' : 'Status:'}</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as PromoStatus)}
+                className={inputCls}
+              >
+                <option value="active">{isAr ? 'نشط (Active)' : 'Active'}</option>
+                <option value="paused">{isAr ? 'متوقف مؤقتاً (Paused)' : 'Paused'}</option>
+                <option value="scheduled">{isAr ? 'مجدول (Scheduled)' : 'Scheduled'}</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-3">
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-neutral-100 px-6 py-4">
           <button
+            type="button"
             onClick={onClose}
             className="rounded-xl border border-neutral-300 px-4 py-2 text-xs font-medium text-[#2D2F33] hover:bg-neutral-50 sm:text-sm"
           >
             {isAr ? 'إغلاق' : 'Close'}
           </button>
           <button
-            onClick={handleGenerateAndExport}
+            type="submit"
             className="flex items-center gap-1.5 rounded-xl bg-[#026F4F] px-5 py-2 text-xs font-bold text-white shadow hover:bg-emerald-800 sm:text-sm"
           >
             <Download size={15} />
             <span>{isAr ? 'توليد وتصدير CSV' : 'Generate & Export CSV'}</span>
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

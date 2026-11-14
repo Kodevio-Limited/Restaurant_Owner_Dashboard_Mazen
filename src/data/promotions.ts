@@ -260,9 +260,10 @@ export function generateRandomCode(prefix = 'MAZEN'): string {
 }
 
 /**
- * Generate X bulk single-use promo codes and format as CSV string.
+ * Generate X unique bulk single-use promo codes (no CSV formatting,
+ * so callers can attach their own promo details to each code).
  */
-export function bulkGenerateCodesCsv(prefix: string, count: number): { codes: string[]; csvContent: string } {
+export function bulkGenerateCodes(prefix: string, count: number): string[] {
   const cleanPrefix = (prefix || 'PROMO').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
   const codes: string[] = [];
   const set = new Set<string>();
@@ -280,11 +281,6 @@ export function bulkGenerateCodesCsv(prefix: string, count: number): { codes: st
     }
   }
 
-  const csvRows = [
-    'Code,Single Use,Created Date,Status',
-    ...codes.map((c) => `${c},YES,${new Date().toISOString().split('T')[0]},ACTIVE`),
-  ];
-
-  return { codes, csvContent: csvRows.join('\n') };
+  return codes;
 }
 
